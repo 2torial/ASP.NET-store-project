@@ -1,2 +1,4 @@
-# ASP.NET-projekt-sklepu
-Projekt sklepu internetowego na potrzeby kursu projektowania aplikacji ASP.NET
+# Internet store ASP.NET project for college classes 
+
+# Contributors
+Daniel Boguszewski (315942)
