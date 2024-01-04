@@ -3,7 +3,8 @@
 # Technologies used
 - ASP.NET Core
 - PostgreSQL Database
-- React (HTML, CSS, JS)
+- HTML, CSS, JS
+- React, SASS, EJS libraries
 
 # Contributors
 Daniel Boguszewski (315942)
