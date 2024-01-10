@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <style>
+            * {
+                font-family: lato;
+            }
+
+            .account-form-grid-container {
+                display: grid;
+                grid-auto-flow: row;
+                grid-template-rows: 4fr 3fr 3fr 3fr 4fr;
+                height: 290px;
+                width: 480px;
+                row-gap: 6px;
+                border-radius: 15px;
+                background-color: lightblue;
+            }
+
+            .form-title-section-item {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .form-title-section-item h2 {
+                margin: 0;
+            }
+
+            .input-section-item {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .input-section-item label {
+                cursor: pointer;
+            }
+
+            .input-section-item input {
+                height: 28px;
+                width: 340px;
+                box-sizing: border-box;
+                margin-top: 5px;
+            }
+
+            .submit-section-item {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .submit-section-item input {
+                height: 32px;
+                width: 80px;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="sign-in-form" class="account-form-grid-container">
+            <div class="form-title-section-item">
+                <h2>Rejestracja</h2>
+            </div>
+            <div class="input-section-item">
+                <label for="username">Podaj swoją nazwę użytkownika<br />
+                    <input id="username" type="text" name="UserName" />
+                </label>
+            </div>
+            <div class="input-section-item">
+                <label for="password">Podaj hasło<br />
+                    <input id="password" type="password" name="PassWord" />
+                </label>
+            </div>
+            <div class="input-section-item">
+                <label for="password-repeat">Powtórz hasło<br />
+                    <input id="password-repeat" type="password" name="PassWordRepeat" />
+                </label>
+            </div>
+            <div class="submit-section-item">
+                <input type="submit" value="Wyślij" />
+            </div>
+        </form>
+    </body>
+</html>
