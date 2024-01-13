@@ -4,8 +4,9 @@
 - ASP.NET Core
 - PostgreSQL Database
 - React, JSX
-- SASS, TypeScript
-Templates are made with vanilla HTML + CSS + JS
+- SASS, TypeScript \
+\
+*Templates are made using vanilla HTML + CSS + JS
 
 ## Contributors
 Daniel Boguszewski (315942)
