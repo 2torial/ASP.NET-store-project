@@ -1,0 +1,140 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="styles/reset.css">
+        <style>
+            * {
+                font-family: lato;
+            }
+
+            .navigation-grid {
+                display: grid;
+                grid-auto-flow: column;
+                grid-template-columns: 4fr 10fr 7fr 3fr;
+                column-gap: 6px;
+                height: 86px;
+                box-sizing: border-box;
+                box-shadow: 0 1px 2px grey;
+                border-radius: 0 0 30% 30% / 0 0 8px 8px;
+            }
+
+            .logo-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .logo-section img {
+                border-radius: 11px;
+            }
+
+            .search-bar-section {
+                display: flex;
+                align-items: center;
+            }
+
+            .search-bar-section form {
+                width: 100%;
+            }
+
+            .search-bar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow:
+                    0.5px 0.5px 1px lightblue,
+                    0.5px -0.5px 1px lightblue,
+                    -0.5px 0.5px 1px lightblue,
+                    -0.5px -0.5px 1px lightblue;
+                border-radius: 14px;
+            }
+
+            .search-bar.focused {
+                box-shadow:
+                    1.5px 1.5px 2px lightblue,
+                    1.5px -1.5px 2px lightblue,
+                    -1.5px 1.5px 2px lightblue,
+                    -1.5px -1.5px 2px lightblue;
+            }
+
+            .search-bar-input-area {
+                display: flex;
+                flex-grow: 1;
+                padding: 8px 10px;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 14px 0 0 14px;
+                transition: box-shadow 0.4s;
+            }
+
+            .search-bar-input-area:focus {
+                outline: none;
+            }
+
+            .search-bar-button-area {
+                border-radius: 0 14px 14px 0;
+            }
+
+            .front-area {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                height: 100%;
+            }
+
+            .front-area img {
+                border-radius: 11px;
+            }
+
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navigation-grid">
+            <div class="logo-section">
+                <a href="">
+                    <img src="https://placehold.co/150x50" alt="logo" />
+                </a>
+            </div>
+            <div class="empty-space-section"></div>
+            <div class="search-bar-section">
+                <form autocomplete="off">
+                    <div class="search-bar">
+                        <input class="search-bar-input-area" type="text" name="SearchBar" placeholder="Szukaj" />
+                        <input class="search-bar-button-area" type="image" src="https://placehold.co/40x40" alt="lupa" />
+                    </div>
+                </form>
+            </div>
+            <div class="account-section">
+                <div class="front-area">
+                    <a href="">
+                        <img src="https://placehold.co/40x40" alt="account" />
+                    </a>
+                    <a href="">
+                        <img src="https://placehold.co/40x40" alt="basket" />
+                    </a>
+                </div>
+                <div class="drop-down-area hidden">
+                    <div id="not-logged-in-account-menu" class="account-menu">
+                        <p>Sign in</p>
+                        <p>Sign up</p>
+                    </div>
+                    <div id="logged-in-account-menu" class="account-menu hidden">
+                        <p>Account settings</p>
+                        <p>Log out</p>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <script>
+            searchBar = document.querySelector(".search-bar")
+            focusSearchBar = () => searchBar.classList.add("focused");
+            unfocusSearchBar = () => searchBar.classList.remove("focused");
+            
+            searchBarInputArea = searchBar.querySelector(".search-bar-input-area");
+            searchBarInputArea.addEventListener("focus", focusSearchBar);
+            searchBarInputArea.addEventListener("focusout", unfocusSearchBar);
+        </script>
+    </body>
+</html>

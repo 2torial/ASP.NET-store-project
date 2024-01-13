@@ -5,7 +5,7 @@
                 font-family: lato;
             }
 
-            .account-form-grid-container {
+            .account-form-grid {
                 display: grid;
                 grid-auto-flow: row;
                 grid-template-rows: 4fr 3fr 3fr 3fr 4fr;
@@ -16,67 +16,69 @@
                 background-color: lightblue;
             }
 
-            .form-title-section-item {
+            .form-title-section {
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
 
-            .form-title-section-item h2 {
+            .form-title-section h2 {
                 margin: 0;
             }
 
-            .input-section-item {
+            .input-section {
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
 
-            .input-section-item label {
+            .input-section label {
                 cursor: pointer;
             }
 
-            .input-section-item input {
+            .input-section input {
                 height: 28px;
                 width: 340px;
                 box-sizing: border-box;
                 margin-top: 5px;
             }
 
-            .submit-section-item {
+            .submit-section {
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
 
-            .submit-section-item input {
+            .submit-section input {
                 height: 32px;
                 width: 80px;
             }
         </style>
     </head>
     <body>
-        <form id="sign-in-form" class="account-form-grid-container">
-            <div class="form-title-section-item">
-                <h2>Rejestracja</h2>
-            </div>
-            <div class="input-section-item">
-                <label for="username">Podaj swoją nazwę użytkownika<br />
-                    <input id="username" type="text" name="UserName" />
-                </label>
-            </div>
-            <div class="input-section-item">
-                <label for="password">Podaj hasło<br />
-                    <input id="password" type="password" name="PassWord" />
-                </label>
-            </div>
-            <div class="input-section-item">
-                <label for="password-repeat">Powtórz hasło<br />
-                    <input id="password-repeat" type="password" name="PassWordRepeat" />
-                </label>
-            </div>
-            <div class="submit-section-item">
-                <input type="submit" value="Wyślij" />
+        <form id="sign-in-form">
+            <div class="account-form-grid">
+                <div class="form-title-section">
+                    <h2>Rejestracja</h2>
+                </div>
+                <div class="input-section">
+                    <label for="username">Podaj swoją nazwę użytkownika<br />
+                        <input id="username" type="text" name="UserName" />
+                    </label>
+                </div>
+                <div class="input-section">
+                    <label for="password">Podaj hasło<br />
+                        <input id="password" type="password" name="PassWord" />
+                    </label>
+                </div>
+                <div class="input-section">
+                    <label for="password-repeat">Powtórz hasło<br />
+                        <input id="password-repeat" type="password" name="PassWordRepeat" />
+                    </label>
+                </div>
+                <div class="submit-section">
+                    <input type="submit" value="Wyślij" />
+                </div>
             </div>
         </form>
     </body>
