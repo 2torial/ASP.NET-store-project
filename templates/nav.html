@@ -1,0 +1,181 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="styles/reset.css">
+        <style>
+            * {
+                font-family: lato;
+            }
+
+            nav {
+                position: relative;
+                z-index: 1;
+                height: 67px;
+            }
+
+            .navigation-grid {
+                position: relative;
+                z-index: 1;
+                display: grid;
+                grid-auto-flow: column;
+                grid-template-columns: 4fr 8fr 8fr 3fr;
+                column-gap: 6px;
+                height: 60px;
+                background-color: white;
+            }
+
+            .logo-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .logo-section input {
+                border-radius: 11px;
+            }
+
+            .search-bar-section {
+                display: flex;
+                align-items: center;
+            }
+
+            .search-bar-section form {
+                width: 100%;
+            }
+
+            .search-bar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow:
+                    0.5px 0.5px 1px lightblue,
+                    0.5px -0.5px 1px lightblue,
+                    -0.5px 0.5px 1px lightblue,
+                    -0.5px -0.5px 1px lightblue;
+                border-radius: 14px;
+            }
+
+            .search-bar.focused {
+                box-shadow:
+                    1.5px 1.5px 2px lightblue,
+                    1.5px -1.5px 2px lightblue,
+                    -1.5px 1.5px 2px lightblue,
+                    -1.5px -1.5px 2px lightblue;
+            }
+
+            .search-bar-input-area {
+                display: flex;
+                flex-grow: 1;
+                padding: 8px 10px;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 14px 0 0 14px;
+                transition: box-shadow 0.4s;
+            }
+
+            .search-bar-input-area:focus {
+                outline: none;
+            }
+
+            .search-bar-button-area {
+                border-radius: 0 14px 14px 0;
+            }
+
+            .menu-section {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+            }
+
+            .menu-section input {
+                border-radius: 11px;
+            }
+
+            .menu-grid {
+                position: absolute;
+                top: 10px;
+                z-index: 0;
+                display: grid;
+                grid-auto-flow: row;
+                grid-template-columns: 17fr 3fr 3fr;
+                height: 57px;
+                width: 100%;
+                border-radius: 0 0 40% 40% / 0 0 7px 7px;
+                box-sizing: border-box;
+                box-shadow: 0px 2px 2px grey;
+                transition: top 0.4s ease-out;
+                pointer-events: auto;
+            }
+
+            .menu-grid .menu-option {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .menu-grid .option-section input {
+                height: 40px;
+                width: 90%;
+                border: 0;
+                border-radius: 11px;
+                background-color: lightgrey;
+                cursor: pointer;
+            }
+            
+            main {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <div class="navigation-grid">
+                <div class="logo-section">
+                    <input id="logo" type="image" src="https://placehold.co/120x50" alt="logo" />
+                </div>
+                <div class="empty-space-section"></div>
+                <div class="search-bar-section">
+                    <form autocomplete="off">
+                        <div class="search-bar">
+                            <input class="search-bar-input-area" type="text" name="SearchBar" placeholder="Search" />
+                            <input id="search-link" class="search-bar-button-area" type="image" src="https://placehold.co/40x40" alt="magnifier" />
+                        </div>
+                    </form>
+                </div>
+                <div class="menu-section">
+                    <input id="basket-link" type="image" src="https://placehold.co/40x40" alt="basket" />
+                    <input id="profile-link" type="image" src="https://placehold.co/40x40" alt="profile" />
+                </div>
+            </div>
+            <div class="menu-grid">
+                <div class="empty-space"></div>
+                <div class="option-section">
+                    <input id="sign-in-link" type="button" value="Sign in" />
+                </div>
+                <div class="option-section">
+                    <input id="sign-up-link" type="button" value="Sign up" />
+                </div>
+            </div>
+        </nav>
+        <main></main>
+        <script>
+            searchBar = document.querySelector(".search-bar");
+            focusSearchBar = () => searchBar.classList.add("focused");
+            unfocusSearchBar = () => searchBar.classList.remove("focused");
+            
+            searchBarInputArea = searchBar.querySelector(".search-bar-input-area");
+            searchBarInputArea.addEventListener("focus", focusSearchBar);
+            searchBarInputArea.addEventListener("focusout", unfocusSearchBar);
+        
+            menuArea = document.querySelector(".menu-grid");
+            openMenu = () => menuArea.style.top = "67px";
+            hideMenu = () => menuArea.style.top = "10px";
+
+            menuSection = document.querySelector(".menu-section");
+            profileIcon = menuSection.querySelector("#profile-link");
+            profileIcon.addEventListener("mouseover", openMenu);
+
+            mainArea = document.querySelector("main");
+            mainArea.addEventListener("mouseover", hideMenu);
+        </script>
+    </body>
+</html>
