@@ -1,10 +1,407 @@
 <html>
     <head>
+        <meta charset="UTF-8">
         <style>
-            /* Put your styles here */
+            * {
+                font-family: lato;
+            }
+
+            main {
+                padding: 20px 5%;
+            }
+
+            .filters {
+                display: flex;
+                flex-direction: column;
+                width: 300px;
+                box-sizing: border-box;
+                box-shadow: 
+                    1px 1px 1px grey,
+                    1px -1px 1px grey,
+                    -1px 1px 1px grey,
+                    -1px -1px 1px grey;
+                padding: 10px;
+                border-radius: 17px;
+            }
+
+            /*
+            .filters::before {
+                content: "Filters";
+                font-size: 20px;
+                font-weight: bold;
+                position: absolute;
+                left: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 40px;
+                width: 80px;
+                border: 1px solid black;
+                border-radius: 25% / 50%;
+                background-color: lightblue;
+            }
+            */
+
+            .filters .title-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 30px;
+                box-sizing: border-box;
+            }
+
+            .filters .title-section input {
+                height: 30px;
+                width: 30px;
+                border: 1px solid grey;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            .filter-section {
+                display: flex;
+                flex-direction: column;
+                margin-top: 10px;
+                padding: 5px 0;
+                border-top: 1px solid grey;
+            }
+
+            .filter-section label {
+                display: inline-block;
+                margin: 8px 0 5px;
+                cursor: pointer;
+            }
+
+            .filter-section label:first-child {
+                margin-top: 0px;
+            }
+            
+            .filter-section .select-list {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                border-radius: 15px;
+            }
+
+            .filter-section .select-list::before {
+                content: "\25BE";
+                position: absolute;
+                right: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 30px;
+                width: 30px;
+                box-sizing: border-box;
+                padding-top: 2px;
+                transform: scaleX(1.5);
+                pointer-events: none;
+            }
+
+            .filter-section .select-list.expanded::before {
+                content: "\25B4";
+            }
+
+            .filter-section .select-list .option {
+                font-size: 12px;
+                color: black;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 30px;
+                width: 100%;
+                box-sizing: border-box;
+                padding: 8px;
+                border: 1px solid grey;
+                background-color: white;
+                cursor: pointer;
+            }
+
+            .filter-section .select-list .option:focus {
+                outline: 0;
+            }
+
+            .filter-section .select-list .option:hover {
+                background-color: lightgrey; 
+            }
+
+            .filter-section .select-list .option:first-child {
+                border-radius: 15px;
+            }
+
+            .filter-section .select-list .option:not(:first-child) {
+                position: absolute;
+                z-index: 1;
+                display: none;
+                border-top: 0;
+            }
+
+            .filter-section .select-list.expanded .option {
+                display: flex;
+            }
+
+            .filter-section .select-list.expanded .option:first-child {
+                border-radius: 15px 15px 0 0;
+                background-color: lightgray;
+            }
+
+            .filter-section .select-list.expanded .option:last-child {
+                border-radius: 0 0 15px 15px;
+            }
+
+            .iconed-select-list .option img {
+                border-radius: 7px;
+            }
+
+            .display-settings-section {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            .view-select-container {
+                width: 85px;
+            }
+
+            .sort-select-container {
+                width: calc(100% - 100px);
+            }
+
+            .range-setting {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .range-setting .range-input {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .range-setting .range-input input {
+                height: 30px;
+                width: 120px;
+            }
+
+            .range-setting .range-dash {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 5%;
+                margin: 0 5px;
+            }
+
+            .checkbox-list {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .checkbox-list .checkbox-option {
+                font-size: 12px;
+                color: black;
+            }
+
+            .apply-section {
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 10px 0 0;
+            }
+
+            .apply-section input {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 30px;
+                width: 45%;
+                border: 0;
+                border-radius: 15px / 15px;
+                cursor: pointer;
+            }
+
+            .apply-section .apply-button {
+                font-weight: bold;
+                color: white;
+                background-color: blue;
+            }
+
+            .apply-section .apply-button:active {
+                background-color: darkblue;
+            }
+
+            .apply-section .default-button:active {
+                background-color: grey;
+            }
+
+            .drop-down-section {
+                position: relative;
+            }
+
+            .drop-down-section::before {
+                content: "\25BE";
+                position: absolute;
+                right: 0;
+                top: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 30px;
+                width: 30px;
+                box-sizing: border-box;
+                padding-top: 2px;
+                transform: scaleX(1.5);
+                pointer-events: none;
+            }
+
+            .drop-down-section.expanded::before {
+                content: "\25B4";
+            }
+
+            .drop-down-section .drop-down-label {
+                margin-bottom: 0;
+            }
+
+            .drop-down-section .drop-down-content {
+                display: none;
+            }
+
+            .drop-down-section.expanded .drop-down-label {
+                margin-bottom: 5px;
+            }
+
+            .drop-down-section.expanded .drop-down-content {
+                display: flex;
+            }
         </style>
     </head>
     <body>
-        <!-- Put your code here -->
+        <main>
+            <section class="filters">
+                <div class="title-section">
+                    <h2>Filters</h2>
+                    <input type="button" value="X" />
+                </div>
+                <div class="filter-section">
+                    <label for="category">Category</label>
+                    <div class="select-list">
+                        <input type="text" class="option" name="Category" id="category" value="Laptop" readonly />
+                        <span class="option" data-value="Headset">Headset</span>
+                        <span class="option" data-value="Laptop">Laptop</span>
+                    </div>
+                </div>
+                <div class="filter-section display-settings-section">
+                    <div class="sort-select-container">
+                        <label id="sortby">Sort by</label>
+                        <div class="select-list">
+                            <input type="text" class="option" name="SortBy" id="sortby" value="Name: Ascending" readonly />
+                            <span class="option" data-value="Name: Ascending">Name: Ascending</span>
+                            <span class="option" data-value="Name: Descending">Name: Descending</span>
+                            <span class="option" data-value="Price: Lowest first">Price: Lowest first</span>
+                            <span class="option" data-value="Price: Highest first">Price: Highest first</span>
+                        </div>
+                    </div>
+                    <div class="view-select-container">
+                        <label for="view">View</label>
+                        <div class="select-list iconed-select-list">
+                            <input type="text" class="option" name="View" id="view" value="Gallery" readonly />
+                            <span class="option" data-value="Gallery">
+                                <p>Gallery</p>
+                                <img src="https://placehold.co/20x20" alt="gallery icon">
+                            </span>
+                            <span class="option" data-value="List">
+                                <p>List</p>
+                                <img src="https://placehold.co/20x20" alt="list icon">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-section drop-down-section expanded">
+                    <label class="drop-down-label" for="price-from">Price</label>
+                    <div class="range-setting drop-down-content">
+                        <span class="range-input">
+                            <input type="text" id="price-from" value="0" />
+                        </span>
+                        <span class="range-dash">
+                            &ndash;
+                        </span>
+                        <span class="range-input">
+                            <input type="text" id="price-to" value="999" />$
+                        </span>
+                    </div>
+                </div>
+                <div class="filter-section drop-down-section">
+                    <label class="drop-down-label">Processor</label>
+                    <div class="checkbox-list drop-down-content">
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Intel Core i3" value="Intel Core i3" />
+                            <label for="Intel Core i3">Intel Core i3</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Intel Core i5" value="Intel Core i5" />
+                            <label for="Intel Core i5">Intel Core i5</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Intel Core i7" value="Intel Core i7" />
+                            <label for="Intel Core i7">Intel Core i7</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Ryzen 3" value="Ryzen 3" />
+                            <label for="Ryzen 3">Ryzen 3</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Ryzen 5" value="Ryzen 5" />
+                            <label for="Ryzen 5">Ryzen 5</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" id="Ryzen 7" value="Ryzen 7" />
+                            <label for="Ryzen 7">Ryzen 7</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="filter-section drop-down-section">
+                    <label class="drop-down-label">RAM</label>
+                    <div class="checkbox-list drop-down-content">
+                        <span class="checkbox-option">
+                            <input type="checkbox" value="8GB" />
+                            <label for="8GB">8GB</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" value="16GB" />
+                            <label for="16GB">16GB</label>
+                        </span>
+                        <span class="checkbox-option">
+                            <input type="checkbox" value="32GB" />
+                            <label for="32GB">32GB</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="filter-section apply-section">
+                    <input type="submit" class="apply-button" value="Apply filters" />
+                    <input type="submit" class="default-button" value="Return default" />
+                </div>
+            </section>
+            <section class="item-list">
+
+            </section>
+        </main>
+        <script>
+            document.querySelectorAll(".select-list").forEach(selectList => {
+                const selectedOption = selectList.querySelector("input");
+                selectedOption.addEventListener("click", () => selectList.classList.toggle("expanded"));
+                const selectableOptions = selectList.querySelectorAll("span.option");
+                for (let i = 0; i < selectableOptions.length; i++) {
+                    const option = selectableOptions[i];
+                    option.style.top = ((i+1) * 30) + "px"; // todo: automate this part with react components
+                    option.addEventListener("click", () => {
+                        selectedOption.value = option.dataset.value;
+                        selectList.classList.remove("expanded");
+                    });
+                };
+            });
+
+            document.querySelectorAll(".drop-down-section").forEach(section => {
+                const label = section.querySelector(".drop-down-label");
+                label.addEventListener("click", () => section.classList.toggle("expanded"));
+            });
+        </script>
     </body>
 </html>

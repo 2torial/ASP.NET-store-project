@@ -1,10 +1,86 @@
 <html>
     <head>
         <style>
-            /* Put your styles here */
+            * {
+                font-family: lato;
+            }
+
+            .item-list {
+                display: flex;
+                flex-direction: column;
+                /*
+                justify-content: space-around;
+                flex-wrap: wrap;
+                */
+            }
+
+            .item {
+                display: flex;
+                justify-content: center;
+                height: 190px;
+                /*width: 40%;*/
+                width: 60%;
+                box-sizing: border-box;
+                padding: 20px;
+                border-radius: 21px;
+                background-color: lightgrey;
+                
+            }
+
+            .item .image-section {
+                height: 150px;
+                width: 150px;
+                box-sizing: border-box;
+            }
+
+            .item .image-section img {
+                border-radius: 11px;
+            }
+
+            .item .details-section {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+
+            .item .details-section .item-name {
+                display: flex;
+                margin: 0;
+            }
+
+            .item .store-section {
+                width: 120px;
+                box-sizing: border-box;
+                padding: 10px;
+            }
         </style>
     </head>
     <body>
-        <!-- Put your code here -->
+        <main>
+            <section class="item-list">
+                <div class="item">
+                    <div class="image-section">
+                        <img src="https://placehold.co/150x150" alt="">
+                    </div>
+                    <div class="details-section">
+                        <h3 class="item-name">Laptop #1</h3>
+                        <ul class="additional-details">
+                            <li>Processor: Ryzen 5</li>
+                            <li>Memory: 16 GB</li>
+                        </ul>
+                    </div>
+                    <div class="store-section">
+                        <div class="store-price">$400</div>
+                        <div class="store-options">
+                            <input type="image" src="https://placehold.co/20x20">
+                        </div>
+                    </div>
+                </div>
+                <div class="item">a</div>
+                <div class="item">b</div>
+                <div class="item">c</div>
+                <div class="item">d</div>
+            </section>
+        </main>
     </body>
 </html>
