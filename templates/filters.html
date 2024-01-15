@@ -48,6 +48,7 @@
                 align-items: center;
                 height: 30px;
                 box-sizing: border-box;
+                margin-bottom: 5px;
             }
 
             .filters .title-section input {
@@ -61,9 +62,10 @@
             .filter-section {
                 display: flex;
                 flex-direction: column;
-                margin-top: 10px;
+                margin-bottom: 5px;
                 padding: 5px 0;
                 border-top: 1px solid grey;
+                user-select: none;
             }
 
             .filter-section label {
@@ -116,6 +118,7 @@
                 border: 1px solid grey;
                 background-color: white;
                 cursor: pointer;
+                user-select: none;
             }
 
             .filter-section .select-list .option:focus {
@@ -197,8 +200,17 @@
             }
 
             .checkbox-list .checkbox-option {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                height: 20px;
                 font-size: 12px;
                 color: black;
+            }
+
+            .checkbox-list .checkbox-option input, 
+            .checkbox-list .checkbox-option label {
+                margin: 0;
             }
 
             .apply-section {
@@ -252,20 +264,17 @@
                 pointer-events: none;
             }
 
+            .drop-down-section:not(.expanded) {
+                margin-bottom: 0px;
+            }
+
             .drop-down-section.expanded::before {
                 content: "\25B4";
             }
 
-            .drop-down-section .drop-down-label {
-                margin-bottom: 0;
-            }
-
             .drop-down-section .drop-down-content {
                 display: none;
-            }
-
-            .drop-down-section.expanded .drop-down-label {
-                margin-bottom: 5px;
+                margin-bottom: 0px;
             }
 
             .drop-down-section.expanded .drop-down-content {
@@ -290,7 +299,7 @@
                 </div>
                 <div class="filter-section display-settings-section">
                     <div class="sort-select-container">
-                        <label id="sortby">Sort by</label>
+                        <label for="sortby">Sort by</label>
                         <div class="select-list">
                             <input type="text" class="option" name="SortBy" id="sortby" value="Name: Ascending" readonly />
                             <span class="option" data-value="Name: Ascending">Name: Ascending</span>
@@ -361,15 +370,15 @@
                     <label class="drop-down-label">RAM</label>
                     <div class="checkbox-list drop-down-content">
                         <span class="checkbox-option">
-                            <input type="checkbox" value="8GB" />
+                            <input type="checkbox" id="8GB" value="8GB" />
                             <label for="8GB">8GB</label>
                         </span>
                         <span class="checkbox-option">
-                            <input type="checkbox" value="16GB" />
+                            <input type="checkbox" id="16GB" value="16GB" />
                             <label for="16GB">16GB</label>
                         </span>
                         <span class="checkbox-option">
-                            <input type="checkbox" value="32GB" />
+                            <input type="checkbox" id="32GB" value="32GB" />
                             <label for="32GB">32GB</label>
                         </span>
                     </div>
