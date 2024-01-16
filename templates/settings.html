@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            @import "styles/select-list.css";
+
+            * {
+                font-family: lato;
+            }
+
+            main {
+                width: 50%;
+            }
+
+            .settings {
+                display: grid;
+                grid-auto-flow: column;
+                grid-template-columns: 5fr 5fr 2fr 2fr;
+                width: 95%;
+                box-sizing: border-box;
+                box-shadow: 
+                    1px 1px 1px grey,
+                    1px -1px 1px grey,
+                    -1px 1px 1px grey,
+                    -1px -1px 1px grey;
+                padding: 10px;
+                border-radius: 17px;
+            }
+
+            .setting-section {
+                display: flex;
+                align-items: center;
+                padding: 5px;
+                user-select: none;
+            }
+
+            .setting-section label {
+                display: inline-block;
+                margin-right: 5px;
+                padding-bottom: 2px;
+                cursor: pointer;
+            }
+
+            .iconed-select-list .option img {
+                border-radius: 7px;
+            }
+
+            .display-settings-section {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <section class="item-list">
+                <div class="settings">
+                    <div class="setting-section">
+                        <label for="category">Category</label>
+                        <div class="select-list">
+                            <input type="text" class="option" name="Category" id="category" value="Laptop" readonly />
+                            <span class="option" data-value="Any">Any</span>
+                            <span class="option" data-value="Headset">Headset</span>
+                            <span class="option" data-value="Laptop">Laptop</span>
+                        </div>
+                    </div>
+                    <div class="setting-section">
+                        <label for="sortby">Sort by</label>
+                        <div class="sort-select-container">
+                            <div class="select-list">
+                                <input type="text" class="option" name="SortBy" id="sortby" value="Name: Ascending" readonly />
+                                <span class="option" data-value="Name: Ascending">Name: Ascending</span>
+                                <span class="option" data-value="Name: Descending">Name: Descending</span>
+                                <span class="option" data-value="Price: Lowest first">Price: Lowest first</span>
+                                <span class="option" data-value="Price: Highest first">Price: Highest first</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="setting-section">
+                            <label for="view">Page</label>
+                            <div class="select-list iconed-select-list">
+                                <input type="text" class="option" name="View" id="view" value="Gallery" readonly />
+                                <span class="option" data-value="Gallery">
+                                    <p>Gallery</p>
+                                    <img src="https://placehold.co/20x20" alt="gallery icon">
+                                </span>
+                                <span class="option" data-value="List">
+                                    <p>List</p>
+                                    <img src="https://placehold.co/20x20" alt="list icon">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="setting-section">
+                            <label for="view">View</label>
+                            <div class="select-list iconed-select-list">
+                                <input type="text" class="option" name="View" id="view" value="Gallery" readonly />
+                                <span class="option" data-value="Gallery">
+                                    <p>Gallery</p>
+                                    <img src="https://placehold.co/20x20" alt="gallery icon">
+                                </span>
+                                <span class="option" data-value="List">
+                                    <p>List</p>
+                                    <img src="https://placehold.co/20x20" alt="list icon">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="item-list">
+
+            </section>
+        </main>
+        <script type="text/javascript" src="scripts/select-list.js"></script>
+    </body>
+</html>

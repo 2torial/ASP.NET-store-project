@@ -1,0 +1,74 @@
+.select-list {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	border-radius: 15px;
+}
+
+.select-list::before {
+	content: "\25BE";
+	position: absolute;
+	right: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 30px;
+	width: 30px;
+	box-sizing: border-box;
+	padding-top: 2px;
+	transform: scaleX(1.5);
+	pointer-events: none;
+}
+
+.select-list.expanded::before {
+	content: "\25B4";
+}
+
+.select-list .option {
+	font-size: 12px;
+	color: black;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 30px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px;
+	border: 1px solid grey;
+	background-color: white;
+	cursor: pointer;
+	user-select: none;
+}
+
+.select-list .option:focus {
+	outline: 0;
+}
+
+.select-list .option:hover {
+	background-color: lightgrey; 
+}
+
+.select-list .option:first-child {
+	border-radius: 15px;
+}
+
+.select-list .option:not(:first-child) {
+	position: absolute;
+	z-index: 1;
+	display: none;
+	border-top: 0;
+}
+
+.select-list.expanded .option {
+	display: flex;
+}
+
+.select-list.expanded .option:first-child {
+	border-radius: 15px 15px 0 0;
+	background-color: lightgray;
+}
+
+.select-list.expanded .option:last-child {
+	border-radius: 0 0 15px 15px;
+}

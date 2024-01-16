@@ -1,0 +1,36 @@
+.drop-down-section {
+	position: relative;
+}
+
+.drop-down-section::before {
+	content: "\25BE";
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 30px;
+	width: 30px;
+	box-sizing: border-box;
+	padding-top: 2px;
+	transform: scaleX(1.5);
+	pointer-events: none;
+}
+
+.drop-down-section:not(.expanded) {
+	margin-bottom: 0px;
+}
+
+.drop-down-section.expanded::before {
+	content: "\25B4";
+}
+
+.drop-down-section .drop-down-content {
+	display: none;
+	margin-bottom: 0px;
+}
+
+.drop-down-section.expanded .drop-down-content {
+	display: flex;
+}
