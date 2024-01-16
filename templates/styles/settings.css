@@ -1,0 +1,49 @@
+@import "select-list.css";
+@import "paginator.css";
+
+* {
+	font-family: lato;
+}
+
+main {
+	width: 50%;
+}
+
+.settings {
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-columns: 5fr 5fr 2fr 2fr;
+	width: 95%;
+	box-sizing: border-box;
+	box-shadow: 
+		1px 1px 1px grey,
+		1px -1px 1px grey,
+		-1px 1px 1px grey,
+		-1px -1px 1px grey;
+	padding: 10px;
+	border-radius: 17px;
+}
+
+.setting-section {
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	user-select: none;
+}
+
+.setting-section label {
+	display: flex;
+	flex-grow: 1;
+	margin-right: 5px;
+	padding-bottom: 2px;
+	cursor: pointer;
+}
+
+.iconed-select-list .option img {
+	border-radius: 7px;
+}
+
+.display-settings-section {
+	flex-direction: row;
+	justify-content: space-between;
+}
