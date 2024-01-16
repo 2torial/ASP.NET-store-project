@@ -5,31 +5,33 @@
                 font-family: lato;
             }
 
-            .account-form-grid {
-                display: grid;
-                grid-auto-flow: row;
-                grid-template-rows: 4fr 3fr 3fr 4fr;
-                height: 290px;
+            .account-form {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 width: 480px;
-                row-gap: 6px;
+                row-gap: 15px;
                 border-radius: 15px;
                 background-color: lightblue;
             }
 
-            .form-title-section {
+            .title-section {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-top: 15px;
             }
 
-            .form-title-section h2 {
+            .title-section h2 {
                 margin: 0;
             }
 
             .input-section {
                 display: flex;
-                justify-content: center;
-                align-items: center;
+                flex-direction: column;
+                flex-shrink: 1;
+                align-items: flex-start;
             }
 
             .input-section label {
@@ -47,6 +49,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-bottom: 15px;
             }
 
             .submit-section input {
@@ -56,24 +59,20 @@
         </style>
     </head>
     <body>
-        <form id="sign-in-form">
-            <div class="account-form-grid">
-                <div class="form-title-section">
-                    <h2>Logowanie</h2>
-                </div>
-                <div class="input-section">
-                    <label for="username">Nazwa użytkownika<br />
-                        <input id="username" type="text" name="UserName" />
-                    </label>
-                </div>
-                <div class="input-section">
-                    <label for="password">Hasło<br />
-                        <input id="password" type="password" name="PassWord" />
-                    </label>
-                </div>
-                <div class="submit-section">
-                    <input type="submit" value="Wyślij" />
-                </div>
+        <form class="account-form">
+            <div class="title-section">
+                <h2>Sign in</h2>
+            </div>
+            <div class="input-section">
+                <label for="username">Username</label>
+                <input id="username" type="text" name="UserName" />
+            </div>
+            <div class="input-section">
+                <label for="password">Password</label>
+                <input id="password" type="password" name="PassWord" />
+            </div>
+            <div class="submit-section">
+                <input type="submit" value="Log in" />
             </div>
         </form>
     </body>

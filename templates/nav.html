@@ -12,7 +12,7 @@
                 height: 67px;
             }
 
-            .navigation-grid {
+            .navigation {
                 position: relative;
                 z-index: 1;
                 display: grid;
@@ -90,7 +90,7 @@
                 border-radius: 11px;
             }
 
-            .menu-grid {
+            .menu {
                 position: absolute;
                 top: 10px;
                 z-index: 0;
@@ -106,13 +106,13 @@
                 pointer-events: auto;
             }
 
-            .menu-grid .menu-option {
+            .menu .menu-option {
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
 
-            .menu-grid .option-section input {
+            .menu .option-section input {
                 height: 40px;
                 width: 90%;
                 border: 0;
@@ -128,7 +128,7 @@
     </head>
     <body>
         <nav>
-            <div class="navigation-grid">
+            <div class="navigation">
                 <div class="logo-section">
                     <input id="logo" type="image" src="https://placehold.co/120x50" alt="logo" />
                 </div>
@@ -146,7 +146,7 @@
                     <input id="profile-link" type="image" src="https://placehold.co/40x40" alt="profile" />
                 </div>
             </div>
-            <div class="menu-grid">
+            <div class="menu">
                 <div class="empty-space"></div>
                 <div class="option-section">
                     <input id="sign-in-link" type="button" value="Sign in" />
@@ -166,7 +166,7 @@
             searchBarInputArea.addEventListener("focus", focusSearchBar);
             searchBarInputArea.addEventListener("focusout", unfocusSearchBar);
         
-            menuArea = document.querySelector(".menu-grid");
+            menuArea = document.querySelector(".menu");
             openMenu = () => menuArea.style.top = "67px";
             hideMenu = () => menuArea.style.top = "10px";
 
