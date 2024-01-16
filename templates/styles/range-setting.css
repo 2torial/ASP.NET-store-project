@@ -1,0 +1,23 @@
+.range-setting {
+	display: flex;
+	justify-content: space-between;
+}
+
+.range-setting .range-input {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.range-setting .range-input input {
+	height: 30px;
+	width: 120px;
+}
+
+.range-setting .range-dash {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 5%;
+	margin: 0 5px;
+}
