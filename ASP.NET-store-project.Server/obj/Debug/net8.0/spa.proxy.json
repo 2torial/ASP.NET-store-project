@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:5173",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "D:\\Users\\bush\\Documents\\Zajecia\\Kurs ASP.NET\\Projekt\\ASP.NET-projekt-sklepu\\ASP.NET-store-project.Server\\..\\asp.net-store-project.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

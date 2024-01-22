@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "oufQU27MUGjvXMjaRsj6hFgezpmi4gs+27LtQdqVl7TyxqtE7Ej9VPQgQ0XO+rP4HD7kz3AH1NQq4rJmFBy8cg==",
+  "success": true,
+  "projectFilePath": "D:\\Users\\bush\\Documents\\Zajecia\\Kurs ASP.NET\\Projekt\\ASP.NET-projekt-sklepu\\ASP.NET-store-project.Server\\ASP.NET-store-project.Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bush\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\8.0.1\\microsoft.aspnetcore.spaproxy.8.0.1.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\bush\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
