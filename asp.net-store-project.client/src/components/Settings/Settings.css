@@ -1,6 +1,3 @@
-@import "components/select-list.css";
-@import "components/paginator.css";
-
 .settings {
     display: flex;
     justify-content: space-evenly;

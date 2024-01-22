@@ -55,7 +55,7 @@ nav {
         -1.5px -1.5px 2px lightblue;
 }
 
-.search-bar-input-area {
+.search-bar .input-area {
     display: flex;
     flex-grow: 1;
     padding: 8px 10px;
@@ -65,11 +65,11 @@ nav {
     transition: box-shadow 0.4s;
 }
 
-.search-bar-input-area:focus {
+.search-bar .input-area:focus {
     outline: none;
 }
 
-.search-bar-button-area {
+.search-bar .search-button {
     border-radius: 0 14px 14px 0;
 }
 

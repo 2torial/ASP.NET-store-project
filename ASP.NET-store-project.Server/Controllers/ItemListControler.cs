@@ -27,7 +27,7 @@ namespace ASP.NET_store_project.Server.Controllers
             return Enumerable.Range(1, 5).Select(index => new StoreItem
             {
                 Name = string.Format("Laptop #{0}", index),
-                ImageURL = "https://placehold.co/150x150",
+                ImageURL = "https://placehold.co/150/png",
                 Info = [Processors[Random.Shared.Next(Processors.Length)], Capacities[Random.Shared.Next(Capacities.Length)]],
                 Price = index * 200
             })

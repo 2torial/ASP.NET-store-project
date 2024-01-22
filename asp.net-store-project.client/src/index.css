@@ -1,33 +1,11 @@
 body {
 	font-family: 'Lato';
+}
+
+#root {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	max-width: 1900px;
 	margin: 0 auto;
-}
-
-main {
-	display: grid;
-	grid-template-columns: 1fr 300px 10fr 1fr;
-	grid-template-rows: 65px auto;
-	justify-items: center;
-	align-items: start;
-	gap: 10px 20px;
-	width: 100%;
-	box-sizing: border-box;
-	padding: 25px 30px;
-}
-
-main .filters {
-	grid-column-start: 2;
-	grid-row-start: span 2;
-}
-
-main .settings {
-	grid-column-start: 3;
-}
-
-main .item-list {
-	grid-column-start: 3;
 }

@@ -2,7 +2,7 @@ searchBar = document.querySelector(".search-bar");
 focusSearchBar = () => searchBar.classList.add("focused");
 unfocusSearchBar = () => searchBar.classList.remove("focused");
 
-searchBarInputArea = searchBar.querySelector(".search-bar-input-area");
+searchBarInputArea = searchBar.querySelector(".input-area");
 searchBarInputArea.addEventListener("focus", focusSearchBar);
 searchBarInputArea.addEventListener("focusout", unfocusSearchBar);
 
