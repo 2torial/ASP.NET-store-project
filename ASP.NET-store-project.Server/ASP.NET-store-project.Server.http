@@ -1,0 +1,6 @@
+@ASP.NET_store_project.Server_HostAddress = http://localhost:5253
+
+GET {{ASP.NET_store_project.Server_HostAddress}}/itemlist/
+Accept: application/json
+
+###

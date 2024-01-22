@@ -1,0 +1,36 @@
+.paginator {
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+}
+
+.paginator .page-changer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 20px;
+	border: 1px solid grey;
+}
+
+.paginator .page-changer:first-of-type {
+	content: "\25C2";
+	border-radius: 15px 0 0 15px / 15px 0 0 15px;
+}
+
+.paginator .page-changer:last-of-type {
+	content: "\25B8";
+	border-radius: 0 15px 15px 0 / 0 15px 15px 0;
+}
+
+.paginator .page-index {
+	text-align: center;
+	width: 25px;
+	border: 0;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	outline: 0;
+}
+
+.paginator .page-index.idle {
+	cursor: pointer;
+}

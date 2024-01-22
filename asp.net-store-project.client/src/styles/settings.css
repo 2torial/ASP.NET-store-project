@@ -1,0 +1,53 @@
+@import "components/select-list.css";
+@import "components/paginator.css";
+
+.settings {
+    display: flex;
+    justify-content: space-evenly;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 
+        1px 1px 1px grey,
+        1px -1px 1px grey,
+        -1px 1px 1px grey,
+        -1px -1px 1px grey;
+    padding: 10px;
+    border-radius: 17px;
+}
+
+.setting-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.setting-section:nth-child(1), .setting-section:nth-child(2) {
+    width: 35%;
+}
+
+.setting-section:nth-child(3) {
+    flex-grow: 0;
+}
+
+.setting-section:nth-child(4) {
+    width: 10%;
+}
+
+.setting-section label {
+    display: flex;
+    flex-grow: 1;
+    margin-right: 5px;
+    padding-bottom: 2px;
+    cursor: pointer;
+}
+
+.iconed-select-list .option img {
+    border-radius: 7px;
+}
+
+.display-settings-section {
+    flex-direction: row;
+    justify-content: space-between;
+}
