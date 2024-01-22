@@ -2,11 +2,11 @@
 
 ## Technologies Used
 - ASP.NET Core
-- PostgreSQL Database
+- PostgreSQL Database*
 - React, JSX
-- SASS, TypeScript \
+- SASS*, TypeScript \
 \
-*Templates are made using vanilla HTML + CSS + JS
+*Still to be implemented
 
 ## Contributors
 Daniel Boguszewski (315942)
