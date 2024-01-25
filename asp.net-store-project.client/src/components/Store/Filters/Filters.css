@@ -1,0 +1,136 @@
+.filters {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    box-sizing: border-box;
+    box-shadow: 
+        1px 1px 1px grey,
+        1px -1px 1px grey,
+        -1px 1px 1px grey,
+        -1px -1px 1px grey;
+    padding: 10px;
+    border-radius: 17px;
+}
+
+/*
+.filters::before {
+    content: "Filters";
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    left: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 80px;
+    border: 1px solid black;
+    border-radius: 25% / 50%;
+    background-color: lightblue;
+}
+*/
+
+.filters .title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+}
+
+.filters .title-section input {
+    height: 30px;
+    width: 30px;
+    border: 1px solid grey;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+    padding: 5px 0;
+    border-top: 1px solid grey;
+    user-select: none;
+}
+
+.filter-section label {
+    display: inline-block;
+    margin: 8px 0 5px;
+    cursor: pointer;
+}
+
+.filter-section label:first-child {
+    margin-top: 0px;
+}
+
+.apply-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 0 0;
+}
+
+.apply-section input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 45%;
+    border: 0;
+    border-radius: 15px / 15px;
+    cursor: pointer;
+}
+
+.apply-section .apply-button {
+    font-weight: bold;
+    color: white;
+    background-color: blue;
+}
+
+.apply-section .apply-button:active {
+    background-color: darkblue;
+}
+
+.apply-section .default-button:active {
+    background-color: grey;
+}
+
+.drop-down-section {
+	position: relative;
+}
+
+.drop-down-section::before {
+	content: "\25BE";
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 30px;
+	width: 30px;
+	box-sizing: border-box;
+	padding-top: 2px;
+	transform: scaleX(1.5);
+	pointer-events: none;
+}
+
+.drop-down-section:not(.expanded) {
+	margin-bottom: 0px;
+}
+
+.drop-down-section.expanded::before {
+	content: "\25B4";
+}
+
+.drop-down-section .drop-down-content {
+	display: none;
+	margin-bottom: 0px;
+}
+
+.drop-down-section.expanded .drop-down-content {
+	display: flex;
+}
