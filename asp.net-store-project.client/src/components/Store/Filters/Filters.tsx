@@ -4,13 +4,14 @@ import './Filters.css'
 import React from 'react';
 
 interface FiltersProps {
-    priceRange: { from: number; to: number };
+    from: number;
+    to: number;
     specifications: Record<string, string[]>;
     updateFilters: () => void;
     resetFilters: () => void;
 }
 
-function Filters({ priceRange, specifications, updateFilters, resetFilters }: FiltersProps) {
+function Filters({ from, to, specifications, updateFilters, resetFilters }: FiltersProps) {
     const handleSubmit = (handler: () => void) => {
         return (event: React.MouseEvent) => {
             event.preventDefault();
@@ -18,12 +19,14 @@ function Filters({ priceRange, specifications, updateFilters, resetFilters }: Fi
         }
     }
 
+    console.log("a", from, to);
+
     return <form className="filters" id="filters">
         <div className="title-section">
             <h2>Filters</h2>
             <input type="button" value="&#x2716;" />
         </div>
-        <RangeFilter {...priceRange} />
+        <RangeFilter from={from} to={to} />
         {Object.entries(specifications).map(([label, configs]) => <CheckBoxFilter label={label} options={configs} />)}
         <div className="apply-section">
             <input type="submit" onClick={handleSubmit(updateFilters)} className="apply-button" id="apply-filters" value="Apply filters" />

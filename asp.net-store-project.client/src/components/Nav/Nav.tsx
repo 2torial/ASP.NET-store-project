@@ -10,12 +10,14 @@ export function Nav() {
 	const openMenu = () => (menuRef.current! as HTMLElement).style.top = "60px";
 	const hideMenu = () => (menuRef.current! as HTMLElement).style.top = "7px";
 
-  	return <nav onMouseLeave={hideMenu}>
+    return <nav onMouseLeave={hideMenu}>
 		<div className="navigation">
 			<div className="logo-section">
 				<input id="logo" type="image" src="https://placehold.co/120x50" alt="logo" />
 			</div>
-			<div className="empty-space-section"></div>
+			<div className="empty-space-section">
+				
+			</div>
 			<div className="search-bar-section">
 				<form autoComplete="off">
 					<search className="search-bar" ref={searchBarRef} onFocus={focusSearchBar} onBlur={unfocusSearchBar}>

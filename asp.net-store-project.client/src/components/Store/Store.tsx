@@ -24,7 +24,7 @@ interface StoreSettings {
 }
 
 interface StoreFilters {
-	priceRange: { from: number; to: number };
+	range: { from: number; to: number };
     specifications: Record<string, string[]>;
 }
 
@@ -97,13 +97,15 @@ export function Store() {
 		resetFilters: updateSettings
 	}
 
+	console.log(filtersProps);
+
 	const settingsProps = {
 		...settings,
 		updateSettings: updateSettings
 	}
 
 	return <main>
-		<Filters {...filtersProps} />
+		<Filters from={filters.range.from} to={filters.range.to} specifications={filters.specifications} updateFilters={updateFilters} resetFilters={updateSettings} />
 		<Settings {...settingsProps}  />
 		<ItemList items={items} />
 	</main>;

@@ -1,5 +1,7 @@
+using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +11,17 @@ namespace ASP.NET_store_project.Server.Controllers
     [Route("[controller]")]
     public class StorePageController : ControllerBase
     {
+
+        private readonly ApplicationDbContext _context;
+
+        private readonly ILogger<StorePageController> _logger;
+
+        public StorePageController(ILogger<StorePageController> logger, ApplicationDbContext context)
+        {
+            _logger = logger;
+            _context = context;
+        }
+
         private static readonly string[] Processors =
         [
             "Intel Core i3", "Intel Core i5", "Intel Core i7", "Intel Core i9",
@@ -25,18 +38,18 @@ namespace ASP.NET_store_project.Server.Controllers
 
         private static readonly string[] ViewModes = ["Gallery", "List"];
 
-        private readonly ILogger<StorePageController> _logger;
-
-        public StorePageController(ILogger<StorePageController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost("/refresh")]
         public StoreBundle Refresh()
         {
-            _logger.LogError(HttpContext.Request.Form["RAM Memory"]);
+            
+            foreach (string key in Request.Form.Keys)
+            {
+                _logger.LogError(Request.Form[key]);
+            }
+            
             var rng = new Random();
+
+            
 
             return new StoreBundle
             {
@@ -69,7 +82,7 @@ namespace ASP.NET_store_project.Server.Controllers
                         { "System", Systems }
                     }
                 },
-                Items = Enumerable.Range(1, 5).Select(index => new StoreItem
+                Items = Enumerable.Range(1, 5).Select(index => new Models.StoreItem
                 {
                     Name = string.Format("Laptop #{0}", index),
                     Price = 200 * rng.Next(index, 10),
