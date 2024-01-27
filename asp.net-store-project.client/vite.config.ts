@@ -46,7 +46,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/itemlist': {
+            '^/refresh': {
                 target: 'https://localhost:7278/',
                 secure: false
             }

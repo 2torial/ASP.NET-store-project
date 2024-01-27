@@ -1,6 +1,6 @@
 @ASP.NET_store_project.Server_HostAddress = http://localhost:5253
 
-GET {{ASP.NET_store_project.Server_HostAddress}}/itemlist/
+GET {{ASP.NET_store_project.Server_HostAddress}}/refresh/
 Accept: application/json
 
 ###

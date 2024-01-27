@@ -94,6 +94,7 @@ nav {
     box-sizing: border-box;
     transition: top 0.4s ease-out;
     pointer-events: auto;
+    background-color: white;
 }
 
 .menu::after {

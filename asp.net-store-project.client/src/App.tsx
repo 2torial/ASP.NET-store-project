@@ -1,14 +1,10 @@
-import { Filters, Footer, ItemList, Nav, Settings } from './components';
+import { Footer, Nav, Store } from './components';
 import './App.css';
 
 function App() {
 	return <>
 		<Nav />
-		<main>
-			<Filters />
-			<Settings />
-			<ItemList />
-		</main>
+		<Store />
 		<Footer />
 	</>;
 }
