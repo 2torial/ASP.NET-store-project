@@ -1,6 +1,4 @@
-﻿using ASP.NET_store_project.Server.Data;
-
-namespace ASP.NET_store_project.Server.Data
+﻿namespace ASP.NET_store_project.Server.Data
 {
     public class Item
     {
@@ -8,16 +6,17 @@ namespace ASP.NET_store_project.Server.Data
 
         public string CategoryId { get; set; }
 
-        public Category Type { get; set; } = null!;
+        public Category Category { get; set; } = null!;
 
         public string Name { get; set; }
 
         public int Price { get; set; }
 
-        public List<Specification> Specifications { get; } = [];
+        public List<Configuration> Configurations { get; } = [];
 
-        public List<Image> Images { get; } = [];
+        public List<Image> Gallery { get; } = [];
 
-        public string? Page { get; set; }
+        public string? Page { get; set; } // Dummy for item's page content (possible new table)
+
     }
 }
