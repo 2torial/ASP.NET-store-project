@@ -8,9 +8,9 @@
 
         public Customer Customer { get; set; } = null!;
 
-        public CustomerDetails CustomerDetails { get; set; }
+        public CustomerDetails? CustomerDetails { get; set; }
 
-        public AdressDetails AdressDetails { get; set; }
+        public AdressDetails? AdressDetails { get; set; }
 
         public List<SelectedItem> OrderedItems { get; } = [];
 

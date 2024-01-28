@@ -32,6 +32,11 @@ namespace ASP.NET_store_project.Server.Data
                 .HasMany(e => e.Configurations)
                 .WithMany()
                 .UsingEntity(join => join.ToTable("ItemConfiguration"));
+
+            modelBuilder.Entity<OrderStatus>()
+                .HasOne(e => e.Order)
+                .WithMany(e => e.StatusHistory)
+                .HasForeignKey(e => e.OrderId);
         }
 
         public DbSet<Customer> Customers { get; set; }

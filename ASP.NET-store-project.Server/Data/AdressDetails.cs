@@ -1,8 +1,13 @@
-﻿namespace ASP.NET_store_project.Server.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ASP.NET_store_project.Server.Data
 {
     public class AdressDetails
     {
-        public int Id { get; set; }
+        [Key]
+        public int OrderId { get; set; }
+
+        public Order Order { get; set; } = null!;
 
         public string Region { get; set; }
 
