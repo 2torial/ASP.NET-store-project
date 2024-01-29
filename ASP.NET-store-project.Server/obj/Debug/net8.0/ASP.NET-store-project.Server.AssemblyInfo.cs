@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ASP.NET-store-project.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b91fa25a25c3d059818da6ba6360ea743d766eee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42b97c65e2a003a881b4bf3e6ca41979f391f192")]
 [assembly: System.Reflection.AssemblyProductAttribute("ASP.NET-store-project.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ASP.NET-store-project.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

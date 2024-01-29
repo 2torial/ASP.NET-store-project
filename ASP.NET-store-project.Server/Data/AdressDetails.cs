@@ -4,10 +4,7 @@ namespace ASP.NET_store_project.Server.Data
 {
     public class AdressDetails
     {
-        [Key]
-        public int OrderId { get; set; }
-
-        public Order Order { get; set; } = null!;
+        public int Id { get; set; }
 
         public string Region { get; set; }
 
