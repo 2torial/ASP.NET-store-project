@@ -20,18 +20,9 @@ namespace ASP.NET_store_project.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SelectedItem>()
-                .HasOne(e => e.Item)
-                .WithOne();
-
-            modelBuilder.Entity<Item>()
-                .HasOne(e => e.Category)
-                .WithOne();
-
-            modelBuilder.Entity<Item>()
-                .HasMany(e => e.Configurations)
-                .WithMany()
-                .UsingEntity(join => join.ToTable("ItemConfiguration"));
+            modelBuilder.Entity<Customer>()
+                .Property(b => b.IsAdmin)
+                .HasDefaultValue(false);
 
             modelBuilder.Entity<Order>()
                 .HasOne(e => e.AdressDetails)
@@ -42,6 +33,32 @@ namespace ASP.NET_store_project.Server.Data
                 .HasOne(e => e.CustomerDetails)
                 .WithOne()
                 .HasForeignKey<Order>(e => e.Id);
+
+            modelBuilder.Entity<Category>()
+                .ToTable("Category");
+
+            modelBuilder.Entity<Item>()
+                .ToTable("Item");
+
+            modelBuilder.Entity<Customer>()
+                .ToTable("Customer");
+
+            modelBuilder.Entity<Order>()
+                .ToTable("Order");
+
+            modelBuilder.Entity<Item>()
+                .HasMany(e => e.Configurations)
+                .WithMany(e => e.Items)
+                .UsingEntity<ItemConfiguration>();
+
+            modelBuilder.Entity<Order>()
+                .HasMany(e => e.StatusHistory)
+                .WithMany()
+                .UsingEntity<OrderStatus>(
+                    e => {
+                        
+                        e.Property(e => e.DateOfChange).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    });
 
         }
 

@@ -14,7 +14,9 @@
 
         public List<SelectedItem> OrderedItems { get; } = [];
 
-        public List<OrderStatus> StatusHistory { get; } = [];
+        public List<Status> StatusHistory { get; } = [];
+
+        public List<OrderStatus> StatusChangeHistory { get; } = [];
 
     }
 }
