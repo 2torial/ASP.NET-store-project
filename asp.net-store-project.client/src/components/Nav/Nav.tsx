@@ -14,7 +14,9 @@ export function Nav() {
     return <nav onMouseLeave={hideMenu}>
 		<div className="navigation">
 			<div className="logo-section">
-				<input id="logo" type="image" src="https://placehold.co/120x50" alt="logo" />
+				<Link to="/">
+					<img src="https://placehold.co/120x50" alt="logo" />
+				</Link>
 			</div>
 			<div className="empty-space-section">
 				
@@ -29,9 +31,9 @@ export function Nav() {
 			</div>
 			<div className="menu-section">
 				<Link to="/basket">
-					<input type="image" src="https://placehold.co/40x40" alt="basket" />
+					<img src="https://placehold.co/40x40" alt="basket" />
 				</Link>
-				<input type="image" onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
+				<img onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
 			</div>
 		</div>
 		<div className="menu" ref={menuRef}>

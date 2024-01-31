@@ -1,3 +1,8 @@
+main.sign-in {
+    display: flex;
+    justify-content: center;
+}
+
 .account-form {
     display: flex;
     flex-direction: column;
@@ -17,6 +22,7 @@
 }
 
 .title-section h2 {
+    font-size: 20px;
     margin: 0;
 }
 
