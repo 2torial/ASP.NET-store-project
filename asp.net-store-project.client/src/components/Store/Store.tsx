@@ -104,7 +104,7 @@ export function Store() {
 		updateSettings: updateSettings
 	}
 
-	return <main className="store">
+	return <main id="store">
 		<Filters from={filters.range.from} to={filters.range.to} specifications={filters.specifications} updateFilters={updateFilters} resetFilters={updateSettings} />
 		<Settings {...settingsProps}  />
 		<ItemList items={items} />
