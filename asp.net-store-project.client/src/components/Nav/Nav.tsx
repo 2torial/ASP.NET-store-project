@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import './Nav.css';
+import { Link } from 'react-router-dom';
 
 export function Nav() {
 	const searchBarRef = useRef(null);
@@ -27,17 +28,19 @@ export function Nav() {
 				</form>
 			</div>
 			<div className="menu-section">
-				<input type="image" src="https://placehold.co/40x40" alt="basket" />
+				<Link to="/basket">
+					<input type="image" src="https://placehold.co/40x40" alt="basket" />
+				</Link>
 				<input type="image" onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
 			</div>
 		</div>
 		<div className="menu" ref={menuRef}>
 			<div className="empty-space"></div>
 			<div className="option-section">
-				<input id="sign-in-link" type="button" value="Sign in" />
+				<Link to="/sign-in">Sign in</Link>
 			</div>
 			<div className="option-section">
-				<input id="sign-up-link" type="button" value="Sign up" />
+				<Link to="/sign-up">Sign up</Link>
 			</div>
 		</div>
 	</nav>;
