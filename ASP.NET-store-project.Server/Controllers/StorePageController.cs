@@ -12,11 +12,11 @@ namespace ASP.NET_store_project.Server.Controllers
     public class StorePageController : ControllerBase
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly AppDbContext _context;
 
         private readonly ILogger<StorePageController> _logger;
 
-        public StorePageController(ILogger<StorePageController> logger, ApplicationDbContext context)
+        public StorePageController(ILogger<StorePageController> logger, AppDbContext context)
         {
             _logger = logger;
             _context = context;
