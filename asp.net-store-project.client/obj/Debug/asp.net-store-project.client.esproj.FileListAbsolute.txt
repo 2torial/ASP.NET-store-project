@@ -1,3 +1,0 @@
-D:\Users\bush\Documents\Zajęcia\Kurs ASP.NET\Projekt\ASP.NET-store-project\asp.net-store-project.client\obj\Debug\asp.net-store-project.client.esproj.CoreCompileInputs.cache
-D:\Users\bush\Documents\Zajecia\Kurs ASP.NET\Projekt\ASP.NET-store-project\asp.net-store-project.client\obj\Debug\asp.net-store-project.client.esproj.CoreCompileInputs.cache
-D:\Users\bush\Documents\Zajecia\Kurs ASP.NET\Projekt\ASP.NET-projekt-sklepu\asp.net-store-project.client\obj\Debug\asp.net-store-project.client.esproj.CoreCompileInputs.cache
