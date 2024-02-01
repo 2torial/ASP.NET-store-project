@@ -56,7 +56,6 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany()
                 .UsingEntity<OrderStatus>(
                     e => {
-                        
                         e.Property(e => e.DateOfChange).HasDefaultValueSql("CURRENT_TIMESTAMP");
                     });
 
