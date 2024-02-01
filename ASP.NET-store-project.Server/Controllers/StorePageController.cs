@@ -1,27 +1,16 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StorePageController : ControllerBase
+    public class StorePageController(AppDbContext context, ILogger<StorePageController> logger) : ControllerBase
     {
+        private readonly AppDbContext _context = context;
 
-        private readonly AppDbContext _context;
-
-        private readonly ILogger<StorePageController> _logger;
-
-        public StorePageController(ILogger<StorePageController> logger, AppDbContext context)
-        {
-            _logger = logger;
-            _context = context;
-        }
+        private readonly ILogger<StorePageController> _logger = logger;
 
         [HttpPost("/refresh")]
         public StoreBundle Refresh()

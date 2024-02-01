@@ -2,17 +2,22 @@
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class AdressDetails
+    public class AdressDetails(int orderId, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
-        public int Id { get; set; }
+        [Key]
+        public int OrderId { get; set; } = orderId;
 
-        public string Region { get; set; }
+        public string Region { get; set; } = region;
 
-        public string City { get; set; }
+        public string City { get; set; } = city;
 
-        public string PostalCode { get; set; }
+        public string PostalCode { get; set; } = postalCode;
 
-        public string Street { get; set; }
+        public string StreetName { get; set; } = streetName;
+
+        public string HouseNumber { get; set; } = houseNumber;
+
+        public string? ApartmentNumber { get; set; } = apartmentNumber;
 
     }
 }
