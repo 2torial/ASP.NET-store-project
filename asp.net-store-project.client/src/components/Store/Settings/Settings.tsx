@@ -59,12 +59,12 @@ function Settings({
         selectedOption: selectedViewMode
     }
 
-    return <section className="settings">
+    return <form className="settings" id="settings">
         <SelectList {...categorySelect} />
         <SelectList {...sortSelect} />
         <Paginator {...pageSelect} />
         <SelectList {...viewSelect} />        
-    </section>;
+    </form>;
 }
 
 export default Settings;

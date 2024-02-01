@@ -1,10 +1,13 @@
-﻿namespace ASP.NET_store_project.Server.Data
-{
-    public class Order
-    {
-        public int Id { get; set; } // Also a foreign key for CustomerDetails and AdressDetails
+﻿using System.ComponentModel.DataAnnotations;
 
-        public string CustomerId { get; set; }
+namespace ASP.NET_store_project.Server.Data
+{
+    public class Order(int orderId, string customerId)
+    {
+        [Key]
+        public int OrderId { get; set; } = orderId; // Also a foreign key for CustomerDetails and AdressDetails
+
+        public string CustomerId { get; set; } = customerId;
 
         public Customer Customer { get; set; } = null!;
 
