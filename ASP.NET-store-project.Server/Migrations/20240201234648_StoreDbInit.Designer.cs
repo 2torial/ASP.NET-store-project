@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASP.NET_store_project.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240201223151_StoreDbInit")]
+    [Migration("20240201234648_StoreDbInit")]
     partial class StoreDbInit
     {
         /// <inheritdoc />

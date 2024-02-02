@@ -26,7 +26,7 @@ namespace ASP.NET_store_project.Server.Models
                 Categories = categories,
                 SelectedCategory = formData.ContainsKey("Category")
                     ? formData["Category"]
-                    : categories.Length > 0 ? categories[0] : "Any",
+                    : categories.Length > 0 ? categories[1] : "Any",
                 SortingMethods = sortingMethods,
                 SelectedSortingMethod = sortingMethods[2],
                 Pages = 4,
