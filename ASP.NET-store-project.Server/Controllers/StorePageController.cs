@@ -13,7 +13,7 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly ILogger<StorePageController> _logger = logger;
 
         [HttpPost("/api/reload")]
-        public StoreBundle Refresh()
+        public StoreData Reload()
         {
             foreach (string key in Request.Form.Keys)
             {
@@ -22,7 +22,7 @@ namespace ASP.NET_store_project.Server.Controllers
                     _logger.LogInformation("array");
             }
 
-            return new StoreBundle(Request.Form, _context);
+            return new StoreData(Request.Form, _context);
         }
     }
 }
