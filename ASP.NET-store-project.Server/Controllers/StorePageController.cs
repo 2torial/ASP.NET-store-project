@@ -12,7 +12,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
         private readonly ILogger<StorePageController> _logger = logger;
 
-        [HttpPost("/refresh")]
+        [HttpPost("/api/reload")]
         public StoreBundle Refresh()
         {
             foreach (string key in Request.Form.Keys)

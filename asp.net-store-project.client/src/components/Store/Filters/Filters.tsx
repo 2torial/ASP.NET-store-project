@@ -19,8 +19,6 @@ function Filters({ from, to, specifications, updateFilters, resetFilters }: Filt
         }
     }
 
-    console.log("a", from, to);
-
     return <form className="filters" id="filters">
         <div className="title-section">
             <h2>Filters</h2>

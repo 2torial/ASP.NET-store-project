@@ -1,15 +1,16 @@
 using ASP.NET_store_project.Server.Data;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace ASP.NET_store_project.Server.Models
 {
     public class StoreBundle
     {
-        public StoreSettings? Settings { get; set; }
+        public StoreSettings Settings { get; set; }
 
-        public StoreFilters? Filters { get; set; }
+        public StoreFilters Filters { get; set; }
 
-        public StoreItem[]? Items { get; set; }
+        public StoreItem[] Items { get; set; }
 
         public StoreBundle(IFormCollection formData, AppDbContext context)
         {
@@ -37,7 +38,19 @@ namespace ASP.NET_store_project.Server.Models
             };
 
             var selectedItems = context.Items
-                .Where(item => item.Category.Label == Settings.SelectedCategory);
+                .Where(item => item.Category.Label == Settings.SelectedCategory)
+                .Select(item => new
+                {
+                    item.Name,
+                    item.Price,
+                    GalleryArray = item.Gallery.Select(image => image.Content).ToArray(),
+                    ConfigurationsList = item.Configurations.Select(config => new
+                    {
+                        config.Label,
+                        config.Parameter
+                    }).ToList(),
+                    item.Page
+                }).ToList();
             int min = selectedItems.Min(item => item.Price), 
                 max = selectedItems.Max(item => item.Price);
             int from = formData.ContainsKey("From")
@@ -53,21 +66,36 @@ namespace ASP.NET_store_project.Server.Models
                     { "to", to },
                 },
                 Specifications = selectedItems
-                    .SelectMany(item => item.Configurations)
+                    .SelectMany(item => item.ConfigurationsList)
                     .Distinct()
                     .GroupBy(config => config.Label, config => config.Parameter)
                     .ToDictionary(configs => configs.Key, configs => configs.ToArray()),
             };
 
-            Items = selectedItems.Select(item => new StoreItem
+            var Items = selectedItems
+                .Select(item => new StoreItem
+                {
+                    Name = item.Name,
+                    Price = item.Price,
+                    Images = item.GalleryArray,
+                    Configuration = new Dictionary<string, string>(),
+                    PageLink = item.Page
+                }).ToList();
+            for (int i = 0; i < Items.Count; i++)
             {
-                Name = item.Name,
-                Price = item.Price,
-                Images = item.Gallery.Select(image => image.Content).ToArray(),
-                Configuration = new Dictionary<string, string>(item.Configurations //workaround for ToDictionary() inside query
-                    .Select(config => new KeyValuePair<string, string>(config.Label, config.Parameter))),
-                PageLink = item.Page,
-            }).ToArray();
+                Items[i].Configuration = selectedItems[i].ConfigurationsList
+                    .ToDictionary(config => config.Label, config => config.Parameter);
+            }
+
+            //selectedItems.Select(item => new StoreItem
+            //{
+            //    Name = item.Name,
+            //    Price = item.Price,
+            //    Images = item.GalleryArray,
+            //    Configuration = item.ConfigurationsList
+            //        .ToDictionary(config => config.Label, config => config.Parameter),
+            //    PageLink = item.Page,
+            //}).ToArray()
         }
     }
 }

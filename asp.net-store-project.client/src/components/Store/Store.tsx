@@ -65,12 +65,11 @@ export function Store() {
 	}
 	
 	const reloadStorePage = (async (formData: FormData) => {
-		const response = await fetch('refresh', {
+		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
 		});
 		const data: StoreBundle = await response.json();
-		console.log(data);
 		setSettings(data.settings);
 		setFilters(data.filters);
 		setItems(data.items);
@@ -89,15 +88,7 @@ export function Store() {
 	}, []);
 
 	if (settings === undefined || filters === undefined || items === undefined)
-		return <p>Failed to load Store component</p>
-
-	const filtersProps = {
-		...filters,
-		updateFilters: updateFilters,
-		resetFilters: updateSettings
-	}
-
-	console.log(filtersProps);
+		return <main><p>Store component is loading</p></main>;
 
 	const settingsProps = {
 		...settings,
