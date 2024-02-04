@@ -6,7 +6,7 @@ Expected milestones:
 - Working searchbar
 - User registration and authorization
 - Item ordering and basket functionalities
-- Expanded database (still local) \
+- ~~Expanded database (still local)~~ done \
 Some time is going to be devoted to improving already implemented features.
 
 ## Technologies Used
