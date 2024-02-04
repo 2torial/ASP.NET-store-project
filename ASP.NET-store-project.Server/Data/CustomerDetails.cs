@@ -2,17 +2,18 @@
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class CustomerDetails
+    public class CustomerDetails(int orderId, string name, string surname, string phoneNumber, string email)
     {
-        public int Id { get; set; }
+        [Key]
+        public int OrderId { get; set; } = orderId;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = name;
 
-        public string Surname { get; set; }
+        public string Surname { get; set; } = surname;
 
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = phoneNumber;
 
-        public string Email { get; set; }
+        public string Email { get; set; } = email;
 
     }
 }

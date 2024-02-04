@@ -1,9 +1,23 @@
-namespace ASP.NET_store_project.Server.Models
+﻿namespace ASP.NET_store_project.Server.Models
 {
     public class StoreFilters
     {
-        public Dictionary<string, int>? Range { get; set; }
+        public ValueRange PriceRange { get; set; }
 
-        public Dictionary<string, string[]>? Specifications { get; set; }
+        public List<PossibleConfiguration> Configurations { get; set; }
+
+        public class ValueRange
+        {
+            public int From { get; set; }
+
+            public int To { get; set; }
+        }
+
+        public class PossibleConfiguration
+        {
+            public string Label { get; set; }
+
+            public List<string> Parameters { get; set; }
+        }
     }
 }

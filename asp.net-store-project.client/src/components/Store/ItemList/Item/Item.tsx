@@ -3,20 +3,24 @@ import './Item.css';
 interface ItemProps {
 	name: string;
 	price: number;
-	images: string[];
-	configuration: Record<string, string>;
-	//link: string;
+	gallery: string[];
+	specification: Configuration[];
+	pageLink?: string;
+}
+type Configuration = {
+	label: string;
+	parameter: string;
 }
 
-function Item({name, price, images, configuration}: ItemProps) {
+function Item({name, price, gallery, specification, pageLink}: ItemProps) {
     return <div className="item">
         <div className="image-section">
-            <img src={images[0]} alt="" />
+            <img src={gallery.length > 0 ? gallery[0] : ""} alt="" />
         </div>
         <div className="details-section">
             <h3 className="item-name">{name}</h3>
             <ul className="additional-details">
-                {Object.entries(configuration).map(([_, value]) => <li>{value}</li>)}
+                {specification.map(config => <li>{`${config.label}: ${config.parameter}`}</li>)}
             </ul>
         </div>
         <div className="store-section">

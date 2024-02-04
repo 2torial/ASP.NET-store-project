@@ -6,7 +6,6 @@ interface RangeFilterProps {
 }
 
 function RangeFilter({ from, to }: RangeFilterProps) {
-    console.log(from, to);
     const toggleSection = (event: React.MouseEvent<HTMLElement>) => {
         (event.target as HTMLElement).parentElement!.classList.toggle("expanded");
     }

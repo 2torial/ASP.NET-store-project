@@ -1,0 +1,57 @@
+main#account-form {
+    display: flex;
+    justify-content: center;
+}
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 480px;
+    row-gap: 15px;
+    border-radius: 15px;
+    background-color: lightblue;
+}
+
+.title-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.title-section h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 1;
+    align-items: flex-start;
+}
+
+.input-section label {
+    cursor: pointer;
+}
+
+.input-section input {
+    height: 28px;
+    width: 340px;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+.submit-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.submit-section input {
+    height: 32px;
+    width: 80px;
+}

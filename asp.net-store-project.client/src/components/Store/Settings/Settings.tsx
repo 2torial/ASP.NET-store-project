@@ -2,38 +2,36 @@ import Paginator from './Paginator';
 import SelectList from './SelectList';
 import './Settings.css'
 
-type IconMap = {[id: string]: string}
-
-interface StoreSettingsProps {
-    categories: string[];
-    selectedCategory: string;
-    sortingMethods: string[];
-    selectedSortingMethod: string;
-    pages: number;
-    selectedPage: number;
-    viewModes: string[];
-    viewModeIcons: IconMap;
-    selectedViewMode: string;
+interface SettingsProps {
+	categories: Category[];
+	selectedCategory: Category;
+	pages: number;
+	selectedPage: number;
+	sortingMethods: string[];
+	selectedSortingMethod: string;
+    updateSettings: () => void;
+}
+type Category = {
+	type: string;
+	label: string;
 }
 
 function Settings({
     categories, 
     selectedCategory, 
-    sortingMethods, 
-    selectedSortingMethod,
     pages,
     selectedPage,
-    viewModes,
-    viewModeIcons,
-    selectedViewMode
-} : StoreSettingsProps) {
+    sortingMethods, 
+    selectedSortingMethod,
+    updateSettings,
+} : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
         name: "Category",
-        options: categories,
+        options: categories.map(category => category.label),
         icons: undefined,
-        selectedOption: selectedCategory
+        selectedOption: selectedCategory.label
     }
 
     const sortSelect = {
@@ -54,17 +52,17 @@ function Settings({
         label: undefined,
         id: "view",
         name: "View",
-        options: viewModes,
-        icons: viewModeIcons,
-        selectedOption: selectedViewMode
+        options: ["Gallery", "List"],
+        icons: {1: "https://placehold.co/20x20", 2: "https://placehold.co/20x20"},
+        selectedOption: "Gallery"
     }
 
-    return <section className="settings">
+    return <form className="settings" id="settings">
         <SelectList {...categorySelect} />
         <SelectList {...sortSelect} />
         <Paginator {...pageSelect} />
         <SelectList {...viewSelect} />        
-    </section>;
+    </form>;
 }
 
 export default Settings;

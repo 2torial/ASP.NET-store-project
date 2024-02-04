@@ -2,20 +2,20 @@
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class Status
+    public class Status(string code)
     {
         [Key]
-        public string Code { get; set; }
+        public string Code { get; set; } = code;
 
     }
 
-    public class OrderStatus
+    public class OrderStatus(int orderId, string statusCode, DateTime dateOfChange)
     {
-        public int OrderId { get; set; }
+        public int OrderId { get; set; } = orderId;
 
-        public string StatusCode { get; set; }
+        public string StatusCode { get; set; } = statusCode;
 
-        public DateTime DateOfChange { get; set; }
+        public DateTime DateOfChange { get; set; } = dateOfChange;
 
     }
 }

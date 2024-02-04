@@ -9,75 +9,86 @@ enum FormID {
 	Settings = "settings",
 }
 
-type IconMap = {[id: string]: string}
+interface StoreComponentData {
+	settings: StoreSettings;
+	filters: StoreFilters;
+	items: StoreItems;
+}
 
 interface StoreSettings {
-	categories: string[];
-	selectedCategory: string;
-	sortingMethods: string[];
-	selectedSortingMethod: string;
+	categories: Category[];
+	selectedCategory: Category;
 	pages: number;
 	selectedPage: number;
-	viewModes: string[];
-	viewModeIcons: IconMap;
-	selectedViewMode: string;
+	sortingMethods: string[];
+	selectedSortingMethod: string;
+}
+type Category = {
+	type: string;
+	label: string;
 }
 
 interface StoreFilters {
-	range: { from: number; to: number };
-    specifications: Record<string, string[]>;
+	priceRange: ValueRange;
+    configurations: PossibleConfiguration[];
+}
+type ValueRange = {
+	from: number;
+	to: number;
+}
+type PossibleConfiguration = {
+	label: string;
+	parameters: string[];
 }
 
-interface StoreItem {
+interface StoreItems {
+	numberOfItems: number;
+	displayedItems: Item[];
+}
+type Item = {
 	name: string;
 	price: number;
-	images: string[];
-	configuration: Record<string, string>;
-	//link: string;
+	gallery: string[];
+	specification: Configuration[];
+	pageLink?: string;
 }
-
-interface StoreBundle {
-	settings: StoreSettings;
-	filters: StoreFilters;
-	items: StoreItem[];
+type Configuration = {
+	label: string;
+	parameter: string;
 }
 
 export function Store() {
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
-	const [items, setItems] = useState<StoreItem[]>();
+	const [items, setItems] = useState<StoreItems>();
 
-	const collectData = (id: string) : FormData => {
-		const data = new FormData();
-		const form: HTMLFormElement | null = document.querySelector(`form#${id}`);
-		if (form !== null) {
-			for (const [name, value] of new FormData(form).entries()) {
-				data.append(name, value);
+	const collectData = (...ids: string[]) : FormData => {
+		let data = undefined;
+		for (const id of ids) {
+			const form: HTMLFormElement | null = document.querySelector(`form#${id}`);
+			if (form !== null) {
+				if (data === undefined) data = new FormData(form);
+				else for (const [name, value] of new FormData(form).entries()) {
+					data.append(name, value);
+				}
 			}
 		}
-		return data;
+		return data !== undefined ? data : new FormData();
 	};
-
-	const joinedData = (formData1: FormData, formData2: FormData): FormData => {
-		for (const pair of formData2)
-			formData1.append(pair[0], pair[1]);
-		return formData1
-	}
 	
 	const reloadStorePage = (async (formData: FormData) => {
-		const response = await fetch('refresh', {
+		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
 		});
-		const data: StoreBundle = await response.json();
-		console.log(data);
+		const data: StoreComponentData = await response.json();
 		setSettings(data.settings);
 		setFilters(data.filters);
 		setItems(data.items);
 	});
 
 	const updateFilters = (async () => {
-		reloadStorePage(joinedData(collectData(FormID.Filters), collectData(FormID.Settings)));
+		reloadStorePage(collectData(FormID.Filters, FormID.Settings));
 	});
 
 	const updateSettings = (async () => {
@@ -89,25 +100,21 @@ export function Store() {
 	}, []);
 
 	if (settings === undefined || filters === undefined || items === undefined)
-		return <p>Failed to load Store component</p>
-
-	const filtersProps = {
+		return <main><p>Store component is loading</p></main>;
+	
+	const filterProps = {
 		...filters,
-		updateFilters: updateFilters,
+		updateFilters,
 		resetFilters: updateSettings
 	}
-
-	console.log(filtersProps);
-
 	const settingsProps = {
 		...settings,
-		updateSettings: updateSettings
+		updateSettings
 	}
-
-	return <main>
-		<Filters from={filters.range.from} to={filters.range.to} specifications={filters.specifications} updateFilters={updateFilters} resetFilters={updateSettings} />
-		<Settings {...settingsProps}  />
-		<ItemList items={items} />
+	return <main id="store">
+		<Filters {...filterProps}/>
+		<Settings {...settingsProps} />
+		<ItemList {...items} />
 	</main>;
 }
 
