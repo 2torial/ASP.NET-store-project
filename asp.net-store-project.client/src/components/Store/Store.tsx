@@ -73,7 +73,7 @@ type Configuration = {
 }
 
 export function Store() {
-	const {pathname, search} = useLocation()
+	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
 	const [items, setItems] = useState<StoreItems>();
@@ -83,9 +83,10 @@ export function Store() {
 	}, []);
 
 	useEffect(() => {
-		if (pathname !== "/store") return;
-		const queryParams = new URLSearchParams(search);
+		if (location.pathname !== "/store") return;
+		const queryParams = new URLSearchParams(location.search);
 		if (!queryParams.has("search")) return;
+		console.log(queryParams.get("search"));
 		const data = collectData(FormID.Filters, FormID.Settings);
 		data.append("SearchBar", queryParams.get("search")!)
 		reloadStorePage(data);
