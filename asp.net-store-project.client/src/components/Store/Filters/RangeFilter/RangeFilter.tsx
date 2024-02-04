@@ -14,11 +14,11 @@ function RangeFilter({ from, to }: RangeFilterProps) {
         <label className="drop-down-label" onClick={toggleSection} htmlFor="price-from">Price</label>
         <div className="range-setting drop-down-content">
             <span className="range-input">
-                <input type="text" id="price-from" name="PriceFrom" value={from} />
+                <input type="text" id="price-from" name="PriceFrom" defaultValue={from} />
             </span>
             <span className="range-dash">&ndash;</span>
             <span className="range-input">
-                <input type="text" id="price-to" name="PriceTo" value={to} />$
+                <input type="text" id="price-to" name="PriceTo" defaultValue={to} />$
             </span>
         </div>
     </div>;
