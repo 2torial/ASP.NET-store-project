@@ -1,21 +1,25 @@
 import Item from './Item';
 import './ItemList.css';
 
-interface StoreItem {
+interface ItemListProps {
+	numberOfItems: number;
+	displayedItems: Item[];
+}
+type Item = {
 	name: string;
 	price: number;
-	images: string[];
-	configuration: Record<string, string>;
-	//link: string;
+	gallery: string[];
+	specification: Configuration[];
+	pageLink?: string;
+}
+type Configuration = {
+	label: string;
+	parameter: string;
 }
 
-interface ItemListProps {
-    items: StoreItem[];
-}
-
-function ItemList({items}: ItemListProps) {  
+function ItemList({numberOfItems, displayedItems}: ItemListProps) {  
     return <section className="item-list">
-        {items.map(item => <Item {...item} />)}
+        {displayedItems.map(item => <Item {...item} />)}
     </section>;
 }
 

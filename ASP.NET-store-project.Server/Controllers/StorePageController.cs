@@ -13,16 +13,9 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly ILogger<StorePageController> _logger = logger;
 
         [HttpPost("/api/reload")]
-        public StoreData Reload()
+        public StoreComponentData Reload()
         {
-            foreach (string key in Request.Form.Keys)
-            {
-                _logger.LogInformation(key + ": " + Request.Form[key]);
-                if (Request.Form[key].GetType().IsArray)
-                    _logger.LogInformation("array");
-            }
-
-            return new StoreData(Request.Form, _context);
+            return new StoreComponentData(Request.Form, _context);
         }
     }
 }

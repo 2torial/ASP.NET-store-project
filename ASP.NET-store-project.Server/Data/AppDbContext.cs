@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ASP.NET_store_project.Server.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
@@ -46,6 +47,9 @@ namespace ASP.NET_store_project.Server.Data
 
             modelBuilder.Entity<Order>()
                 .ToTable("Order");
+
+            modelBuilder.Entity<SortingMethod>()
+                .ToTable("SortingMethod");
 
             modelBuilder.Entity<Item>()
                 .HasMany(e => e.Configurations)
@@ -180,6 +184,12 @@ namespace ASP.NET_store_project.Server.Data
                 new SelectedItem(3, 12, "user", 1, 1),
                 new SelectedItem(4, 4, "root", 10, 2),
                 new SelectedItem(5, 1, "root", 1, 2));
+
+            modelBuilder.Entity<SortingMethod>().HasData(
+                new SortingMethod("Price: Lowest to Highest", "Price", true),
+                new SortingMethod("Price: Highest to Lowest", "Price", false),
+                new SortingMethod("Name: Ascending", "Name", true),
+                new SortingMethod("Name: Descending", "Name", false));
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -190,5 +200,6 @@ namespace ASP.NET_store_project.Server.Data
 
         public DbSet<Order> Orders { get; set; }
 
+        public DbSet<SortingMethod> SortingMethods { get; set; }
     }
 }

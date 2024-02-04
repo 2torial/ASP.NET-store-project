@@ -2,7 +2,7 @@ using ASP.NET_store_project.Server.Data;
 
 namespace ASP.NET_store_project.Server.Models
 {
-    public class StoreData
+    public class StoreComponentData
     {
         public StoreSettings Settings { get; }
 
@@ -10,46 +10,43 @@ namespace ASP.NET_store_project.Server.Models
 
         public StoreItems Items { get; }
 
-        public StoreData(IFormCollection formData, AppDbContext context)
+        public StoreComponentData(IFormCollection formData, AppDbContext context)
         {
-            IEnumerable <StoreSettings.ViewMode> viewModes = [
-                new("Gallery", "https://placehold.co/20x20"),
-                new("List", "https://placehold.co/20x20")
-            ];
-            IEnumerable<StoreSettings.SortingMethod> sortingMethods = [
-                new StoreSettings.SortingMethod<int>("Price: Lowest to Highest", item => item.Price),
-                new StoreSettings.SortingMethod<int>("Price: Highest to Lowest", item => item.Price, false),
-                new StoreSettings.SortingMethod<string>("Name: Ascending", item => item.Name),
-                new StoreSettings.SortingMethod<string>("Name: Descending", item => item.Name, false),
-            ];
+            var sortingMethod = (formData.TryGetValue("SortBy", out var sortBy)
+                ? context.SortingMethods.Where(method => method.Label == sortBy).FirstOrDefault()
+                : null) ?? context.SortingMethods
+                    .Where(method => method.Label == "Price: Lowest to Highest")
+                    .Single();
             Settings = new StoreSettings
             {
                 Categories = context.Categories.ToList(),
-
                 SelectedCategory = (formData.TryGetValue("Category", out var type)
-                    ? context.Categories.Where(c => c.Type == type).FirstOrDefault()
-                    : null) ?? new Category("Any", "Any"),
+                    ? context.Categories.Where(category => category.Type == type).FirstOrDefault()
+                    : null) ?? context.Categories
+                        .Where(category => category.Type == "Laptops")
+                        .Single(), // Default category set to Laptops for presentation purposes
 
                 Pages = 1,
-
                 SelectedPage = 1,
 
-                SortingMethods = sortingMethods.ToList(),
-
-                SelectedSortingMethod = (formData.TryGetValue("SortBy", out var sort)
-                    ? sortingMethods.Where(s => s.Label == sort).FirstOrDefault()
-                    : null) ?? sortingMethods.Last(),
-
-                ViewModes = viewModes.ToList(),
-
-                SelectedViewMode = (formData.TryGetValue("ViewMode", out var view)
-                    ? viewModes.Where(v => v.Mode == view).FirstOrDefault()
-                    : null) ?? viewModes.First(),
+                SortingMethods = context.SortingMethods
+                    .Select(method => method.Label)
+                    .ToList(),
+                SelectedSortingMethod = sortingMethod.Label,
             };
 
             var selectedItems = Settings.SelectedCategory.Type == "Any"
                 ? context.Items
                 : context.Items.Where(item => item.Category.Type == Settings.SelectedCategory.Type);
+            if (sortingMethod.IsAscending) selectedItems
+                .OrderBy(item => typeof(Item)
+                    .GetProperty(sortingMethod.SortBy)!
+                    .GetValue(item));
+            else selectedItems
+                .OrderByDescending(item => typeof(Item)
+                    .GetProperty(sortingMethod.SortBy)!
+                    .GetValue(item));
+
             int minPrice = selectedItems.Any()
                 ? selectedItems.Min(item => item.Price)
                 : 0;
