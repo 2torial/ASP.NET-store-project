@@ -4,19 +4,9 @@ import './Nav.css';
 import { Link } from 'react-router-dom';
 
 export function Nav() {
-	const searchBarRef = useRef(null);
-	const focusSearchBar = () => (searchBarRef.current! as HTMLElement).classList.add("focused");
-	const unfocusSearchBar = () => (searchBarRef.current! as HTMLElement).classList.remove("focused");
-
 	const menuRef = useRef(null);
 	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
 	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
-
-	const searchBarProps = {
-		searchBarRef, 
-		focusSearchBar, 
-		unfocusSearchBar
-	}
 
     return <nav onMouseLeave={hideMenu}>
 		<div className="navigation">
@@ -26,7 +16,7 @@ export function Nav() {
 				</Link>
 			</div>
 			<div className="empty-space-section"></div>
-			<SearchBar {...searchBarProps}/>
+			<SearchBar />
 			<div className="menu-section">
 				<Link to="/basket">
 					<img src="https://placehold.co/40x40" alt="basket" />

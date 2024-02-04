@@ -45,7 +45,7 @@ nav {
     grid-template-columns: 17fr 3fr 3fr;
     width: 100%;
     box-sizing: border-box;
-    transition: transform 0.4s ease-out;
+    transition: top 0.4s ease-out;
     pointer-events: auto;
     background-color: white;
 }
@@ -63,7 +63,7 @@ nav {
 }
 
 .menu.opened {
-    transform: translateY(60px);
+    top: 60px;
 }
 
 .menu .option-section {

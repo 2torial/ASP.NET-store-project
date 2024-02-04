@@ -41,6 +41,6 @@
     outline: none;
 }
 
-.search-bar .search-button {
+.search-bar input {
     border-radius: 0 14px 14px 0;
 }
