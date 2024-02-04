@@ -9,8 +9,8 @@ export function Nav() {
 	const unfocusSearchBar = () => (searchBarRef.current! as HTMLElement).classList.remove("focused");
 
 	const menuRef = useRef(null);
-	const openMenu = () => (menuRef.current! as HTMLElement).style.top = "60px";
-	const hideMenu = () => (menuRef.current! as HTMLElement).style.top = "7px";
+	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
+	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
 
 	const searchBarProps = {
 		searchBarRef, 
