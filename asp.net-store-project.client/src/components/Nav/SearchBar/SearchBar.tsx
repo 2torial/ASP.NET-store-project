@@ -11,9 +11,10 @@ function SearchBar() {
 
     const search = (event: React.SyntheticEvent) => {
         event.preventDefault();
+        const input = searchBarInput.replace(" ", "+").toString();
         navigate({
             pathname: "/store",
-            search: `?search=${searchBarInput}`,
+            search: `?search=${input}`,
         });
     };
 

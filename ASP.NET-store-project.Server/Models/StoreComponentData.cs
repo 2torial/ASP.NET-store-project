@@ -82,10 +82,10 @@ namespace ASP.NET_store_project.Server.Models
 
             // Searchbar filtering
             if (formData.TryGetValue("SearchBar", out var searchbar))
-                selectedItems = selectedItems
-                    .Where(item => item.Name.ToLower()
-                        .Contains(searchbar.ToString().ToLower()));
+                foreach (var word in searchbar.ToString().ToLower().Split(' '))
+                    selectedItems = selectedItems.Where(item => item.Name.ToLower().Contains(word));
 
+            // Price range filtering
             selectedItems = selectedItems
                 .Where(item => Filters.PriceRange.From <= item.Price && item.Price <= Filters.PriceRange.To);
 
