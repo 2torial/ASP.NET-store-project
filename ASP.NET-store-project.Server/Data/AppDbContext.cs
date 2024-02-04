@@ -1,27 +1,16 @@
-﻿using ASP.NET_store_project.Server.Models;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) 
+        : IdentityDbContext<IdentityUser>(options)
     {
-        protected readonly IConfiguration _configuration;
-
-        public AppDbContext(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("StoreDatabase"));
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Customer>()
                 .Property(b => b.IsAdmin)
                 .HasDefaultValue(false);
