@@ -1,5 +1,4 @@
 using ASP.NET_store_project.Server.Data;
-using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +9,7 @@ using System.Text;
 namespace ASP.NET_store_project.Server.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("[controller]")]
     public class AuthController(
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
@@ -18,15 +17,15 @@ namespace ASP.NET_store_project.Server.Controllers
         IConfiguration configuration
     ) : ControllerBase
     {
-        public UserManager<IdentityUser> _userManager = userManager;
+        public readonly UserManager<IdentityUser> _userManager = userManager;
 
-        public RoleManager<IdentityRole> _roleManager = roleManager;
+        public readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-        public SignInManager<IdentityUser> _signInManager = signInManager;
+        public readonly SignInManager<IdentityUser> _signInManager = signInManager;
 
         private readonly IConfiguration _configuration = configuration;
 
-        [HttpPost("account/create")]
+        [HttpPost("/api/account/create")]
         public async Task<IActionResult> CreateUser([FromBody] InboundUser inboundUser)
         {
             try
@@ -61,19 +60,24 @@ namespace ASP.NET_store_project.Server.Controllers
                 userInfo.PassWord,
                 isPersistent: false, 
                 lockoutOnFailure: false);
+            if (!result.Succeeded) return BadRequest("Username or password invalid!");
 
-            return result.Succeeded
-                ? Ok(BuildToken(userInfo, [RoleType.User]))
-                : BadRequest("Username or password invalid!");
+            var user = await _userManager.FindByNameAsync(userInfo.UserName);
+            var roles = await _userManager.GetRolesAsync(user!);
+            return Ok(BuildToken(
+                userInfo,
+                roles.Contains(RoleType.Admin.ToString())
+                    ? [RoleType.User, RoleType.Admin]
+                    : [RoleType.User]));
         }
 
-        private async Task<string> BuildToken(InboundUser userInfo, RoleType[] roleTypes)
+        private async Task<string?> BuildToken(InboundUser userInfo, RoleType[] roleTypes)
         {
             var user = await _userManager.FindByNameAsync(userInfo.UserName);
             if (user == null) return null;
 
             List<Claim> claims = [
-                new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
+                new Claim(JwtRegisteredClaimNames.Name, userInfo.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ];
 
@@ -98,21 +102,6 @@ namespace ASP.NET_store_project.Server.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        //[ActionName("SignIn")]
-        //public bool SignIn(HttpContext httpContext)
-        //{
-        //    var formData = Request.Form;
-        //    var user = formData.TryGetValue("UserName", out var username)
-        //        ? formData.TryGetValue("PassWord", out var password)
-        //            ? context.Customers
-        //                .Where(customer => customer.UserName == username.ToString())
-        //                .Where(customer => customer.PassWord == password.ToString())
-        //                .FirstOrDefault()
-        //            : null
-        //        : null;
-        //    if (user == null) return false;
-
-        //}
     }
     public enum RoleType { User, Admin }
 }
