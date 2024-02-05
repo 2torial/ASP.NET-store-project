@@ -26,11 +26,19 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly IConfiguration _configuration = configuration;
 
         [HttpPost("/api/account/create")]
-        public async Task<IActionResult> CreateUser([FromBody] InboundUser inboundUser)
+        public async Task<IActionResult> CreateUser()
         {
+            var inboundUser =
+                Request.Form.TryGetValue("UserName", out var username)
+                && Request.Form.TryGetValue("PassWord", out var password)
+                    ? new InboundUser { UserName = username.ToString(), PassWord = password.ToString() }
+                    : null;
+            if (inboundUser == null) return BadRequest("oof");
             try
             {
                 var user = new IdentityUser { UserName = inboundUser.UserName };
+                Console.WriteLine(inboundUser.UserName);
+                Console.WriteLine(inboundUser.PassWord);
 
                 if (!await _roleManager.RoleExistsAsync(RoleType.User.ToString()))
                     await _roleManager.CreateAsync(new IdentityRole(RoleType.User.ToString()));
@@ -52,24 +60,24 @@ namespace ASP.NET_store_project.Server.Controllers
             }
         }
 
-        [HttpPost("account/login")]
-        public async Task<IActionResult> Login([FromBody] InboundUser userInfo)
-        {
-            var result = await _signInManager.PasswordSignInAsync(
-                userInfo.UserName, 
-                userInfo.PassWord,
-                isPersistent: false, 
-                lockoutOnFailure: false);
-            if (!result.Succeeded) return BadRequest("Username or password invalid!");
+        //[HttpPost("account/login")]
+        //public async Task<IActionResult> Login([FromBody] InboundUser userInfo)
+        //{
+        //    var result = await _signInManager.PasswordSignInAsync(
+        //        userInfo.UserName, 
+        //        userInfo.PassWord,
+        //        isPersistent: false, 
+        //        lockoutOnFailure: false);
+        //    if (!result.Succeeded) return BadRequest("Username or password invalid!");
 
-            var user = await _userManager.FindByNameAsync(userInfo.UserName);
-            var roles = await _userManager.GetRolesAsync(user!);
-            return Ok(BuildToken(
-                userInfo,
-                roles.Contains(RoleType.Admin.ToString())
-                    ? [RoleType.User, RoleType.Admin]
-                    : [RoleType.User]));
-        }
+        //    var user = await _userManager.FindByNameAsync(userInfo.UserName);
+        //    var roles = await _userManager.GetRolesAsync(user!);
+        //    return Ok(BuildToken(
+        //        userInfo,
+        //        roles.Contains(RoleType.Admin.ToString())
+        //            ? [RoleType.User, RoleType.Admin]
+        //            : [RoleType.User]));
+        //}
 
         private async Task<string?> BuildToken(InboundUser userInfo, RoleType[] roleTypes)
         {

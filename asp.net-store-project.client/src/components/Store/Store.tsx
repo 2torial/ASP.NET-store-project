@@ -4,25 +4,7 @@ import Filters from './Filters';
 import Settings from './Settings';
 import ItemList from './ItemList';
 import { useLocation } from 'react-router-dom';
-
-const collectData = (...ids: string[]) : FormData => {
-	let data = undefined;
-	for (const id of ids) {
-		const form: HTMLFormElement | null = document.querySelector(`form#${id}`);
-		if (form !== null) {
-			if (data === undefined) data = new FormData(form);
-			else for (const [name, value] of new FormData(form).entries()) {
-				data.append(name, value);
-			}
-		}
-	}
-	return data !== undefined ? data : new FormData();
-};
-
-enum FormID {
-	Filters = "filters",
-	Settings = "settings",
-}
+import { FormID, collectData } from '../../shared/FormDataCollection';
 
 interface StoreComponentData {
 	settings: StoreSettings;

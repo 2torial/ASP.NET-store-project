@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { FormID, collectData } from '../../shared/FormDataCollection';
 import './AccountForm.css';
 
 interface AccountFormProps {
@@ -5,8 +7,49 @@ interface AccountFormProps {
 }
 
 function AccountForm({ newAccount }: AccountFormProps) {
+	const navigate = useNavigate();
+
+	const signIn = async (event: React.SyntheticEvent) => {
+		event.preventDefault();
+		const data = collectData(FormID.SignIn);
+		const response = await fetch('/api/account/create', {
+			method: "post",
+			body: data
+		});
+		const result: object = await response.json();
+		console.log(result);
+		navigate("/");
+	};
+	const signUp = async (event: React.SyntheticEvent) => {
+		event.preventDefault();
+		const data = collectData(FormID.SignUp);
+		for (const value of data.values()) {
+			if (value === "") {
+				alert("All sections are required!");
+				return;
+			}
+		}
+		if (data.get("PassWord") !== data.get("PassWordRepeat")) {
+			alert("Passwords must match!");
+			return;
+		}
+		data.delete("PassWordRepeat");
+		const response = await fetch('/api/account/create', {
+			method: "post",
+			body: data
+		});
+		const result: object = await response.json();
+		console.log(result);
+		navigate("/");
+	};
+
+	const formProps = {
+		id: newAccount ? FormID.SignUp : FormID.SignIn,
+		onSubmit: newAccount ? signUp : signIn,
+	}
+
 	return <main id="account-form">
-		<form className="account-form">
+		<form className="account-form" {...formProps} >
 			<div className="title-section">
 				<h2>{newAccount ? "Sign up" : "Sign in"}</h2>
 			</div>
