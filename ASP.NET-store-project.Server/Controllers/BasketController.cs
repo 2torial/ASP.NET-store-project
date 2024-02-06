@@ -6,6 +6,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Numerics;
 using System.Xml.Linq;
 using Microsoft.Extensions.Primitives;
+using static ASP.NET_store_project.Server.Models.StoreItems;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
@@ -64,7 +65,7 @@ namespace ASP.NET_store_project.Server.Controllers
             var customer = _context.Customers
                 .Where(customer => customer.UserName == "user"); // ommit authentication for now
             var basket = customer
-                .SelectMany(customer => customer.Basket)
+                .SelectMany(customer => customer.SelectedItems)
                 .Where(item => item.Order == null);
 
             if (!basket.Any()) return BadRequest("Basket is empty");
@@ -103,18 +104,59 @@ namespace ASP.NET_store_project.Server.Controllers
             return Ok();
         }
 
-        [HttpPost("/api/basket/item/add")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
-        public string AddItem()
+        [HttpPost("/api/basket/item/add/{itemId}")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
+        public IActionResult AddItem([FromRoute] int itemId)
         {
-            return "add";
+            if (!_context.Items.Where(item => item.Id == itemId).Any())
+                return BadRequest("This item does not exist!");
+
+            var customer = _context.Customers
+                .Where(customer => customer.UserName == "user"); // ommit authentication for now
+            if (!customer.Any())
+                return BadRequest("This customer does not exist!");
+
+            var selectedItem = customer
+                .SelectMany(customer => customer.SelectedItems)
+                .Where(item => item.Order == null && item.Id == itemId);
+
+            if (selectedItem.Any())
+                selectedItem.Single().Quantity += 1;
+            else
+            {
+                int selectedItemId = customer
+                    .SelectMany(customer => customer.SelectedItems)
+                    .Max(item => item.Id);
+                customer.Single().SelectedItems
+                    .Add(new SelectedItem(selectedItemId, itemId, customer.Single().UserName, 1));
+            }
+
+            _context.SaveChanges();
+            return Ok();
         }
 
-        [HttpPost("/api/basket/item/remove")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
-        public string RemoveItem()
+        [HttpPost("/api/basket/item/remove/{itemId}")]
+        // [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
+        public IActionResult RemoveItem([FromRoute] int itemId)
         {
-            return "remove";
+            if (!_context.Items.Where(item => item.Id == itemId).Any())
+                return BadRequest("This item does not exist!");
+
+            var customer = _context.Customers
+                .Where(customer => customer.UserName == "user"); // ommit authentication for now
+            if (!customer.Any())
+                return BadRequest("This customer does not exist!");
+
+            var selectedItem = customer
+                .SelectMany(customer => customer.SelectedItems)
+                .Where(item => item.Order == null && item.Id == itemId);
+
+            selectedItem.Single().Quantity -= 1;
+            if (selectedItem.Single().Quantity == 0)
+                customer.Single().SelectedItems.Remove(selectedItem.Single());
+
+            _context.SaveChanges();
+            return Ok();
         }
     }
 }

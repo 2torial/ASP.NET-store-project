@@ -14,11 +14,10 @@ type Configuration = {
 }
 
 function Item({ id, name, price, gallery, specification, pageLink }: ItemProps) {
-    const addItem = (event: React.MouseEvent) => {
+    const addItem = async (event: React.MouseEvent) => {
         event.preventDefault();
         const data = new FormData();
-        data.append("Id", id.toString());
-        const response = await fetch('/api/basket/item/add', {
+        const response = await fetch(`/api/basket/item/add/${id}`, {
             method: "post",
             body: data
         });
