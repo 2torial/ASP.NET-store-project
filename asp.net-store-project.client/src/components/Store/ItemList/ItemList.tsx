@@ -6,6 +6,7 @@ interface ItemListProps {
 	displayedItems: Item[];
 }
 type Item = {
+	id: number,
 	name: string;
 	price: number;
 	gallery: string[];

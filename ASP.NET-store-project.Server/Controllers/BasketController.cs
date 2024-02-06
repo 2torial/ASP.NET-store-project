@@ -22,6 +22,7 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly ILogger<StoreController> _logger = logger;
 
         [HttpGet("/api/basket")]
+        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
         public BasketComponentData Basket()
         {
@@ -59,6 +60,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpPost("/api/basket/summary")]
+        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
         public IActionResult Summary()
         {
@@ -105,6 +107,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpPost("/api/basket/item/add/{itemId}")]
+        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
         public IActionResult AddItem([FromRoute] int itemId)
         {
@@ -135,8 +138,8 @@ namespace ASP.NET_store_project.Server.Controllers
             return Ok();
         }
 
-        [HttpPost("/api/basket/item/remove/{itemId}")]
-        // [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
+        [HttpDelete("/api/basket/item/remove/{itemId}")]
+        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult RemoveItem([FromRoute] int itemId)
         {
             if (!_context.Items.Where(item => item.Id == itemId).Any())

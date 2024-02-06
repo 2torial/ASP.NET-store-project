@@ -12,7 +12,7 @@ function AccountForm({ newAccount }: AccountFormProps) {
 	const signIn = async (event: React.SyntheticEvent) => {
 		event.preventDefault();
 		const data = collectData(FormID.SignIn);
-		const response = await fetch('/api/account/create', {
+		const response = await fetch('/api/account/login', {
 			method: "post",
 			body: data
 		});
