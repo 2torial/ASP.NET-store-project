@@ -1,4 +1,4 @@
-import { Footer, Nav, AccountForm, Store } from './components';
+import { Footer, Nav, AccountForm, Store, Basket } from './components';
 import './App.css';
 import { useRoutes } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ function App() {
 			//...["/", "/store"].map(path => ({ path, element: <Store /> })),
 			{ path: "/", element: <Store /> },
 			{ path: "/store", element: <Store /> },
-			//{ path: "/basket", element: <Basket /> },
+			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm newAccount={true} /> },
 			//{ path: "/", element: <NoPage /> },

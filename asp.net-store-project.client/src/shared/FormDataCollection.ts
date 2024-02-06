@@ -16,5 +16,6 @@ export enum FormID {
 	Filters = "filters",
 	Settings = "settings",
 	SignIn = "sign-in",
-	SignUp = "sign-up"
+	SignUp = "sign-up",
+	Summary = "summary",
 }
