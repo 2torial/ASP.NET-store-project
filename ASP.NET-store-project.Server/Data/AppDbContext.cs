@@ -172,7 +172,9 @@ namespace ASP.NET_store_project.Server.Data
                 new SelectedItem(2, 8, "user", 1, 1),
                 new SelectedItem(3, 12, "user", 1, 1),
                 new SelectedItem(4, 4, "root", 10, 2),
-                new SelectedItem(5, 1, "root", 1, 2));
+                new SelectedItem(5, 1, "root", 1, 2),
+                new SelectedItem(6, 2, "user", 1),
+                new SelectedItem(7, 9, "user", 2));
 
             modelBuilder.Entity<SortingMethod>().HasData(
                 new SortingMethod("Price: Lowest to Highest", "Price", true),
