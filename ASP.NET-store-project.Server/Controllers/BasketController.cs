@@ -2,42 +2,30 @@ using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Numerics;
-using System.Xml.Linq;
-using Microsoft.Extensions.Primitives;
-using static ASP.NET_store_project.Server.Models.StoreItems;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BasketController(
-        AppDbContext context, 
-        ILogger<StoreController> logger
-    ) : ControllerBase
+    public class BasketController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
-
-        private readonly ILogger<StoreController> _logger = logger;
-
         [HttpGet("/api/basket")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
-        public BasketComponentData Basket()
+        public IActionResult Basket()
         {
-            logger.LogError("me");
+            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var customer = context.Customers
+                .Where(customer => customer.UserName == jwtToken.Subject);
+            if (!customer.Any())
+                return BadRequest("This customer does not exist!");
+
             var basket = context.Customers
                 .Where(customer => customer.UserName == "user") // Temporarly without authentication
-                .SelectMany(customer => customer.SelectedItems);
-
-            foreach (var item in basket)
-                logger.LogError(item.OrderId.ToString());
-
-            basket = basket
+                .SelectMany(customer => customer.SelectedItems)
                 .Where(item => item.OrderId == null);
 
-            return new BasketComponentData
+            var data = new BasketComponentData
             {
                 Items = basket
                     .Select(selectedItem => new BasketComponentData.BasketedItem
@@ -57,22 +45,26 @@ namespace ASP.NET_store_project.Server.Controllers
                         PageLink = selectedItem.Item.Page,
                     }).ToList(),
             };
+            return Ok(data);
         }
 
         [HttpPost("/api/basket/summary")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
         public IActionResult Summary()
         {
-            var customer = _context.Customers
-                .Where(customer => customer.UserName == "user"); // ommit authentication for now
+            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var customer = context.Customers
+                .Where(customer => customer.UserName == jwtToken.Subject);
+            if (!customer.Any())
+                return BadRequest("This customer does not exist!");
+
             var basket = customer
                 .SelectMany(customer => customer.SelectedItems)
                 .Where(item => item.Order == null);
 
             if (!basket.Any()) return BadRequest("Basket is empty");
 
-            int orderId = _context.Orders.Max(order => order.OrderId) + 1;
+            int orderId = context.Orders.Max(order => order.OrderId) + 1;
             var order = new Order(orderId, customer.Single().UserName);
 
             if (!Request.Form.TryGetValue("Region", out var region))
@@ -101,21 +93,21 @@ namespace ASP.NET_store_project.Server.Controllers
 
             foreach (var item in basket) item.OrderId = orderId;
 
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            context.Orders.Add(order);
+            context.SaveChanges();
             return Ok();
         }
 
         [HttpPost("/api/basket/item/add/{itemId}")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(RoleType.User))]
         public IActionResult AddItem([FromRoute] int itemId)
         {
-            if (!_context.Items.Where(item => item.Id == itemId).Any())
+            if (!context.Items.Where(item => item.Id == itemId).Any())
                 return BadRequest("This item does not exist!");
 
-            var customer = _context.Customers
-                .Where(customer => customer.UserName == "user"); // ommit authentication for now
+            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var customer = context.Customers
+                .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");
 
@@ -134,7 +126,7 @@ namespace ASP.NET_store_project.Server.Controllers
                     .Add(new SelectedItem(selectedItemId, itemId, customer.Single().UserName, 1));
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
             return Ok();
         }
 
@@ -142,11 +134,12 @@ namespace ASP.NET_store_project.Server.Controllers
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult RemoveItem([FromRoute] int itemId)
         {
-            if (!_context.Items.Where(item => item.Id == itemId).Any())
+            if (!context.Items.Where(item => item.Id == itemId).Any())
                 return BadRequest("This item does not exist!");
 
-            var customer = _context.Customers
-                .Where(customer => customer.UserName == "user"); // ommit authentication for now
+            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var customer = context.Customers
+                .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");
 
@@ -158,7 +151,7 @@ namespace ASP.NET_store_project.Server.Controllers
             if (selectedItem.Single().Quantity == 0)
                 customer.Single().SelectedItems.Remove(selectedItem.Single());
 
-            _context.SaveChanges();
+            context.SaveChanges();
             return Ok();
         }
     }

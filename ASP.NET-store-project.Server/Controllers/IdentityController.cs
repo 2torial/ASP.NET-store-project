@@ -10,13 +10,9 @@ namespace ASP.NET_store_project.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class IdentityController(AppDbContext context, ILogger<StoreController> logger) : ControllerBase
+    public class IdentityController(AppDbContext context) : ControllerBase
     {
         private readonly string TokenSecret = "StoreItWithAzureKeyVaultOrSomethingSimilar";
-
-        private readonly AppDbContext _context = context;
-
-        private readonly ILogger _logger = logger;
 
         [HttpPost("/api/account/create")]
         public IActionResult CreateUser()
@@ -28,13 +24,15 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var alreadyExists = _context.Customers
+            var alreadyExists = context.Customers
                 .Where(customer => customer.UserName == username).Any();
             if (alreadyExists)
                 return BadRequest("User already exists.");
 
-            _context.Customers.Add(new Customer(userInfo.UserName, userInfo.PassWord));
-            _context.SaveChanges();
+            // Include data validation here
+
+            context.Customers.Add(new Customer(userInfo.UserName, userInfo.PassWord));
+            context.SaveChanges();
             return Ok("Account created succesfully");
         }
 
@@ -48,7 +46,7 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var customer = _context.Customers
+            var customer = context.Customers
                 .Where(customer => customer.UserName == userInfo.UserName);
             if (!customer.Any() || customer.Single().PassWord != userInfo.PassWord)
                 return BadRequest("Username or password is incorrect.");
