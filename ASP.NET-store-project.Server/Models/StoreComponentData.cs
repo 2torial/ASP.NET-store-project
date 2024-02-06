@@ -105,6 +105,7 @@ namespace ASP.NET_store_project.Server.Models
                 DisplayedItems = selectedItems
                     .Select(item => new StoreItems.Item
                     {
+                        Id = item.Id,
                         Name = item.Name,
                         Price = item.Price,
                         Gallery = item.Gallery
