@@ -16,9 +16,8 @@ function AccountForm({ newAccount }: AccountFormProps) {
 			method: "post",
 			body: data
 		});
-		const result: object = await response.json();
-		console.log(result);
-		navigate("/");
+		alert(await response.text());
+		if (response.ok) navigate("/");
 	};
 
 	const signUp = async (event: React.SyntheticEvent) => {
@@ -45,14 +44,8 @@ function AccountForm({ newAccount }: AccountFormProps) {
 			method: "post",
 			body: data
 		});
-		if (!response.ok) {
-			for (const err of await response.json())
-				alert(err);
-			return;
-		}
-		alert("Account created successfuly");
-		localStorage.setItem("token", await response.json());
-		navigate("/");
+		alert(await response.text());
+		if (response.ok) navigate("/");
 	};
 
 	const formProps = {

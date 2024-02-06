@@ -19,12 +19,23 @@ function Basket() {
     const navigate = useNavigate();
     const [items, setItems] = useState<BasketedItem[]>([]);
 
-    const addItem = (id: number) => () => {
-        fetch('/api/basket/add/item/' + id);
+    const reloadBasket = async () => {
+        const response = await fetch('/api/basket');
+        const data: BasketComponentData = await response.json();
+        console.log(data);
+        setItems(data.items);
     }
 
-    const removeItem = (id: number) => () => {
-        fetch('/api/basket/add/remove/' + id);
+    const addItem = (id: number) => async () => {
+        const response = await fetch(`/api/basket/add/${id}`);
+        alert(await response.text());
+        reloadBasket();
+    }
+
+    const removeItem = (id: number) => async () => {
+        const response = await fetch(`/api/basket/remove/${id}`);
+        alert(await response.text());
+        reloadBasket();
     }
 
     const summarize = async (event: React.SyntheticEvent) => {
@@ -33,22 +44,12 @@ function Basket() {
             method: "post",
             body: collectData(FormID.Summary),
         });
-        if (!response.ok) {
-            alert("Not all required data was inputed!");
-            return;
-        }
-        alert("Order accepted!");
-        navigate("/store");
+        alert(await response.text());
+        if (response.ok) navigate("/store");
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('/api/basket');
-            const data: BasketComponentData = await response.json();
-            console.log(data);
-            setItems(data.items);
-        }
-        fetchData();
+        reloadBasket();
     }, []);
 
     return <main className="basket">

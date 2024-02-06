@@ -10,44 +10,6 @@ namespace ASP.NET_store_project.Server.Controllers
     [Route("[controller]")]
     public class BasketController(AppDbContext context) : ControllerBase
     {
-        [HttpGet("/api/basket")]
-        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
-        public IActionResult Basket()
-        {
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
-            var customer = context.Customers
-                .Where(customer => customer.UserName == jwtToken.Subject);
-            if (!customer.Any())
-                return BadRequest("This customer does not exist!");
-
-            var basket = context.Customers
-                .Where(customer => customer.UserName == "user") // Temporarly without authentication
-                .SelectMany(customer => customer.SelectedItems)
-                .Where(item => item.OrderId == null);
-
-            var data = new BasketComponentData
-            {
-                Items = basket
-                    .Select(selectedItem => new BasketComponentData.BasketedItem
-                    {
-                        Id = selectedItem.Item.Id, // SelectedItem.Id =/= Item.Id
-
-                        Quantity = selectedItem.Quantity,
-
-                        Name = selectedItem.Item.Name,
-
-                        Price = selectedItem.Item.Price,
-
-                        Gallery = selectedItem.Item.Gallery
-                            .Select(image => image.Content)
-                            .ToList(),
-
-                        PageLink = selectedItem.Item.Page,
-                    }).ToList(),
-            };
-            return Ok(data);
-        }
-
         [HttpPost("/api/basket/summary")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult Summary()
@@ -98,7 +60,7 @@ namespace ASP.NET_store_project.Server.Controllers
             return Ok();
         }
 
-        [HttpPost("/api/basket/item/add/{itemId}")]
+        [HttpGet("/api/basket/add/{itemId}")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult AddItem([FromRoute] int itemId)
         {
@@ -113,24 +75,24 @@ namespace ASP.NET_store_project.Server.Controllers
 
             var selectedItem = customer
                 .SelectMany(customer => customer.SelectedItems)
-                .Where(item => item.Order == null && item.Id == itemId);
+                .Where(item => item.Order == null && item.ItemId == itemId);
 
             if (selectedItem.Any())
                 selectedItem.Single().Quantity += 1;
             else
             {
-                int selectedItemId = customer
+                int newlySelectedItemId = customer
                     .SelectMany(customer => customer.SelectedItems)
-                    .Max(item => item.Id);
+                    .Max(item => item.Id) + 1;
                 customer.Single().SelectedItems
-                    .Add(new SelectedItem(selectedItemId, itemId, customer.Single().UserName, 1));
+                    .Add(new SelectedItem(newlySelectedItemId, itemId, customer.Single().UserName, 1));
             }
 
             context.SaveChanges();
-            return Ok();
+            return Ok("Added item " + context.Items.Where(item => item.Id == itemId).Single().Name + " (user: " + customer.Single().UserName + ").");
         }
 
-        [HttpDelete("/api/basket/item/remove/{itemId}")]
+        [HttpGet("/api/basket/remove/{itemId}")]
         [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult RemoveItem([FromRoute] int itemId)
         {
@@ -145,14 +107,51 @@ namespace ASP.NET_store_project.Server.Controllers
 
             var selectedItem = customer
                 .SelectMany(customer => customer.SelectedItems)
-                .Where(item => item.Order == null && item.Id == itemId);
+                .Where(item => item.Order == null && item.ItemId == itemId);
 
             selectedItem.Single().Quantity -= 1;
             if (selectedItem.Single().Quantity == 0)
                 customer.Single().SelectedItems.Remove(selectedItem.Single());
 
             context.SaveChanges();
-            return Ok();
+            return Ok("Removed item " + context.Items.Where(item => item.Id == itemId).Single().Name + " (user: " + customer.Single().UserName + ").");
+        }
+
+        [HttpGet("/api/basket")]
+        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
+        public IActionResult Basket()
+        {
+            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var customer = context.Customers
+                .Where(customer => customer.UserName == jwtToken.Subject);
+            if (!customer.Any())
+                return BadRequest("This customer does not exist!");
+
+            var basket = customer
+                .SelectMany(customer => customer.SelectedItems)
+                .Where(item => item.OrderId == null);
+
+            var data = new BasketComponentData
+            {
+                Items = basket
+                    .Select(selectedItem => new BasketComponentData.BasketedItem
+                    {
+                        Id = selectedItem.Item.Id, // SelectedItem.Id =/= Item.Id
+
+                        Quantity = selectedItem.Quantity,
+
+                        Name = selectedItem.Item.Name,
+
+                        Price = selectedItem.Item.Price,
+
+                        Gallery = selectedItem.Item.Gallery
+                            .Select(image => image.Content)
+                            .ToList(),
+
+                        PageLink = selectedItem.Item.Page,
+                    }).ToList(),
+            };
+            return Ok(data);
         }
     }
 }

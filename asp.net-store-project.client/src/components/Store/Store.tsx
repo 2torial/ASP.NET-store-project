@@ -69,7 +69,6 @@ export function Store() {
 		if (location.pathname !== "/store") return;
 		const queryParams = new URLSearchParams(location.search);
 		if (!queryParams.has("search")) return;
-		console.log(queryParams.get("search"));
 		const data = collectData(FormID.Filters, FormID.Settings);
 		data.append("SearchBar", queryParams.get("search")!)
 		reloadStorePage(data);
@@ -80,6 +79,11 @@ export function Store() {
 			method: "post",
 			body: formData
 		});
+		if (!response.ok) {
+			alert("Error while fetching data");
+			console.log(await response.json());
+			return;
+		}
 		const data: StoreComponentData = await response.json();
 		setSettings(data.settings);
 		setFilters(data.filters);

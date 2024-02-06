@@ -16,12 +16,8 @@ type Configuration = {
 function Item({ id, name, price, gallery, specification, pageLink }: ItemProps) {
     const addItem = async (event: React.MouseEvent) => {
         event.preventDefault();
-        const data = new FormData();
-        const response = await fetch(`/api/basket/item/add/${id}`, {
-            method: "post",
-            body: data
-        });
-        
+        const response = await fetch(`/api/basket/add/${id}`);
+        alert(await response.text());
     }
     return <div className="item">
         <div className="image-section">
