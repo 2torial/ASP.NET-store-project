@@ -1,15 +1,12 @@
+import { default as SearchBar } from './SearchBar';
 import { useRef } from 'react';
 import './Nav.css';
 import { Link } from 'react-router-dom';
 
 export function Nav() {
-	const searchBarRef = useRef(null);
-	const focusSearchBar = () => (searchBarRef.current! as HTMLElement).classList.add("focused");
-	const unfocusSearchBar = () => (searchBarRef.current! as HTMLElement).classList.remove("focused");
-
 	const menuRef = useRef(null);
-	const openMenu = () => (menuRef.current! as HTMLElement).style.top = "60px";
-	const hideMenu = () => (menuRef.current! as HTMLElement).style.top = "7px";
+	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
+	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
 
     return <nav onMouseLeave={hideMenu}>
 		<div className="navigation">
@@ -18,17 +15,8 @@ export function Nav() {
 					<img src="https://placehold.co/120x50" alt="logo" />
 				</Link>
 			</div>
-			<div className="empty-space-section">
-				
-			</div>
-			<div className="search-bar-section">
-				<form autoComplete="off">
-					<search className="search-bar" ref={searchBarRef} onFocus={focusSearchBar} onBlur={unfocusSearchBar}>
-						<input className="input-area" type="text" name="SearchBar" placeholder="Search" />
-						<input className="search-button" type="image" src="https://placehold.co/40x40" id="search-link" alt="magnifier" />
-					</search>
-				</form>
-			</div>
+			<div className="empty-space-section"></div>
+			<SearchBar />
 			<div className="menu-section">
 				<Link to="/basket">
 					<img src="https://placehold.co/40x40" alt="basket" />

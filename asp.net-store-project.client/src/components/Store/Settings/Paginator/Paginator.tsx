@@ -31,7 +31,7 @@ function Paginator({selectedPage}: PaginatorProps) {
             <span className="page-changer">&#x25C2;</span>
             <input type="text" className="page-index idle" 
                 onClick={focusPageIndex} onBlur={unfocusPageIndex} 
-                name="PageIndex" value={selectedPage} 
+                name="PageIndex" defaultValue={selectedPage} 
                 data-current-page={selectedPage} readOnly />
             <span className="page-changer">&#x25B8;</span>
         </div>

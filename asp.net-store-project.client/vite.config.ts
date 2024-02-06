@@ -46,7 +46,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/api/reload': {
+            '/api': {
                 target: 'https://localhost:7278/',
                 secure: false
             }
