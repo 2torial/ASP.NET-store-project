@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Numerics;
 using System.Xml.Linq;
+using Microsoft.Extensions.Primitives;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
@@ -30,14 +31,36 @@ namespace ASP.NET_store_project.Server.Controllers
 
             if (!basket.Any()) return BadRequest("Basket is empty");
 
-            int orderId = _context.Orders.Count() + 1;
-            var order = _context.Orders
-                .Add(new Order(orderId, customer.Single().UserName));
-            foreach (var item in basket)
-            {
-                item.OrderId = orderId;
-            }
+            int orderId = _context.Orders.Max(order => order.OrderId) + 1;
+            var order = new Order(orderId, customer.Single().UserName);
 
+            if (!Request.Form.TryGetValue("Region", out var region))
+                return BadRequest("Region is missing!");
+            if (!Request.Form.TryGetValue("City", out var city))
+                return BadRequest("City is missing!");
+            if (!Request.Form.TryGetValue("PostalCode", out var postalCode))
+                return BadRequest("Postal code is missing!");
+            if (!Request.Form.TryGetValue("StreetName", out var streetName))
+                return BadRequest("Street name is missing!");
+            if (!Request.Form.TryGetValue("HouseNumber", out var houseNumber))
+                return BadRequest("House number is missing!");
+            if (!Request.Form.TryGetValue("ApartmentNumber", out var apartmentNumber))
+                return BadRequest("Apartment number is missing!");
+            if (!Request.Form.TryGetValue("Name", out var name))
+                return BadRequest("Name is missing!");
+            if (!Request.Form.TryGetValue("Surname", out var surname))
+                return BadRequest("Surname is missing!");
+            if (!Request.Form.TryGetValue("PhoneNumber", out var phoneNumber))
+                return BadRequest("Phone number is missing!");
+            if (!Request.Form.TryGetValue("Mail", out var email))
+                return BadRequest("E-mail is missing!");
+
+            order.AdressDetails = new AdressDetails(orderId, region!, city!, postalCode!, streetName!, houseNumber!, apartmentNumber!);
+            order.CustomerDetails = new CustomerDetails(orderId, name!, surname!, phoneNumber!, email!);
+
+            foreach (var item in basket) item.OrderId = orderId;
+
+            _context.Orders.Add(order);
             _context.SaveChanges();
             return Ok();
         }
