@@ -42,21 +42,24 @@ namespace ASP.NET_store_project.Server.Controllers
 
                 if (!await _roleManager.RoleExistsAsync(RoleType.User.ToString()))
                     await _roleManager.CreateAsync(new IdentityRole(RoleType.User.ToString()));
-
+                
+                Console.WriteLine("0");
                 var result = await _userManager.CreateAsync(user, inboundUser.PassWord);
-                await _userManager.AddToRoleAsync(user, RoleType.User.ToString());
-
                 if (!result.Succeeded)
                     return BadRequest(result.Errors.Select(e => e.Description));
 
-                var token = BuildToken(inboundUser, [RoleType.User]);
+                Console.WriteLine("0.5");
+                await _userManager.AddToRoleAsync(user, RoleType.User.ToString());
+                Console.WriteLine("2");
+                var token = await BuildToken(inboundUser, [RoleType.User]);
+                Console.WriteLine("11");
                 return token != null
                     ? Ok(token)
                     : BadRequest("Email or password invalid!");
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest("hm?");
             }
         }
 
@@ -82,33 +85,36 @@ namespace ASP.NET_store_project.Server.Controllers
         private async Task<string?> BuildToken(InboundUser userInfo, RoleType[] roleTypes)
         {
             var user = await _userManager.FindByNameAsync(userInfo.UserName);
+            Console.WriteLine("3");
             if (user == null) return null;
-
+            Console.WriteLine("4");
             List<Claim> claims = [
                 new Claim(JwtRegisteredClaimNames.Name, userInfo.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ];
-
+            Console.WriteLine("5");
             foreach (var role in roleTypes)
                 claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-
+            Console.WriteLine("6");
             foreach (var role in await _userManager.GetRolesAsync(user))
                 claims.Add(new Claim(ClaimTypes.Role, role));
-
+            Console.WriteLine("7");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]!));
-
+            Console.WriteLine("8");
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+            Console.WriteLine("9");
             var expiration = DateTime.UtcNow.AddHours(1);
-            var token = new JwtSecurityToken(
-               issuer: null,
-               audience: null,
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenHanlder = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = null,
+                Audience = null,
+                Subject = new ClaimsIdentity(claims),
+                Expires = expiration,
+                SigningCredentials = creds
+            };
+            Console.WriteLine("10");
+            return tokenHanlder.WriteToken(tokenHanlder.CreateToken(tokenDescriptor));
         }
     }
     public enum RoleType { User, Admin }

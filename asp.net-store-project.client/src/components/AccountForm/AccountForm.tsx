@@ -20,6 +20,7 @@ function AccountForm({ newAccount }: AccountFormProps) {
 		console.log(result);
 		navigate("/");
 	};
+
 	const signUp = async (event: React.SyntheticEvent) => {
 		event.preventDefault();
 		const data = collectData(FormID.SignUp);
@@ -29,17 +30,28 @@ function AccountForm({ newAccount }: AccountFormProps) {
 				return;
 			}
 		}
-		if (data.get("PassWord") !== data.get("PassWordRepeat")) {
+		const password = data.get("PassWord")!;
+		if (password instanceof File) {
+			console.log("how?");
+			return;
+		}
+		if (password !== data.get("PassWordRepeat")) {
 			alert("Passwords must match!");
 			return;
 		}
 		data.delete("PassWordRepeat");
+
 		const response = await fetch('/api/account/create', {
 			method: "post",
 			body: data
 		});
-		const result: object = await response.json();
-		console.log(result);
+		if (!response.ok) {
+			for (const err of await response.json())
+				alert(err);
+			return;
+		}
+		alert("Account created successfuly");
+		localStorage.setItem("token", await response.json());
 		navigate("/");
 	};
 
