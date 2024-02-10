@@ -2,6 +2,8 @@
 {
     public class IdentityData
     {
+        public const string AnonymousUserPolicyName = "Anonymous"; // default
+
         public const string AdminUserClaimName = "admin";
 
         public const string AdminUserPolicyName = "Admin";

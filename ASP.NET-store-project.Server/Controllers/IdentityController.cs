@@ -64,6 +64,26 @@ namespace ASP.NET_store_project.Server.Controllers
             return Ok("Successfuly logged in.");
         }
 
+        [HttpGet("/api/account/identity")]
+        public IActionResult Identity()
+        {
+            if (!Request.Cookies.TryGetValue("Token", out var token))
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            var username = new JwtSecurityToken(token).Subject;
+            if (username == null) 
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            var user = context.Customers
+                .Where(customer => customer.UserName == username);
+            if (!user.Any())
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            return Ok(user.Single().IsAdmin 
+                ? IdentityData.AdminUserPolicyName
+                : IdentityData.RegularUserPolicyName);
+        }
+
         private string GenerateToken(string userName, List<CustomClaim> customClaims)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
