@@ -4,7 +4,8 @@ Next commits are going to be divided into multiple branches. \
 There may be found some unused pieces of code or templates. \
 \
 This project's purpose is solely to represent my ability to code and to use version control system Git. \
-It does not aspire to become a fully fledged site but rather to rise a question "How can this project yet to be improved?"
+It does not aspire to become a fully fledged site but rather to rise a question: \
+&emsp;*How can this project yet to be improved?*
 
 ## Milestones
 :white_check_mark: Working searchbar \
