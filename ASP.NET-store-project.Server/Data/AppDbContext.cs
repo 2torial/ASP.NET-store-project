@@ -1,27 +1,13 @@
-﻿using ASP.NET_store_project.Server.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        protected readonly IConfiguration _configuration;
-
-        public AppDbContext(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("StoreDatabase"));
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Customer>()
                 .Property(b => b.IsAdmin)
                 .HasDefaultValue(false);
@@ -183,7 +169,11 @@ namespace ASP.NET_store_project.Server.Data
                 new SelectedItem(2, 8, "user", 1, 1),
                 new SelectedItem(3, 12, "user", 1, 1),
                 new SelectedItem(4, 4, "root", 10, 2),
-                new SelectedItem(5, 1, "root", 1, 2));
+                new SelectedItem(5, 1, "root", 1, 2),
+                new SelectedItem(6, 2, "user", 1),
+                new SelectedItem(7, 9, "user", 2),
+                new SelectedItem(8, 3, "root", 4),
+                new SelectedItem(9, 9, "root", 3));
 
             modelBuilder.Entity<SortingMethod>().HasData(
                 new SortingMethod("Price: Lowest to Highest", "Price", true),

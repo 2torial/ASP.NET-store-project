@@ -1,6 +1,7 @@
 import './Item.css';
 
 interface ItemProps {
+    id: number,
 	name: string;
 	price: number;
 	gallery: string[];
@@ -12,7 +13,12 @@ type Configuration = {
 	parameter: string;
 }
 
-function Item({name, price, gallery, specification, pageLink}: ItemProps) {
+function Item({ id, name, price, gallery, specification, pageLink }: ItemProps) {
+    const addItem = async (event: React.MouseEvent) => {
+        event.preventDefault();
+        const response = await fetch(`/api/basket/add/${id}`);
+        alert(await response.text());
+    }
     return <div className="item">
         <div className="image-section">
             <img src={gallery.length > 0 ? gallery[0] : ""} alt="" />
@@ -26,7 +32,7 @@ function Item({name, price, gallery, specification, pageLink}: ItemProps) {
         <div className="store-section">
             <h3 className="store-price">${price}</h3>
             <div className="store-options">
-                <input type="image" src="https://placehold.co/20x20" />
+                <input onClick={addItem} type="image" src="https://placehold.co/20x20" />
             </div>
         </div>
     </div>;

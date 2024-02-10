@@ -3,11 +3,8 @@ import './Store.css';
 import Filters from './Filters';
 import Settings from './Settings';
 import ItemList from './ItemList';
-
-enum FormID {
-	Filters = "filters",
-	Settings = "settings",
-}
+import { useLocation } from 'react-router-dom';
+import { FormID, collectData } from '../../shared/FormDataCollection';
 
 interface StoreComponentData {
 	settings: StoreSettings;
@@ -46,6 +43,7 @@ interface StoreItems {
 	displayedItems: Item[];
 }
 type Item = {
+	id: number,
 	name: string;
 	price: number;
 	gallery: string[];
@@ -58,29 +56,34 @@ type Configuration = {
 }
 
 export function Store() {
+	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
 	const [items, setItems] = useState<StoreItems>();
 
-	const collectData = (...ids: string[]) : FormData => {
-		let data = undefined;
-		for (const id of ids) {
-			const form: HTMLFormElement | null = document.querySelector(`form#${id}`);
-			if (form !== null) {
-				if (data === undefined) data = new FormData(form);
-				else for (const [name, value] of new FormData(form).entries()) {
-					data.append(name, value);
-				}
-			}
-		}
-		return data !== undefined ? data : new FormData();
-	};
+	useEffect(() => {
+		reloadStorePage(new FormData());
+	}, []);
+
+	useEffect(() => {
+		if (location.pathname !== "/store") return;
+		const queryParams = new URLSearchParams(location.search);
+		if (!queryParams.has("search")) return;
+		const data = collectData(FormID.Filters, FormID.Settings);
+		data.append("SearchBar", queryParams.get("search")!)
+		reloadStorePage(data);
+	}, [location])
 	
 	const reloadStorePage = (async (formData: FormData) => {
 		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
 		});
+		if (!response.ok) {
+			alert("Error while fetching data");
+			console.log(await response.json());
+			return;
+		}
 		const data: StoreComponentData = await response.json();
 		setSettings(data.settings);
 		setFilters(data.filters);
@@ -94,10 +97,6 @@ export function Store() {
 	const updateSettings = (async () => {
 		reloadStorePage(collectData(FormID.Settings));
 	});
-
-	useEffect(() => {
-		reloadStorePage(new FormData());
-	}, []);
 
 	if (settings === undefined || filters === undefined || items === undefined)
 		return <main><p>Store component is loading</p></main>;

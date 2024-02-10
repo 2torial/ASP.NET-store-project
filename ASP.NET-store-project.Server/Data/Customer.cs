@@ -11,7 +11,7 @@ namespace ASP.NET_store_project.Server.Data
 
         public bool IsAdmin { get; set; } = isAdmin;
 
-        public List<SelectedItem> Basket { get; } = [];
+        public List<SelectedItem> SelectedItems { get; } = [];
 
         public List<Order> Orders { get; } = [];
 
