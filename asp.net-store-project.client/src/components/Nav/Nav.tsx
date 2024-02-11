@@ -1,6 +1,6 @@
 import { default as SearchBar } from './SearchBar';
 import './Nav.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 
 interface NavProps {
@@ -10,6 +10,7 @@ interface NavProps {
 type Identity = "Anonymous" | "User" | "Admin";
 
 export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
+	const navigate = useNavigate();
 	const menuRef = useRef(null);
 	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
 	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
@@ -19,6 +20,7 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 		const response = await fetch('/api/account/logout');
 		alert(await response.text());
 		updateUserIdentity();
+		navigate("/");
 	}
 
     return <nav onMouseLeave={hideMenu}>
