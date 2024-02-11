@@ -25,7 +25,7 @@ namespace ASP.NET_store_project.Server.Controllers
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
             var alreadyExists = context.Customers
-                .Where(customer => customer.UserName == username).Any();
+                .Where(customer => customer.UserName == userInfo.UserName).Any();
             if (alreadyExists)
                 return BadRequest("User already exists.");
 
@@ -37,7 +37,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpPost("/api/account/login")]
-        public IActionResult Login()
+        public IActionResult LogIn()
         {
             var userInfo =
                 Request.Form.TryGetValue("UserName", out var username)
@@ -64,6 +64,18 @@ namespace ASP.NET_store_project.Server.Controllers
             return Ok("Successfuly logged in.");
         }
 
+        [HttpGet("/api/account/logout")]
+        public IActionResult LogOut()
+        {
+            var token = GenerateToken("Anonymous", []);
+            Response.Cookies.Append("Token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict
+            });
+            return Ok("Successfuly logged out.");
+        }
+
         [HttpGet("/api/account/identity")]
         public IActionResult Identity()
         {
@@ -78,6 +90,8 @@ namespace ASP.NET_store_project.Server.Controllers
                 .Where(customer => customer.UserName == username);
             if (!user.Any())
                 return Ok(IdentityData.AnonymousUserPolicyName);
+
+            Console.WriteLine(username);
 
             return Ok(user.Single().IsAdmin 
                 ? IdentityData.AdminUserPolicyName
