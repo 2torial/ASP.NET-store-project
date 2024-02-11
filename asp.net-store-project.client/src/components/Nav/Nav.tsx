@@ -37,34 +37,38 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 				<img onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
 			</div>
 		</div>
-		<div className="menu" ref={menuRef}>
-			<div className="empty-space"></div>
-			{userIdentity == "Anonymous"
+		<div className="menu" ref={menuRef}> {userIdentity === "Anonymous"
 			? <>
-				<div className="option-section">
+				{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+				<div className="option-section" key="7">
 					<Link to="/sign-in">Sign in</Link>
 				</div>
-				<div className="option-section">
+				<div className="option-section" key="8">
 					<Link to="/sign-up">Sign up</Link>
 				</div>
 			</>
-			: <>
-				{userIdentity == "Admin"
+			: <> {userIdentity === "Admin"
 				? <>
-					<div className="option-section">
-						<Link to="/adminpanel/users">Users</Link>
+					{[...Array(4).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					<div className="option-section" key="5">
+						<Link to="/admin/users">Users</Link>
 					</div>
-					<div className="option-section">
-						<Link to="/adminpanel/orders">Orders</Link>
+					<div className="option-section" key="6">
+						<Link to="/admin/orders">Orders</Link>
 					</div>
-					<div className="option-section">
-						<Link to="/adminpanel/store-items">Store items</Link>
+					<div className="option-section" key="7">
+						<Link to="/admin/items">Store items</Link>
+					</div>
+					<div className="option-section" key="8">
+						<a onClick={signOut}>Sign out</a>
 					</div>
 				</>
-				: <></>}
-				<div className="option-section">
-					<a onClick={signOut}>Sign out</a>
-				</div>
+				: <>
+					{[...Array(7).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					<div className="option-section" key="7">
+						<a onClick={signOut}>Sign out</a>
+					</div>
+				</>}
 			</>}
 		</div>
 	</nav>;

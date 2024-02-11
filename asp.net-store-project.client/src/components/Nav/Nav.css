@@ -42,7 +42,7 @@ nav {
     z-index: 0;
     display: grid;
     grid-auto-flow: row;
-    grid-template-columns: 17fr 3fr 3fr;
+    grid-template-columns: repeat(8, 3fr);
     width: 100%;
     box-sizing: border-box;
     transition: top 0.4s ease-out;
@@ -54,7 +54,7 @@ nav {
     content: '';
     position: relative;
     top: 0;
-    grid-column-start: span 3;
+    grid-column-start: span 8;
     height: 7px;
     width: 100%;
     border-radius: 0 0 40% 40% / 0 0 100% 100%;
