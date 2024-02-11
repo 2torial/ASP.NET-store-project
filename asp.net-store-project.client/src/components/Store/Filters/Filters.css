@@ -36,7 +36,7 @@
     align-items: center;
     height: 30px;
     box-sizing: border-box;
-    margin-bottom: 5px;
+    margin: 0 0 5px;
 }
 
 .filters .title-section input {

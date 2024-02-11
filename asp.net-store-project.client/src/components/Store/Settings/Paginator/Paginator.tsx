@@ -3,10 +3,10 @@ import './Paginator.css'
 interface PaginatorProps {
     pages: number;
     selectedPage: number;
+    updateSettings(): void;
 }
 
 function Paginator({selectedPage}: PaginatorProps) {
-    /* Do poprawy - input nie rejestruje zmian */
     const focusPageIndex = (event: React.MouseEvent) => {
         const pageIndex = (event.target as HTMLInputElement);
         pageIndex.classList.remove("idle");
