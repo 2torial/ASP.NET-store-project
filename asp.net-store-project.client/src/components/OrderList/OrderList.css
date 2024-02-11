@@ -1,0 +1,13 @@
+.orders {
+    font-size: 12px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+table, td, tr, th {
+    border: 1px solid black !important;
+}
+
+td, th {
+    padding: 2px 5px !important;
+}

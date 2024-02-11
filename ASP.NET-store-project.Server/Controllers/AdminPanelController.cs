@@ -24,5 +24,38 @@ namespace ASP.NET_store_project.Server.Controllers
                     }).ToList()
             });
         }
+
+        [HttpGet("/api/admin/orders")]
+        public IActionResult GetOrders()
+        {
+            return Ok(new OrderListComponentData()
+            {
+                Orders = context.Orders
+                    .Select(order => new OrderListComponentData.OrderData
+                    {
+                        OrderId = order.OrderId,
+                        CustomerDetails = new OrderListComponentData.OrderData.UserData
+                        {
+                            CustomerId = order.CustomerId,
+                            Name = order.CustomerDetails.Name,
+                            Surname = order.CustomerDetails.Surname,
+                            PhoneNumber = order.CustomerDetails.PhoneNumber,
+                            Email = order.CustomerDetails.Email,
+                        },
+                        AdressDetails = new OrderListComponentData.OrderData.AdressData
+                        {
+                            Region = order.AdressDetails.Region,
+                            City = order.AdressDetails.City,
+                            PostalCode = order.AdressDetails.PostalCode,
+                            StreetName = order.AdressDetails.StreetName,
+                            HouseNumber = order.AdressDetails.HouseNumber,
+                            ApartmentNumber = order.AdressDetails.ApartmentNumber,
+                        },
+                        CurrentStatus = order.StatusChangeHistory
+                            .OrderBy(status => status.DateOfChange)
+                            .Last().StatusCode
+                    }).ToList(),
+            });
+        }
     }
 }
