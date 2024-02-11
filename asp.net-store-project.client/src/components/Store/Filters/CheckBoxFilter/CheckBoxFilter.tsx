@@ -13,8 +13,8 @@ function CheckBoxFilter({ label, options }: CheckBoxFilterProps) {
     return <div className="filter-section drop-down-section">
         <label className="drop-down-label" onClick={toggleSection}>{label}</label>
         <div className="checkbox-list drop-down-content">
-            {options.map(option => (
-                <span className="checkbox-option">
+            {options.map((option, i) => (
+                <span className="checkbox-option" key={i}>
                     <input type="checkbox" id={option} name={label} value={option} />
                     <label htmlFor={option}>{option}</label>
                 </span>

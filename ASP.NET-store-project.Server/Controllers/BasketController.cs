@@ -15,7 +15,7 @@ namespace ASP.NET_store_project.Server.Controllers
         public IActionResult Summary()
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");
@@ -68,7 +68,7 @@ namespace ASP.NET_store_project.Server.Controllers
                 return BadRequest("This item does not exist!");
 
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");
@@ -100,7 +100,7 @@ namespace ASP.NET_store_project.Server.Controllers
                 return BadRequest("This item does not exist!");
 
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");
@@ -122,7 +122,7 @@ namespace ASP.NET_store_project.Server.Controllers
         public IActionResult Basket()
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == jwtToken.Subject);
             if (!customer.Any())
                 return BadRequest("This customer does not exist!");

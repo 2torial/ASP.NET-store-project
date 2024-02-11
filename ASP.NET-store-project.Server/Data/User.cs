@@ -2,7 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data
 {
-    public class Customer(string userName, string passWord, bool isAdmin = false)
+    public class User(string userName, string passWord, bool isAdmin = false)
     {
         [Key]
         public string UserName { get; set; } = userName;

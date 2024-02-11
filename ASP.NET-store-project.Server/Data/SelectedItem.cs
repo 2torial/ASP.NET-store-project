@@ -10,7 +10,7 @@
 
         public string CustomerId { get; set; } = customerId;
 
-        public Customer Customer { get; set; } = null!;
+        public User Customer { get; set; } = null!;
 
         public int Quantity { get; set; } = quantity;
 

@@ -24,20 +24,20 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var alreadyExists = context.Customers
-                .Where(customer => customer.UserName == username).Any();
+            var alreadyExists = context.Users
+                .Where(customer => customer.UserName == userInfo.UserName).Any();
             if (alreadyExists)
                 return BadRequest("User already exists.");
 
             // Include data validation here
 
-            context.Customers.Add(new Customer(userInfo.UserName, userInfo.PassWord));
+            context.Users.Add(new User(userInfo.UserName, userInfo.PassWord));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }
 
         [HttpPost("/api/account/login")]
-        public IActionResult Login()
+        public IActionResult LogIn()
         {
             var userInfo =
                 Request.Form.TryGetValue("UserName", out var username)
@@ -46,7 +46,7 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == userInfo.UserName);
             if (!customer.Any() || customer.Single().PassWord != userInfo.PassWord)
                 return BadRequest("Username or password is incorrect.");
@@ -62,6 +62,40 @@ namespace ASP.NET_store_project.Server.Controllers
                 SameSite = SameSiteMode.Strict
             });
             return Ok("Successfuly logged in.");
+        }
+
+        [HttpGet("/api/account/logout")]
+        public IActionResult LogOut()
+        {
+            var token = GenerateToken("Anonymous", []);
+            Response.Cookies.Append("Token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict
+            });
+            return Ok("Successfuly logged out.");
+        }
+
+        [HttpGet("/api/account/identity")]
+        public IActionResult Identity()
+        {
+            if (!Request.Cookies.TryGetValue("Token", out var token))
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            var username = new JwtSecurityToken(token).Subject;
+            if (username == null) 
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            var user = context.Users
+                .Where(customer => customer.UserName == username);
+            if (!user.Any())
+                return Ok(IdentityData.AnonymousUserPolicyName);
+
+            Console.WriteLine(username);
+
+            return Ok(user.Single().IsAdmin 
+                ? IdentityData.AdminUserPolicyName
+                : IdentityData.RegularUserPolicyName);
         }
 
         private string GenerateToken(string userName, List<CustomClaim> customClaims)

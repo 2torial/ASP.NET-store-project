@@ -9,7 +9,7 @@ namespace ASP.NET_store_project.Server.Data
 
         public string CustomerId { get; set; } = customerId;
 
-        public Customer Customer { get; set; } = null!;
+        public User Customer { get; set; } = null!;
 
         public CustomerDetails CustomerDetails { get; set; } = null!;
 

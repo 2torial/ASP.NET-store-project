@@ -3,10 +3,11 @@ import { FormID, collectData } from '../../shared/FormDataCollection';
 import './AccountForm.css';
 
 interface AccountFormProps {
+	updateUserIdentity(): void,
 	newAccount: boolean;
 }
 
-function AccountForm({ newAccount }: AccountFormProps) {
+function AccountForm({ updateUserIdentity, newAccount }: AccountFormProps) {
 	const navigate = useNavigate();
 
 	const signIn = async (event: React.SyntheticEvent) => {
@@ -16,8 +17,11 @@ function AccountForm({ newAccount }: AccountFormProps) {
 			method: "post",
 			body: data
 		});
+		if (response.ok) {
+			updateUserIdentity();
+			navigate("/");
+		}
 		alert(await response.text());
-		if (response.ok) navigate("/");
 	};
 
 	const signUp = async (event: React.SyntheticEvent) => {
@@ -44,8 +48,11 @@ function AccountForm({ newAccount }: AccountFormProps) {
 			method: "post",
 			body: data
 		});
+		if (response.ok) {
+			updateUserIdentity();
+			navigate("/");
+		}
 		alert(await response.text());
-		if (response.ok) navigate("/");
 	};
 
 	const formProps = {
