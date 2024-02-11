@@ -16,45 +16,41 @@ type Category = {
 	label: string;
 }
 
-function Settings({
-    categories, 
-    selectedCategory, 
-    pages,
-    selectedPage,
-    sortingMethods, 
-    selectedSortingMethod,
-    updateSettings,
-} : SettingsProps) {
+function Settings({ categories, selectedCategory, pages, selectedPage, sortingMethods, selectedSortingMethod, updateSettings } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
         name: "Category",
-        options: categories.map(category => category.label),
+        options: categories.map(category => ({ label: category.label, value: category.type })),
         icons: undefined,
-        selectedOption: selectedCategory.label
+        selectedOption: { label: selectedCategory.label, value: selectedCategory.type },
+        updateSettings: updateSettings,
     }
 
     const sortSelect = {
         label: "Sort by",
         id: "sortby",
         name: "SortBy",
-        options: sortingMethods,
+        options: sortingMethods.map(method => ({ label: method, value: method })),
         icons: undefined,
-        selectedOption: selectedSortingMethod
+        selectedOption: { label: selectedSortingMethod, value: selectedSortingMethod },
+        updateSettings: updateSettings,
     }
 
     const pageSelect = {
         pages: pages,
-        selectedPage: selectedPage
+        selectedPage: selectedPage,
+        updateSettings: updateSettings,
     }
 
     const viewSelect = {
         label: undefined,
         id: "view",
         name: "View",
-        options: ["Gallery", "List"],
-        icons: {1: "https://placehold.co/20x20", 2: "https://placehold.co/20x20"},
-        selectedOption: "Gallery"
+        options: ["Gallery", "List"].map(view => ({ label: view, value: view })),
+        icons: { "Gallery": "https://placehold.co/20x20", "List": "https://placehold.co/20x20" },
+        selectedOption: { label: "Gallery", value: "Gallery" },
+        updateSettings: updateSettings,
     }
 
     return <form className="settings" id="settings">
