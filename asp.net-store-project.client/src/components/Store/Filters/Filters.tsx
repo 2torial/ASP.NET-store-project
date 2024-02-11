@@ -32,7 +32,7 @@ function Filters({ priceRange, configurations, updateFilters, resetFilters }: Fi
             <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
-        {configurations.map(config => <CheckBoxFilter label={config.label} options={config.parameters} />)}
+        {configurations.map(config => <CheckBoxFilter label={config.label} options={config.parameters} key={config.label} />)}
         <div className="apply-section">
             <input type="submit" onClick={handleSubmit(updateFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
             <input type="submit" onClick={handleSubmit(resetFilters)}  className="default-button" id="reset-filters" value="Return default" />

@@ -40,32 +40,32 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 		<div className="menu" ref={menuRef}> {userIdentity === "Anonymous"
 			? <>
 				{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
-				<div className="option-section" key="7">
+				<div className="option-section">
 					<Link to="/sign-in">Sign in</Link>
 				</div>
-				<div className="option-section" key="8">
+				<div className="option-section">
 					<Link to="/sign-up">Sign up</Link>
 				</div>
 			</>
 			: <> {userIdentity === "Admin"
 				? <>
 					{[...Array(4).keys()].map((i) => <div className="empty-space" key={i}></div>)}
-					<div className="option-section" key="5">
+					<div className="option-section">
 						<Link to="/admin/users">Users</Link>
 					</div>
-					<div className="option-section" key="6">
+					<div className="option-section">
 						<Link to="/admin/orders">Orders</Link>
 					</div>
-					<div className="option-section" key="7">
+					<div className="option-section">
 						<Link to="/admin/items">Store items</Link>
 					</div>
-					<div className="option-section" key="8">
+					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>
 				</>
 				: <>
 					{[...Array(7).keys()].map((i) => <div className="empty-space" key={i}></div>)}
-					<div className="option-section" key="7">
+					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>
 				</>}

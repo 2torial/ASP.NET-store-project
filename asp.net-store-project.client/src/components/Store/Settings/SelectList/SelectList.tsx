@@ -34,7 +34,7 @@ function SelectList({label, id, name, options, icons, selectedOption}: SelectLis
         <div ref={selectListRef} className={"select-list" + (icons === undefined ? "" : " iconed-list")}>
             <input ref={topOptionRef} type="text" className="option" onClick={toggleSelectList} name={name} id={id} value={selectedOption} readOnly />
             {options.map((option, idx) => {
-                return <span className="option" onClick={selectOption} data-value={option} style={{top: `${30*(idx+1)}px`}}>
+                return <span className="option" onClick={selectOption} data-value={option} style={{ top: `${30 * (idx + 1)}px` }} key={idx}>
                     <p>{option}</p>
                     {icons !== undefined 
                     ? <img src={icons[option]} alt="list icon" />

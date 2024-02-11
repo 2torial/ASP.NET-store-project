@@ -18,9 +18,9 @@ type Configuration = {
 	parameter: string;
 }
 
-function ItemList({numberOfItems, displayedItems}: ItemListProps) {  
+function ItemList({ displayedItems }: ItemListProps) {  
     return <section className="item-list">
-        {displayedItems.map(item => <Item {...item} />)}
+		{displayedItems.map(item => <Item {...item} key={item.id} />)}
     </section>;
 }
 
