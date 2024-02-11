@@ -24,14 +24,14 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var alreadyExists = context.Customers
+            var alreadyExists = context.Users
                 .Where(customer => customer.UserName == userInfo.UserName).Any();
             if (alreadyExists)
                 return BadRequest("User already exists.");
 
             // Include data validation here
 
-            context.Customers.Add(new Customer(userInfo.UserName, userInfo.PassWord));
+            context.Users.Add(new User(userInfo.UserName, userInfo.PassWord));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }
@@ -46,7 +46,7 @@ namespace ASP.NET_store_project.Server.Controllers
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
-            var customer = context.Customers
+            var customer = context.Users
                 .Where(customer => customer.UserName == userInfo.UserName);
             if (!customer.Any() || customer.Single().PassWord != userInfo.PassWord)
                 return BadRequest("Username or password is incorrect.");
@@ -86,7 +86,7 @@ namespace ASP.NET_store_project.Server.Controllers
             if (username == null) 
                 return Ok(IdentityData.AnonymousUserPolicyName);
 
-            var user = context.Customers
+            var user = context.Users
                 .Where(customer => customer.UserName == username);
             if (!user.Any())
                 return Ok(IdentityData.AnonymousUserPolicyName);

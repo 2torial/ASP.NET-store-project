@@ -30,13 +30,14 @@ function App() {
 	return <>
 		<Nav updateUserIdentity={updateUserIdentity} userIdentity={userIdentity} />
 		{useRoutes([
-			//...["/", "/store"].map(path => ({ path, element: <Store /> })),
 			{ path: "/", element: <Store /> },
 			{ path: "/store", element: <Store /> },
 			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={true} /> },
-			//{ path: "/", element: <NoPage /> },
+			//{ path: "/admin/orders", element: <Orders /> },
+			//{ path: "/admin/users", element: <Users /> },
+			//{ path: "/admin/items", element: <Items /> },
 		])}
 		<Footer />
 	</>;
