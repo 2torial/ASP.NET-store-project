@@ -191,5 +191,9 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<Order> Orders { get; set; }
 
         public DbSet<SortingMethod> SortingMethods { get; set; }
+
+        public DbSet<AdressDetails> AdressDetails { get; set; }
+
+        public DbSet<CustomerDetails> CustomerDetails { get; set; }
     }
 }
