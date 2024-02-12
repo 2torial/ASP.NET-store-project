@@ -1,6 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data
 {
-    public class Item(int id, string categoryId, string name, int price, string? page = null)
+    public class Item(int id, string categoryId, string name, int price, string? page = null, bool isDeleted = false)
     {
         public int Id { get; set; } = id;
 
@@ -17,6 +17,8 @@
         public List<Image> Gallery { get; } = [];
 
         public string? Page { get; set; } = page;
+
+        public bool IsDeleted { get; set; } = isDeleted;
 
     }
 }

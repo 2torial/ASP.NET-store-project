@@ -41,6 +41,9 @@ namespace ASP.NET_store_project.Server.Models
                 ? context.Items
                 : context.Items.Where(item => item.Category.Type == Settings.SelectedCategory.Type);
 
+            // Not showing items tagged as deleted
+            selectedItems = selectedItems.Where(item => !item.IsDeleted);
+
             // Price range min and max values evaluation
             int minPrice = selectedItems.Any()
                 ? selectedItems.Min(item => item.Price)
@@ -88,6 +91,17 @@ namespace ASP.NET_store_project.Server.Models
             // Price range filtering
             selectedItems = selectedItems
                 .Where(item => Filters.PriceRange.From <= item.Price && item.Price <= Filters.PriceRange.To);
+
+            // Specification filtering
+            var selectedConfigs = selectedItems
+                .SelectMany(item => item.Configurations)
+                .Where(config => formData.Keys.Contains(config.Label));
+            foreach (var config in selectedConfigs)
+                if (formData.TryGetValue(config.Label, out var parameters))
+                    selectedItems = selectedItems
+                        .Where(item => item.Configurations
+                            .Any(config => parameters.ToString()
+                                .IndexOf(config.Parameter) >= 0));
 
             // Sorting
             selectedItems = sortingMethod.SortBy == "Name"

@@ -81,11 +81,10 @@ namespace ASP.NET_store_project.Server.Controllers
                 selectedItem.Single().Quantity += 1;
             else
             {
-                int newlySelectedItemId = customer
-                    .SelectMany(customer => customer.SelectedItems)
+                int newlySelectedItemId = context.SelectedItems
                     .Max(item => item.Id) + 1;
-                customer.Single().SelectedItems
-                    .Add(new SelectedItem(newlySelectedItemId, itemId, customer.Single().UserName, 1));
+                context.SelectedItems.Add(
+                    new SelectedItem(newlySelectedItemId, itemId, customer.Single().UserName, 1));
             }
 
             context.SaveChanges();
@@ -111,7 +110,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
             selectedItem.Single().Quantity -= 1;
             if (selectedItem.Single().Quantity == 0)
-                customer.Single().SelectedItems.Remove(selectedItem.Single());
+                context.SelectedItems.Remove(selectedItem.Single());
 
             context.SaveChanges();
             return Ok("Removed item " + context.Items.Where(item => item.Id == itemId).Single().Name + " (user: " + customer.Single().UserName + ").");

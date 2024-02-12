@@ -37,6 +37,9 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<SortingMethod>()
                 .ToTable("SortingMethod");
 
+            modelBuilder.Entity<SelectedItem>()
+                .ToTable("SelectedItem");
+
             modelBuilder.Entity<Item>()
                 .HasMany(e => e.Configurations)
                 .WithMany(e => e.Items)
@@ -191,5 +194,7 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<Order> Orders { get; set; }
 
         public DbSet<SortingMethod> SortingMethods { get; set; }
+
+        public DbSet<SelectedItem> SelectedItems { get; set; }
     }
 }

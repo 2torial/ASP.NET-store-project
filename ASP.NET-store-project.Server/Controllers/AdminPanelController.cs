@@ -24,5 +24,31 @@ namespace ASP.NET_store_project.Server.Controllers
                     }).ToList()
             });
         }
+
+        [HttpGet("/api/admin/items")]
+        public IActionResult GetItems()
+        {
+            return Ok(new ItemListComponentData()
+            {
+                Items = context.Items
+                    .Select(item => new StoreItems.Item
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = item.Price,
+                        Gallery = item.Gallery
+                            .Select(image => image.Content)
+                            .ToList(),
+                        Specification = item.Configurations
+                            .Select(config => new StoreItems.Item.Configuration
+                            {
+                                Label = config.Label,
+                                Parameter = config.Parameter,
+                            })
+                            .ToList(),
+                        PageLink = item.Page,
+                    }).ToList(),
+            });
+        }
     }
 }
