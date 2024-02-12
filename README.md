@@ -12,10 +12,10 @@ It does not aspire to become a fully fledged site but rather to rise a question:
 :white_check_mark: User registration and authorization \
 :white_check_mark: Item ordering and basket functionalities \
 :white_check_mark: Expanded database \
-:hourglass: Order summarization \
+:white_check_mark: Order summarization \
 :hourglass: Adding/editing/removing items (admin panel) \
-:hourglass: User list (admin panel) \
-:hourglass: Order review (admin panel) \
+:white_check_mark: User list (admin panel) \
+:white_check_mark: Order review (admin panel) \
 \
 Some time is going to be devoted to improving already implemented features.
 
