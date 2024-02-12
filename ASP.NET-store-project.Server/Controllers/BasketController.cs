@@ -8,10 +8,10 @@ namespace ASP.NET_store_project.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Policy = IdentityData.RegularUserPolicyName)]
     public class BasketController(AppDbContext context) : ControllerBase
     {
         [HttpPost("/api/basket/summary")]
-        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult Summary()
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
@@ -24,11 +24,9 @@ namespace ASP.NET_store_project.Server.Controllers
                 .SelectMany(customer => customer.SelectedItems)
                 .Where(item => item.Order == null);
 
-            if (!basket.Any()) return BadRequest("Basket is empty");
+            if (!basket.Any()) return BadRequest("Basket is empty.");
 
             int orderId = context.Orders.Max(order => order.OrderId) + 1;
-            var order = new Order(orderId, customer.Single().UserName);
-
             if (!Request.Form.TryGetValue("Region", out var region))
                 return BadRequest("Region is missing!");
             if (!Request.Form.TryGetValue("City", out var city))
@@ -50,18 +48,16 @@ namespace ASP.NET_store_project.Server.Controllers
             if (!Request.Form.TryGetValue("Mail", out var email))
                 return BadRequest("E-mail is missing!");
 
-            order.AdressDetails = new AdressDetails(orderId, region!, city!, postalCode!, streetName!, houseNumber!, apartmentNumber!);
-            order.CustomerDetails = new CustomerDetails(orderId, name!, surname!, phoneNumber!, email!);
-
             foreach (var item in basket) item.OrderId = orderId;
-
-            context.Orders.Add(order);
+            context.CustomerDetails.Add(new CustomerDetails(orderId, name!, surname!, phoneNumber!, email!));
+            context.AdressDetails.Add(new AdressDetails(orderId, region!, city!, postalCode!, streetName!, houseNumber!, apartmentNumber!));
+            context.Orders.Add(new Order(orderId, customer.Single().UserName));
             context.SaveChanges();
-            return Ok();
+
+            return Ok("Order summarized successfuly.");
         }
 
         [HttpGet("/api/basket/add/{itemId}")]
-        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult AddItem([FromRoute] int itemId)
         {
             if (!context.Items.Where(item => item.Id == itemId).Any())
@@ -93,7 +89,6 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/basket/remove/{itemId}")]
-        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult RemoveItem([FromRoute] int itemId)
         {
             if (!context.Items.Where(item => item.Id == itemId).Any())
@@ -118,7 +113,6 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/basket")]
-        [Authorize(Policy = IdentityData.RegularUserPolicyName)]
         public IActionResult Basket()
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);

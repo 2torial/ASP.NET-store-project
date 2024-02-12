@@ -40,7 +40,7 @@ function Basket() {
 
     const summarize = async (event: React.SyntheticEvent) => {
         event.preventDefault();
-        const response = await fetch('/api/basket', {
+        const response = await fetch('/api/basket/summary', {
             method: "post",
             body: collectData(FormID.Summary),
         });
@@ -51,6 +51,8 @@ function Basket() {
     useEffect(() => {
         reloadBasket();
     }, []);
+
+    if (items.length == 0) return <main>Your basket is empty.</main>
 
     return <main className="basket">
         {items.map(item => <div className="basketed-item">
@@ -67,10 +69,10 @@ function Basket() {
             Street name <input type="text" name="StreetName" />
             House number* <input type="text" name="HouseNumber" />
             Apartment number* <input type="text" name="ApartmentNumber" />
-            Name <input type="text" name="HouseNumber" />
-            Surname* <input type="text" name="ApartmentNumber" />
-            Phone number <input type="text" name="HouseNumber" />
-            E-mail* <input type="text" name="ApartmentNumber" />
+            Name <input type="text" name="Name" />
+            Surname* <input type="text" name="Surname" />
+            Phone number <input type="text" name="PhoneNumber" />
+            E-mail* <input type="text" name="Mail" />
             <input type="submit" value="Submit" />
         </form>
     </main>;
