@@ -1,4 +1,4 @@
-import { Footer, Nav, AccountForm, Store, Basket } from './components';
+import { Footer, Nav, AccountForm, Store, Basket, UserList, ItemList } from './components';
 import './App.css';
 import { useRoutes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -36,8 +36,8 @@ function App() {
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={true} /> },
 			//{ path: "/admin/orders", element: <Orders /> },
-			//{ path: "/admin/users", element: <Users /> },
-			//{ path: "/admin/items", element: <Items /> },
+			{ path: "/admin/users", element: <UserList /> },
+			{ path: "/admin/items", element: <ItemList /> },
 		])}
 		<Footer />
 	</>;
