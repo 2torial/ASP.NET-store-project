@@ -40,7 +40,8 @@ Some time is going to be devoted to improving already implemented features.
 - Vite
 
 ### Set Up
-Project requires to Update-Database through Entity Framework to work (database is going to be named *Store*).
+Project requires to Update-Database through Entity Framework to work if it's run for the first time (database is going to be named *Store*).
+There are two preset site accounts: user (password: user) and root (password: root).
 
 ## Contributors
 Daniel Boguszewski (315942)
