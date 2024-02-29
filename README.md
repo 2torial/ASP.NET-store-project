@@ -1,4 +1,6 @@
 # Internet Store ASP.NET Project for College Classes
+Project is currently on hold. \
+\
 Stage of the project changed from *setting up* to *adding features*. \
 Next commits are going to be divided into multiple branches. \
 There may be found some unused pieces of code or templates. \
@@ -36,6 +38,9 @@ Some time is going to be devoted to improving already implemented features.
   - Microsoft.AspNetCore.Authentication.JwtBearer
 - React Router
 - Vite
+
+### Set Up
+Project requires to Update-Database through Entity Framework to work (database is going to be named *Store*).
 
 ## Contributors
 Daniel Boguszewski (315942)
