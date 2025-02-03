@@ -1,7 +1,6 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
