@@ -149,16 +149,19 @@ namespace ASP.NET_store_project.Server.Data
                 new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
                 new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
 
+            var orderId1 = Guid.NewGuid();
+            var orderId2 = Guid.NewGuid();
+
             modelBuilder.Entity<Order>().HasData(
-                new(userId1, supplierId1, "A-001-200", 50, 20),
-                new(userId2, supplierId2, "A-001-200", 500, 250));
+                new(userId1, supplierId1, "A-001-200", 50, 20) { Id = orderId1 },
+                new(userId2, supplierId2, "A-001-200", 500, 250) { Id = orderId1 });
 
             modelBuilder.Entity<SelectedItem>().HasData(
-                new(1, 1, userId1, 1, 1),
-                new(2, 8, userId1, 1, 1),
-                new(3, 12, userId1, 1, 1),
-                new(4, 4, userId2, 10, 2),
-                new(5, 1, userId2, 1, 2),
+                new(1, 1, userId1, 1, orderId1),
+                new(2, 8, userId1, 1, orderId1),
+                new(3, 12, userId1, 1, orderId1),
+                new(4, 4, userId2, 10, orderId2),
+                new(5, 1, userId2, 1, orderId2),
                 new(6, 2, userId1, 1),
                 new(7, 9, userId1, 2),
                 new(8, 3, userId2, 4),

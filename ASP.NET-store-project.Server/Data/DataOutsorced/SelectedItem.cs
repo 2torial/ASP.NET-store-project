@@ -2,7 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class SelectedItem(int id, int itemId, Guid customerId, int quantity, int? orderId = null)
+    public class SelectedItem(int id, int itemId, Guid customerId, int quantity, Guid? orderId = null)
     {
         public int Id { get; set; } = id;
 
@@ -16,7 +16,7 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
 
         public int Quantity { get; set; } = quantity;
 
-        public int? OrderId { get; set; } = orderId;
+        public Guid? OrderId { get; set; } = orderId;
 
         public Order? Order { get; set; }
 

@@ -1,4 +1,6 @@
 using ASP.NET_store_project.Server.Data;
+using ASP.NET_store_project.Server.Data.DataRevised;
+using ASP.NET_store_project.Server.Data.DataOutsorced;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
             if (!basket.Any()) return BadRequest("Basket is empty.");
 
-            int orderId = context.Orders.Max(order => order.OrderId) + 1;
+            var orderId = Guid.NewGuid();
             if (!Request.Form.TryGetValue("Region", out var region))
                 return BadRequest("Region is missing!");
             if (!Request.Form.TryGetValue("City", out var city))
@@ -51,7 +53,7 @@ namespace ASP.NET_store_project.Server.Controllers
             foreach (var item in basket) item.OrderId = orderId;
             context.CustomerDetails.Add(new CustomerDetails(orderId, name!, surname!, phoneNumber!, email!));
             context.AdressDetails.Add(new AdressDetails(orderId, region!, city!, postalCode!, streetName!, houseNumber!, apartmentNumber!));
-            context.Orders.Add(new Order(orderId, customer.Single().UserName));
+            context.Orders.Add(new Order(customer.Single().Id, Guid.NewGuid(), "????", 10, 0) { Id = orderId }); // SUPPLIER MOCKUP <<<<!!!!!!!!!!!!!!!!
             context.SaveChanges();
 
             return Ok("Order summarized successfuly.");
@@ -80,7 +82,7 @@ namespace ASP.NET_store_project.Server.Controllers
                 int newlySelectedItemId = context.SelectedItems
                     .Max(item => item.Id) + 1;
                 context.SelectedItems.Add(
-                    new SelectedItem(newlySelectedItemId, itemId, customer.Single().UserName, 1));
+                    new SelectedItem(newlySelectedItemId, itemId, customer.Single().Id, 1));
             }
 
             context.SaveChanges();

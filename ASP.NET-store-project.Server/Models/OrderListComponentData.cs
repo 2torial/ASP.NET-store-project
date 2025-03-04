@@ -6,7 +6,7 @@ namespace ASP.NET_store_project.Server.Models
 
         public class OrderData
         {
-            public int OrderId { get; set; }
+            public Guid OrderId { get; set; }
 
             public UserData CustomerDetails { get; set; }
 
@@ -16,7 +16,7 @@ namespace ASP.NET_store_project.Server.Models
 
             public class UserData
             {
-                public string CustomerId { get; set; }
+                public Guid CustomerId { get; set; }
 
                 public string Name { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
+using System.ComponentModel.DataAnnotations;
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
@@ -20,6 +21,10 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         public CustomerDetails CustomerDetails { get; set; } = null!;
 
         public AdressDetails AdressDetails { get; set; } = null!;
+
+
+
+        public List<SelectedItem> SelectedItems { get; set; } = [];
 
     }
 }

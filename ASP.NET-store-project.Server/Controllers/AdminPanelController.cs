@@ -33,27 +33,25 @@ namespace ASP.NET_store_project.Server.Controllers
                 Orders = context.Orders
                     .Select(order => new OrderListComponentData.OrderData
                     {
-                        OrderId = order.OrderId,
+                        OrderId = order.Id,
                         CustomerDetails = new OrderListComponentData.OrderData.UserData
                         {
                             CustomerId = order.CustomerId,
-                            Name = order.CustomerDetails.Name,
-                            Surname = order.CustomerDetails.Surname,
-                            PhoneNumber = order.CustomerDetails.PhoneNumber,
-                            Email = order.CustomerDetails.Email,
+                            Name = order.Customer.CustomerDetails.Name,
+                            Surname = order.Customer.CustomerDetails.Surname,
+                            PhoneNumber = order.Customer.CustomerDetails.PhoneNumber,
+                            Email = order.Customer.CustomerDetails.Email,
                         },
                         AdressDetails = new OrderListComponentData.OrderData.AdressData
                         {
-                            Region = order.AdressDetails.Region,
-                            City = order.AdressDetails.City,
-                            PostalCode = order.AdressDetails.PostalCode,
-                            StreetName = order.AdressDetails.StreetName,
-                            HouseNumber = order.AdressDetails.HouseNumber,
-                            ApartmentNumber = order.AdressDetails.ApartmentNumber,
+                            Region = order.Customer.AdressDetails.Region,
+                            City = order.Customer.AdressDetails.City,
+                            PostalCode = order.Customer.AdressDetails.PostalCode,
+                            StreetName = order.Customer.AdressDetails.StreetName,
+                            HouseNumber = order.Customer.AdressDetails.HouseNumber,
+                            ApartmentNumber = order.Customer.AdressDetails.ApartmentNumber,
                         },
-                        CurrentStatus = order.StatusChangeHistory
-                            .OrderBy(status => status.DateOfChange)
-                            .Last().StatusCode
+                        CurrentStatus = null,
                     }).ToList(),
             });
         }
