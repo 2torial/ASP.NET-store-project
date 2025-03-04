@@ -1,4 +1,4 @@
-﻿namespace ASP.NET_store_project.Server.Data
+﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
     public class Configuration(int id, string label, string parameter, int order = 9999)
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ASP.NET_store_project.Server.DataRevised
+namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class User(string userName, string passWord, bool isAdmin = false)
     {

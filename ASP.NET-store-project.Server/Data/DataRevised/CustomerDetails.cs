@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ASP.NET_store_project.Server.Data
+namespace ASP.NET_store_project.Server.Data.DataRevised
 {
-    public class CustomerDetails(int orderId, string name, string surname, string phoneNumber, string email)
+    public class CustomerDetails(Guid customerId, string name, string surname, string phoneNumber, string email)
     {
         [Key]
-        public int OrderId { get; set; } = orderId;
+        public Guid Id { get; set; }
+
+        public Guid CustomerId { get; set; } = customerId;
 
         public string Name { get; set; } = name;
 

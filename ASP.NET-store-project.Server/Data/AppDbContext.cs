@@ -1,4 +1,6 @@
-﻿using ASP.NET_store_project.Server.Utility;
+﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
+using ASP.NET_store_project.Server.Data.DataRevised;
+using ASP.NET_store_project.Server.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Data
@@ -12,16 +14,6 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<User>()
                 .Property(b => b.IsAdmin)
                 .HasDefaultValue(false);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(e => e.AdressDetails)
-                .WithOne()
-                .HasForeignKey<Order>(e => e.OrderId);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(e => e.CustomerDetails)
-                .WithOne()
-                .HasForeignKey<Order>(e => e.OrderId);
 
             modelBuilder.Entity<Category>()
                 .ToTable("Category");
@@ -46,17 +38,19 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany(e => e.Items)
                 .UsingEntity<ItemConfiguration>();
 
-            modelBuilder.Entity<Order>()
-                .HasMany(e => e.StatusHistory)
-                .WithMany()
-                .UsingEntity<OrderStatus>(
-                    e => {
-                        e.Property(e => e.DateOfChange).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                    });
+            var userId1 = Guid.NewGuid();
+            var userId2 = Guid.NewGuid();
 
             modelBuilder.Entity<User>().HasData(
-                new("user", new SimplePasswordHasher().HashPassword("user")),
-                new("root", new SimplePasswordHasher().HashPassword("root"), true));
+                new("user", new SimplePasswordHasher().HashPassword("user")) { Id = userId1 },
+                new("root", new SimplePasswordHasher().HashPassword("root"), true) { Id = userId2 });
+
+            var supplierId1 = Guid.NewGuid();
+            var supplierId2 = Guid.NewGuid();
+
+            modelBuilder.Entity<Supplier>().HasData(
+                new("SupplierA", new("https://localhost:5173/")),
+                new("SupplierB", new("https://localhost:5173/"), 200));
 
             modelBuilder.Entity<Category>().HasData(
                 new("Laptops", "Laptops/Notebooks/Ultrabooks"),
@@ -147,37 +141,28 @@ namespace ASP.NET_store_project.Server.Data
                 new(7, 15),
                 new(7, 22));
 
-            modelBuilder.Entity<Status>().HasData(
-                new("Pending"),
-                new("Preparing"),
-                new("Awaiting Delivery"),
-                new("Sent"),
-                new("Delivered"),
-                new("Returned"),
-                new("Canceled"));
-
             modelBuilder.Entity<AdressDetails>().HasData(
-                new(1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
-                new(2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
+                new(userId1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
+                new(userId2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
 
             modelBuilder.Entity<CustomerDetails>().HasData(
-                new(1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
-                new(2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
+                new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
+                new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
 
             modelBuilder.Entity<Order>().HasData(
-                new(1, "user"),
-                new(2, "root"));
+                new(userId1, supplierId1, "A-001-200", 50, 20),
+                new(userId2, supplierId2, "A-001-200", 500, 250));
 
             modelBuilder.Entity<SelectedItem>().HasData(
-                new(1, 1, "user", 1, 1),
-                new(2, 8, "user", 1, 1),
-                new(3, 12, "user", 1, 1),
-                new(4, 4, "root", 10, 2),
-                new(5, 1, "root", 1, 2),
-                new(6, 2, "user", 1),
-                new(7, 9, "user", 2),
-                new(8, 3, "root", 4),
-                new(9, 9, "root", 3));
+                new(1, 1, userId1, 1, 1),
+                new(2, 8, userId1, 1, 1),
+                new(3, 12, userId1, 1, 1),
+                new(4, 4, userId2, 10, 2),
+                new(5, 1, userId2, 1, 2),
+                new(6, 2, userId1, 1),
+                new(7, 9, userId1, 2),
+                new(8, 3, userId2, 4),
+                new(9, 9, userId2, 3));
 
             modelBuilder.Entity<SortingMethod>().HasData(
                 new("Price: Lowest to Highest", "Price", true),

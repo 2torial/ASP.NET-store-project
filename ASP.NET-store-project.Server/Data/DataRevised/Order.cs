@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ASP.NET_store_project.Server.DataRevised
+namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class Order(Guid customerId, Guid supplierId, string supplierOrderId, decimal profit, decimal cost)
     {

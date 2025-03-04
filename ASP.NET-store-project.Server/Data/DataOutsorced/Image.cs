@@ -1,4 +1,4 @@
-﻿namespace ASP.NET_store_project.Server.Data
+﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
     public class Image(int id, string content, int itemId)
     {

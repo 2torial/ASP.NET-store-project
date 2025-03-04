@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ASP.NET_store_project.Server.DataRevised
+namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class AdressDetails(Guid customerId, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
         [Key]
-        public Guid Id {get; set; }
+        public Guid Id { get; set; }
 
         public Guid CustomerId { get; set; } = customerId;
 

@@ -1,4 +1,4 @@
-﻿namespace ASP.NET_store_project.Server.Data
+﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
     public class Item(int id, string categoryId, string name, int price, string? page = null, bool isDeleted = false)
     {

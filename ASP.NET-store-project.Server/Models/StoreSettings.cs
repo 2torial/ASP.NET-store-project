@@ -1,4 +1,4 @@
-﻿using ASP.NET_store_project.Server.Data;
+﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
 
 namespace ASP.NET_store_project.Server.Models
 {

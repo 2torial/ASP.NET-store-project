@@ -1,6 +1,8 @@
-﻿namespace ASP.NET_store_project.Server.Data
+﻿using ASP.NET_store_project.Server.Data.DataRevised;
+
+namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class SelectedItem(int id, int itemId, string customerId, int quantity, int? orderId = null)
+    public class SelectedItem(int id, int itemId, Guid customerId, int quantity, int? orderId = null)
     {
         public int Id { get; set; } = id;
 
@@ -8,7 +10,7 @@
 
         public Item Item { get; set; } = null!;
 
-        public string CustomerId { get; set; } = customerId;
+        public Guid CustomerId { get; set; } = customerId;
 
         public User Customer { get; set; } = null!;
 

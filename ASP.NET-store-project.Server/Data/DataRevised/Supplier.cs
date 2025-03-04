@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ASP.NET_store_project.Server.DataRevised
+namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class Supplier(string name, Uri uri, decimal profitMultiplier = 1.15m)
     {
