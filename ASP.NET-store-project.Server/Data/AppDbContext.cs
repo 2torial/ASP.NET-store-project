@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ASP.NET_store_project.Server.Utility;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Data
 {
@@ -54,8 +55,8 @@ namespace ASP.NET_store_project.Server.Data
                     });
 
             modelBuilder.Entity<User>().HasData(
-                new("user", "user"),
-                new("root", "root", true));
+                new("user", new SimplePasswordHasher().HashPassword("user")),
+                new("root", new SimplePasswordHasher().HashPassword("root"), true));
 
             modelBuilder.Entity<Category>().HasData(
                 new("Laptops", "Laptops/Notebooks/Ultrabooks"),

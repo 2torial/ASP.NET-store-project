@@ -1,5 +1,6 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
+using ASP.NET_store_project.Server.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,7 +21,7 @@ namespace ASP.NET_store_project.Server.Controllers
             var userInfo =
                 Request.Form.TryGetValue("UserName", out var username)
                 && Request.Form.TryGetValue("PassWord", out var password)
-                    ? new { UserName = username.ToString(), PassWord = password.ToString() }
+                    ? new { UserName = username.ToString(), HashedPassWord = new SimplePasswordHasher().HashPassword(password.ToString()) }
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
@@ -31,7 +32,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
             // Include data validation here
 
-            context.Users.Add(new User(userInfo.UserName, userInfo.PassWord));
+            context.Users.Add(new User(userInfo.UserName, userInfo.HashedPassWord));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }
@@ -42,14 +43,23 @@ namespace ASP.NET_store_project.Server.Controllers
             var userInfo =
                 Request.Form.TryGetValue("UserName", out var username)
                 && Request.Form.TryGetValue("PassWord", out var password)
-                    ? new { UserName = username.ToString(), PassWord = password.ToString() }
+                    ? new { UserName = username.ToString(), HashedPassWord = password.ToString() }
                     : null;
             if (userInfo == null) return BadRequest("Username or password is missing.");
 
             var customer = context.Users
                 .Where(customer => customer.UserName == userInfo.UserName);
-            if (!customer.Any() || customer.Single().PassWord != userInfo.PassWord)
+
+            try
+            {
+                if (!customer.Any())
+                    throw new UnauthorizedAccessException();
+                new SimplePasswordHasher().VerifyHash(customer.Single().PassWord, userInfo.HashedPassWord);
+            } 
+            catch (UnauthorizedAccessException)
+            {
                 return BadRequest("Username or password is incorrect.");
+            }
 
             List<CustomClaim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
             if (customer.Single().IsAdmin)
