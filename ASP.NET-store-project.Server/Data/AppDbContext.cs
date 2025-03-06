@@ -1,6 +1,6 @@
 ﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
 using ASP.NET_store_project.Server.Data.DataRevised;
-using ASP.NET_store_project.Server.Utility;
+using ASP.NET_store_project.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Data
@@ -27,9 +27,6 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Order>()
                 .ToTable("Order");
 
-            modelBuilder.Entity<SortingMethod>()
-                .ToTable("SortingMethod");
-
             modelBuilder.Entity<SelectedItem>()
                 .ToTable("SelectedItem");
 
@@ -49,8 +46,8 @@ namespace ASP.NET_store_project.Server.Data
             var supplierId2 = Guid.NewGuid();
 
             modelBuilder.Entity<Supplier>().HasData(
-                new("SupplierA", new("https://localhost:5173/")),
-                new("SupplierB", new("https://localhost:5173/"), 200));
+                new("SupplierA", new("https://localhost:5173/")) { Id = supplierId1 },
+                new("SupplierB", new("https://localhost:5173/"), 200) { Id = supplierId2 });
 
             modelBuilder.Entity<Category>().HasData(
                 new("Laptops", "Laptops/Notebooks/Ultrabooks"),
@@ -142,19 +139,19 @@ namespace ASP.NET_store_project.Server.Data
                 new(7, 22));
 
             modelBuilder.Entity<AdressDetails>().HasData(
-                new(userId1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
-                new(userId2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
+                new(userId1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91") { Id = Guid.NewGuid() },
+                new(userId2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15") { Id = Guid.NewGuid() });
 
             modelBuilder.Entity<CustomerDetails>().HasData(
-                new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
-                new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
+                new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2") { Id = Guid.NewGuid() },
+                new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on") { Id = Guid.NewGuid() });
 
             var orderId1 = Guid.NewGuid();
             var orderId2 = Guid.NewGuid();
 
             modelBuilder.Entity<Order>().HasData(
                 new(userId1, supplierId1, "A-001-200", 50, 20) { Id = orderId1 },
-                new(userId2, supplierId2, "A-001-200", 500, 250) { Id = orderId1 });
+                new(userId2, supplierId2, "A-001-200", 500, 250) { Id = orderId2 });
 
             modelBuilder.Entity<SelectedItem>().HasData(
                 new(1, 1, userId1, 1, orderId1),
@@ -166,12 +163,6 @@ namespace ASP.NET_store_project.Server.Data
                 new(7, 9, userId1, 2),
                 new(8, 3, userId2, 4),
                 new(9, 9, userId2, 3));
-
-            modelBuilder.Entity<SortingMethod>().HasData(
-                new("Price: Lowest to Highest", "Price", true),
-                new("Price: Highest to Lowest", "Price", false),
-                new("Name: Ascending", "Name", true),
-                new("Name: Descending", "Name", false));
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -181,8 +172,6 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<Order> Orders { get; set; }
-
-        public DbSet<SortingMethod> SortingMethods { get; set; }
 
         public DbSet<SelectedItem> SelectedItems { get; set; }
 

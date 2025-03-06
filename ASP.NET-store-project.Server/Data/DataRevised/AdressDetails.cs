@@ -2,12 +2,12 @@
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
-    public class AdressDetails(Guid customerId, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
+    public class AdressDetails(Guid userId, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
         [Key]
         public Guid Id { get; set; }
 
-        public Guid CustomerId { get; set; } = customerId;
+        public Guid UserId { get; set; } = userId;
 
         public string Region { get; set; } = region;
 

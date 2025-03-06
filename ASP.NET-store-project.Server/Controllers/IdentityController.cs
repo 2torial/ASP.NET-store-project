@@ -1,7 +1,7 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models;
-using ASP.NET_store_project.Server.Utility;
+using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

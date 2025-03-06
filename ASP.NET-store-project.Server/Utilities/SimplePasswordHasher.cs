@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace ASP.NET_store_project.Server.Utility
+namespace ASP.NET_store_project.Server.Utilities
 {
     internal class SimplePasswordHasher(int saltSize = 32, int hashSize = 20, int iterations = 10000)
     {

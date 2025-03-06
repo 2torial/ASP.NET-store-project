@@ -1,9 +1,13 @@
 using ASP.NET_store_project.Server.Data;
+using ASP.NET_store_project.Server.Data.Enums;
 
 namespace ASP.NET_store_project.Server.Models
 {
     public class StoreComponentData
     {
+        private static List<SortingMethod> SortingMethods { get; } = Enum.GetValues(typeof(SortingMethod)).Cast<SortingMethod>().ToList();
+
+
         public StoreSettings Settings { get; }
 
         public StoreFilters Filters { get; }
@@ -13,11 +17,16 @@ namespace ASP.NET_store_project.Server.Models
         public StoreComponentData(IFormCollection formData, AppDbContext context)
         {
             // Sorting method selection
-            var sortingMethod = (formData.TryGetValue("SortBy", out var sortBy)
-                ? context.SortingMethods.Where(method => method.Label == sortBy.ToString()).FirstOrDefault()
-                : null) ?? context.SortingMethods
-                    .Where(method => method.Label == "Price: Lowest to Highest")
-                    .Single();
+            SortingMethod sortingMethod = formData.TryGetValue("SortBy", out var sortBy)
+                ? SortingMethods.Where(sm => sm == sortBy).SingleOrDefault()
+                : SortingMethod.Name;
+            bool isAscending = formData.TryGetValue("OrderBy", out var orderBy)
+                ? orderBy switch {
+                    var _ when orderBy == "Ascending" => true,
+                    var _ when orderBy == "Descending" => false,
+                    _ => true
+                } : true;
+
             Settings = new StoreSettings
             {
                 Categories = context.Categories.ToList(),
@@ -30,10 +39,8 @@ namespace ASP.NET_store_project.Server.Models
                 Pages = 1,
                 SelectedPage = 1,
 
-                SortingMethods = context.SortingMethods
-                    .Select(method => method.Label)
-                    .ToList(),
-                SelectedSortingMethod = sortingMethod.Label,
+                SortingMethods = SortingMethods.Select(sm => sm.ToString()).ToList(),
+                SelectedSortingMethod = sortingMethod.ToString(),
             };
 
             // Category filtering
@@ -104,13 +111,14 @@ namespace ASP.NET_store_project.Server.Models
                                 .IndexOf(config.Parameter) >= 0));
 
             // Sorting
-            selectedItems = sortingMethod.SortBy == "Name"
-                ? selectedItems.OrderBy(item => item.Name)
-                : sortingMethod.SortBy == "Price"
-                    ? selectedItems.OrderBy(item => item.Price)
-                    : selectedItems;
+            selectedItems = sortingMethod switch
+            {
+                SortingMethod.Name => selectedItems.OrderBy(item => item.Name),
+                SortingMethod.Price => selectedItems.OrderBy(item => item.Price),
+                _ => selectedItems.OrderBy(item => item.Name)
+            };
 
-            if (!sortingMethod.IsAscending)
+            if (isAscending)
                 selectedItems = selectedItems.Reverse();
 
             Items = new StoreItems
