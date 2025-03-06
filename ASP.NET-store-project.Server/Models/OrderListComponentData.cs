@@ -18,6 +18,8 @@ namespace ASP.NET_store_project.Server.Models
             {
                 public Guid CustomerId { get; set; }
 
+                public string UserName { get; set; }
+
                 public string Name { get; set; }
 
                 public string Surname { get; set; }

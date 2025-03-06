@@ -36,7 +36,8 @@ namespace ASP.NET_store_project.Server.Controllers
                         OrderId = order.Id,
                         CustomerDetails = new OrderListComponentData.OrderData.UserData
                         {
-                            CustomerId = order.CustomerId,
+                            CustomerId = order.Customer.Id,
+                            UserName = order.Customer.UserName,
                             Name = order.Customer.CustomerDetails.Name,
                             Surname = order.Customer.CustomerDetails.Surname,
                             PhoneNumber = order.Customer.CustomerDetails.PhoneNumber,
