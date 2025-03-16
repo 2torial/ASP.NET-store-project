@@ -140,7 +140,7 @@ namespace ASP.NET_store_project.Server.Models
                                 Parameter = config.Parameter,
                             })
                             .ToList(),
-                        PageLink = item.Page,
+                        PageLink = item.WebPage,
                     }).ToList(),
             };
         }

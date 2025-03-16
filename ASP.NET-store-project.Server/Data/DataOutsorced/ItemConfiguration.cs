@@ -1,8 +1,8 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Configuration(int id, string label, string parameter, int order = 9999)
+    public class Configuration(string label, string parameter, int order = 9999)
     {
-        public int Id { get; set; } = id;
+        public Guid Id { get; set; }
 
         public string Label { get; set; } = label;
 
@@ -14,11 +14,11 @@
 
     }
 
-    public class ItemConfiguration(int itemId, int configurationId)
+    public class ItemConfiguration(Guid itemId, Guid configurationId)
     {
-        public int ItemId { get; set; } = itemId;
+        public Guid ItemId { get; set; } = itemId;
 
-        public int ConfigurationId { get; set; } = configurationId;
+        public Guid ConfigurationId { get; set; } = configurationId;
 
     }
 }

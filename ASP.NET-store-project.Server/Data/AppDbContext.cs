@@ -12,7 +12,7 @@ namespace ASP.NET_store_project.Server.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>()
-                .Property(b => b.IsAdmin)
+                .Property(p => p.IsAdmin)
                 .HasDefaultValue(false);
 
             modelBuilder.Entity<Category>()
@@ -24,11 +24,8 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<User>()
                 .ToTable("User");
 
-            modelBuilder.Entity<Order>()
-                .ToTable("Order");
-
-            modelBuilder.Entity<SelectedItem>()
-                .ToTable("SelectedItem");
+            modelBuilder.Entity<OrderedProduct>()
+                .ToTable("OrderedProduct");
 
             modelBuilder.Entity<Item>()
                 .HasMany(e => e.Configurations)
@@ -146,23 +143,16 @@ namespace ASP.NET_store_project.Server.Data
                 new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2") { Id = Guid.NewGuid() },
                 new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on") { Id = Guid.NewGuid() });
 
-            var orderId1 = Guid.NewGuid();
-            var orderId2 = Guid.NewGuid();
-
-            modelBuilder.Entity<Order>().HasData(
-                new(userId1, supplierId1, "A-001-200", 50, 20) { Id = orderId1 },
-                new(userId2, supplierId2, "A-001-200", 500, 250) { Id = orderId2 });
-
-            modelBuilder.Entity<SelectedItem>().HasData(
-                new(1, 1, userId1, 1, orderId1),
-                new(2, 8, userId1, 1, orderId1),
-                new(3, 12, userId1, 1, orderId1),
-                new(4, 4, userId2, 10, orderId2),
-                new(5, 1, userId2, 1, orderId2),
-                new(6, 2, userId1, 1),
-                new(7, 9, userId1, 2),
-                new(8, 3, userId2, 4),
-                new(9, 9, userId2, 3));
+            modelBuilder.Entity<OrderedProduct>().HasData(
+                new(userId1, supplierId1, "aaa", 2, 50) { Id = Guid.NewGuid() },
+                new(userId1, supplierId1, "aab", 1, 250) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "aac", 1, 500) { Id = Guid.NewGuid() },
+                new(userId2, supplierId2, "aba", 3, 150) { Id = Guid.NewGuid() },
+                new(userId1, supplierId2, "aba", 1, 150) { Id = Guid.NewGuid() },
+                new(userId2, supplierId2, "abb", 4, 50) { Id = Guid.NewGuid() },
+                new(userId1, supplierId1, "baa", 1, 500) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "bab", 1, 350) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "aab", 2, 150) { Id = Guid.NewGuid() });
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -171,9 +161,7 @@ namespace ASP.NET_store_project.Server.Data
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Order> Orders { get; set; }
-
-        public DbSet<SelectedItem> SelectedItems { get; set; }
+        public DbSet<OrderedProduct> OrderedProducts { get; set; }
 
         public DbSet<AdressDetails> AdressDetails { get; set; }
 
