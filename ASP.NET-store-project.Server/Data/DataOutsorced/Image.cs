@@ -1,8 +1,8 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Image(int id, string content, int itemId)
+    public class Image(string content, int itemId)
     {
-        public int Id { get; set; } = id;
+        public Guid Id { get; set; }
 
         public string Content { get; set; } = content;
 

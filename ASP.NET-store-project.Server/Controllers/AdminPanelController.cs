@@ -30,30 +30,30 @@ namespace ASP.NET_store_project.Server.Controllers
         {
             return Ok(new OrderListComponentData()
             {
-                Orders = context.Orders
-                    .Select(order => new OrderListComponentData.OrderData
-                    {
-                        OrderId = order.Id,
-                        CustomerDetails = new OrderListComponentData.OrderData.UserData
-                        {
-                            CustomerId = order.Customer.Id,
-                            UserName = order.Customer.UserName,
-                            Name = order.Customer.CustomerDetails.Name,
-                            Surname = order.Customer.CustomerDetails.Surname,
-                            PhoneNumber = order.Customer.CustomerDetails.PhoneNumber,
-                            Email = order.Customer.CustomerDetails.Email,
-                        },
-                        AdressDetails = new OrderListComponentData.OrderData.AdressData
-                        {
-                            Region = order.Customer.AdressDetails.Region,
-                            City = order.Customer.AdressDetails.City,
-                            PostalCode = order.Customer.AdressDetails.PostalCode,
-                            StreetName = order.Customer.AdressDetails.StreetName,
-                            HouseNumber = order.Customer.AdressDetails.HouseNumber,
-                            ApartmentNumber = order.Customer.AdressDetails.ApartmentNumber,
-                        },
-                        CurrentStatus = null,
-                    }).ToList(),
+                //Orders = context.Orders
+                //    .Select(order => new OrderListComponentData.OrderData
+                //    {
+                //        OrderId = order.Id,
+                //        CustomerDetails = new OrderListComponentData.OrderData.UserData
+                //        {
+                //            CustomerId = order.Customer.Id,
+                //            UserName = order.Customer.UserName,
+                //            Name = order.Customer.CustomerDetails.Name,
+                //            Surname = order.Customer.CustomerDetails.Surname,
+                //            PhoneNumber = order.Customer.CustomerDetails.PhoneNumber,
+                //            Email = order.Customer.CustomerDetails.Email,
+                //        },
+                //        AdressDetails = new OrderListComponentData.OrderData.AdressData
+                //        {
+                //            Region = order.Customer.AdressDetails.Region,
+                //            City = order.Customer.AdressDetails.City,
+                //            PostalCode = order.Customer.AdressDetails.PostalCode,
+                //            StreetName = order.Customer.AdressDetails.StreetName,
+                //            HouseNumber = order.Customer.AdressDetails.HouseNumber,
+                //            ApartmentNumber = order.Customer.AdressDetails.ApartmentNumber,
+                //        },
+                //        CurrentStatus = null,
+                //    }).ToList(),
             });
         }
         [HttpGet("/api/admin/items")]
@@ -79,7 +79,7 @@ namespace ASP.NET_store_project.Server.Controllers
                                 Parameter = config.Parameter,
                             })
                             .ToList(),
-                            PageLink = item.Page,
+                            PageLink = item.WebPage,
                         },
                         IsDeleted = item.IsDeleted,
                     }).ToList(),
