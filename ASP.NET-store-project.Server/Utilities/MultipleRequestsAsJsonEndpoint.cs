@@ -2,24 +2,29 @@
 {
     public static class MultipleRequestsAsJsonEndpoint<T>
     {
-        public static async Task<KeyValuePair<Guid, T?>[]> SendAsync(Dictionary<Guid, HttpClient> clients, string requestAdress, HttpContent content) {
-            var messages = await Task.WhenAll(clients
-                .Select(async client => new KeyValuePair<Guid, HttpResponseMessage>(
-                    client.Key, await client.Value.PostAsync(requestAdress, content))));
+        public static async Task<IEnumerable<KeyValuePair<U, T?>>> SendAsync<U>(IDictionary<U, ClientData> clientsData, string? requestAdress = null, HttpContent? content = null) {
+            if (requestAdress == null && clientsData.Any(kvp => kvp.Value.RequestAdress == null))
+                throw new ArgumentNullException(nameof(requestAdress));
+            if (content == null && clientsData.Any(kvp => kvp.Value.Content == null))
+                throw new ArgumentNullException(nameof(content));
 
-            return await ResolveResponse(messages);
+            var messages = await Task.WhenAll(clientsData
+                .Select(async kvp => new KeyValuePair<U, HttpResponseMessage>(
+                    kvp.Key,
+                    await kvp.Value.Client.PostAsync(
+                        requestAdress ?? kvp.Value.RequestAdress,
+                        content ?? kvp.Value.Content))));
+
+            return await Task.WhenAll(messages
+                .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await kvp.Value.Content.ReadFromJsonAsync<T>())));
         }
 
-        public static async Task<KeyValuePair<Guid, T?>[]> SendAsync(Dictionary<Guid, (HttpClient, StringContent)> clients, string requestAdress)
-        {
-            var messages = await Task.WhenAll(clients
-                .Select(async client => new KeyValuePair<Guid, HttpResponseMessage>(
-                    client.Key, await client.Value.Item1.PostAsync(requestAdress, client.Value.Item2))));
+    }
 
-            return await ResolveResponse(messages);
-        }
-
-        private static async Task<KeyValuePair<Guid, T?>[]> ResolveResponse(KeyValuePair<Guid, HttpResponseMessage>[] messages) =>
-            await Task.WhenAll(messages.Select(async msg => new KeyValuePair<Guid, T?>(msg.Key, await msg.Value.Content.ReadFromJsonAsync<T>())));
+    public class ClientData(HttpClient client)
+    {
+        public HttpClient Client { get; } = client;
+        public string? RequestAdress { get; set; }
+        public HttpContent? Content { get; set; }
     }
 }

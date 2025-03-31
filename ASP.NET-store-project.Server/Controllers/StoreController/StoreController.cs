@@ -16,35 +16,59 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         [HttpPost("/api/reload")]
         public async Task<IActionResult> Reload([FromForm] PageReloadData pageData)
         {
-            var clients = context.Suppliers
-                .ToDictionary(sup => sup.Id, sup => httpClientFactory.CreateClient(sup.Name));
+            var suppliers = context.Suppliers
+                .Select(sup => new
+                    {
+                        sup.Id,
+                        Client = httpClientFactory.CreateClient(sup.Name),
+                        sup.FilteredProductsRequestAdress,
+                        sup.SelectedProductsRequestAdress
+                    })
+                .AsEnumerable();
+
             var content = Request.ReadFormAsync().Result
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
             var contentEncoded = new FormUrlEncodedContent(content);
-            
-            var requestAdress = context.Suppliers.Single().FilteredProductsRequestAdress;
+
+            var filterRequestClientsData = suppliers
+                .ToDictionary(
+                    sup => sup.Id,
+                    sup => new ClientData(sup.Client)
+                    {
+                        Content = contentEncoded,
+                        RequestAdress = sup.FilteredProductsRequestAdress,
+                    });
+
             var filteredProductsBatch = await MultipleRequestsAsJsonEndpoint<List<ProductInfo>>
-                .SendAsync(clients, requestAdress, contentEncoded);
+                .SendAsync(filterRequestClientsData);
             var filteredProducts = filteredProductsBatch
                 .SelectMany(
                     kvp => kvp.Value,
-                    (batch, prod) => 
+                    (batch, prod) =>
                         new ProductInfo(prod.Id, prod.Name, prod.Price) { SupplierId = batch.Key });
 
             filteredProducts = pageData.ModifyAwaited(filteredProducts);
-
             var selectedProductsData = filteredProducts
                 .GroupBy(
                     prod => prod.SupplierId,
                     prod => prod.Id,
-                    (supId, prods) => new KeyValuePair<Guid, string>(supId, JsonSerializer.Serialize(prods)))
+                    (supId, prods) => new KeyValuePair<Guid, string>(supId, JsonSerializer.Serialize(prods)));
+
+            var selectRequestClientsData = suppliers
+                .Join(selectedProductsData,
+                    sup => sup.Id,
+                    selectedData => selectedData.Key,
+                    (sup, selectedData) => new KeyValuePair<Guid, ClientData>(sup.Id, new ClientData(sup.Client)
+                    {
+                        Content = new StringContent(selectedData.Value, Encoding.UTF8, "application/json"),
+                        RequestAdress = sup.SelectedProductsRequestAdress,
+                    }))
                 .ToDictionary(
                     kvp => kvp.Key,
-                    kvp => (clients[kvp.Key], new StringContent(kvp.Value, Encoding.UTF8, "application/json")));
+                    kvp => kvp.Value);
 
-            requestAdress = context.Suppliers.Single().SelectedProductsRequestAdress;
             var selectedProductsBatch = await MultipleRequestsAsJsonEndpoint<List<ProductInfo>>
-                .SendAsync(selectedProductsData, requestAdress);
+                .SendAsync(selectRequestClientsData);
             var selectedProducts = selectedProductsBatch
                 .SelectMany(kvp => kvp.Value, (batch, prod) => new ProductInfo(prod.Id, prod.Name, prod.Price)
                 {
