@@ -1,6 +1,5 @@
 using ASP.NET_store_project.Server.Data;
-using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData.StoreComponentData;
-using ASP.NET_store_project.Server.Utilities;
+using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
@@ -56,7 +55,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                                 .Contains(config.Parameter, StringComparison.CurrentCulture)));
 
             var filteredProducts = categorizedProducts
-                .Select(item => new ProductData(item.Id, item.Name, item.Price))
+                .Select(item => new ProductInfo(item.Id, item.Name, item.Price))
                 /*.ToList()*/;
 
             return Ok(filteredProducts);
@@ -67,11 +66,11 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         {
             var selectedProducts = context.Items
                 .Where(item => selectedProductIds.Contains(item.Id))
-                .Select(item => new ProductData(item.Id, item.Name, item.Price)
+                .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
                 {
                     Gallery = new List<string>(),
-                    Tags = item.Configurations.Select(config => new KeyValuePair<string, string>(config.Label, config.Parameter)).ToList(),
-                    WebPageLink = item.WebPage,
+                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }).ToList(),
+                    WebPageLink = item.WebPage
                 });
             return Ok(selectedProducts);
         }

@@ -1,5 +1,5 @@
 using ASP.NET_store_project.Server.Data.Enums;
-using ASP.NET_store_project.Server.Models.StructureData;
+using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 

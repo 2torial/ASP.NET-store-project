@@ -1,5 +1,4 @@
-using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData.StoreComponentData;
-using ASP.NET_store_project.Server.Models.StructureData;
+using ASP.NET_store_project.Server.Models.StructuredData;
 
 namespace ASP.NET_store_project.Server.Models.ComponentData
 {
@@ -9,7 +8,7 @@ namespace ASP.NET_store_project.Server.Models.ComponentData
 
         public class ItemData
         {
-            public ProductInfo.Product Item { get; set; }
+            public ProductInfo Item { get; set; }
 
             public bool IsDeleted { get; set; }
         }

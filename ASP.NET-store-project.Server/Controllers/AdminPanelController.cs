@@ -1,8 +1,7 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using ASP.NET_store_project.Server.Models.ComponentData;
-using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData.StoreComponentData;
-using ASP.NET_store_project.Server.Models.StructureData;
+using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static ASP.NET_store_project.Server.Models.ComponentData.UserListComponentData;
@@ -67,21 +66,18 @@ namespace ASP.NET_store_project.Server.Controllers
                 Items = context.Items
                     .Select(item => new ItemListComponentData.ItemData
                     {
-                        Item = new ProductInfo.Product
+                        Item = new ProductInfo(item.Id, item.Name, item.Price)
                         {
-                            Id = item.Id,
-                            Name = item.Name,
-                            Price = item.Price,
                             Gallery = item.Gallery
-                            .Select(image => image.Content)
-                            .ToList(),
-                            Specification = item.Configurations
-                            .Select(config => new ProductInfo.Product.Configuration
-                            {
-                                Label = config.Label,
-                                Parameter = config.Parameter,
-                            })
-                            .ToList(),
+                                .Select(image => image.Content)
+                                .ToList(),
+                            Tags = item.Configurations
+                                .Select(config => new ProductTag
+                                {
+                                    Label = config.Label,
+                                    Parameter = config.Parameter,
+                                })
+                                .ToList(),
                             WebPageLink = item.WebPage,
                         },
                         IsDeleted = item.IsDeleted,

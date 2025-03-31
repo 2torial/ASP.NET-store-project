@@ -1,6 +1,4 @@
-﻿using ASP.NET_store_project.Server.Models.StructuredData;
-
-namespace ASP.NET_store_project.Server.Models.StructureData
+﻿namespace ASP.NET_store_project.Server.Models.StructuredData
 {
     public class ProductInfo(Guid id, string name, decimal price)
     {

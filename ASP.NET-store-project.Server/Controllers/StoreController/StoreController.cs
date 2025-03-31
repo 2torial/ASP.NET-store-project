@@ -1,7 +1,7 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
-using ASP.NET_store_project.Server.Models.StructureData;
+using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;

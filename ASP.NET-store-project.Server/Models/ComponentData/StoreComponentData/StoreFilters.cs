@@ -1,4 +1,4 @@
-﻿using ASP.NET_store_project.Server.Models.StructureData;
+﻿using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 
 namespace ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData
