@@ -1,10 +1,10 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Data.DataOutsorced;
-using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using ASP.NET_store_project.Server.Models;
 
 namespace ASP.NET_store_project.Server.Controllers
 {

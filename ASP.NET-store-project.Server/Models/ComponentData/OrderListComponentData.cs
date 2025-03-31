@@ -1,4 +1,4 @@
-namespace ASP.NET_store_project.Server.Models
+namespace ASP.NET_store_project.Server.Models.ComponentData
 {
     public class OrderListComponentData
     {

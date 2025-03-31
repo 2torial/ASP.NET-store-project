@@ -39,8 +39,8 @@ type PossibleConfiguration = {
 }
 
 interface StoreItems {
-	numberOfItems: number;
-	displayedItems: Item[];
+	numberOfRecords: number;
+	records: Item[];
 }
 type Item = {
 	id: number,

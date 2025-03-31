@@ -2,8 +2,8 @@ import Item from './Item';
 import './ItemList.css';
 
 interface ItemListProps {
-	numberOfItems: number;
-	displayedItems: Item[];
+	numberOfRecords: number;
+	records: Item[];
 }
 type Item = {
 	id: number,
@@ -18,9 +18,9 @@ type Configuration = {
 	parameter: string;
 }
 
-function ItemList({ displayedItems }: ItemListProps) {  
+function ItemList({ records }: ItemListProps) {  
     return <section className="item-list">
-		{displayedItems.map(item => <Item {...item} key={item.id} />)}
+		{records.map(item => <Item {...item} key={item.id} />)}
     </section>;
 }
 

@@ -1,8 +1,11 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
+using ASP.NET_store_project.Server.Models.ComponentData;
+using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData.StoreComponentData;
+using ASP.NET_store_project.Server.Models.StructureData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static ASP.NET_store_project.Server.Models.UserListComponentData;
+using static ASP.NET_store_project.Server.Models.ComponentData.UserListComponentData;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
@@ -64,7 +67,7 @@ namespace ASP.NET_store_project.Server.Controllers
                 Items = context.Items
                     .Select(item => new ItemListComponentData.ItemData
                     {
-                        Item = new StoreItems.Item
+                        Item = new ProductInfo.Product
                         {
                             Id = item.Id,
                             Name = item.Name,
@@ -73,13 +76,13 @@ namespace ASP.NET_store_project.Server.Controllers
                             .Select(image => image.Content)
                             .ToList(),
                             Specification = item.Configurations
-                            .Select(config => new StoreItems.Item.Configuration
+                            .Select(config => new ProductInfo.Product.Configuration
                             {
                                 Label = config.Label,
                                 Parameter = config.Parameter,
                             })
                             .ToList(),
-                            PageLink = item.WebPage,
+                            WebPageLink = item.WebPage,
                         },
                         IsDeleted = item.IsDeleted,
                     }).ToList(),
@@ -87,7 +90,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/admin/items/set/unavaliable/{itemId}")]
-        public IActionResult SetUnavaliable([FromRoute] int itemId)
+        public IActionResult SetUnavaliable([FromRoute] Guid itemId)
         {
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())
@@ -98,7 +101,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/admin/items/set/avaliable/{itemId}")]
-        public IActionResult SetAvaliable([FromRoute] int itemId)
+        public IActionResult SetAvaliable([FromRoute] Guid itemId)
         {
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())

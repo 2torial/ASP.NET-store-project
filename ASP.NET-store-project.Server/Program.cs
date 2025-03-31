@@ -3,12 +3,23 @@ using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddHttpClient();
+var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
+{
+    httpClient.BaseAddress = new Uri(uriAdress);
+
+    httpClient.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+};
+
+builder.Services.AddHttpClient("SupplierA", configSupplier("https://localhost:5173/api/supplier/A/"));
+builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:5173/api/supplier/B/"));
+builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/C/"));
 
 builder.Services.AddAuthentication(auth =>
 {
