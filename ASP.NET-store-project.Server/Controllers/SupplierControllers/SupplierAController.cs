@@ -56,7 +56,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
 
             var filteredProducts = categorizedProducts
                 .Select(item => new ProductInfo(item.Id, item.Name, item.Price))
-                /*.ToList()*/;
+                .AsEnumerable();
 
             return Ok(filteredProducts);
         }
@@ -66,9 +66,10 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         {
             var selectedProducts = context.Items
                 .Where(item => selectedProductIds.Contains(item.Id))
+                .AsEnumerable()
                 .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
                 {
-                    Gallery = new List<string>(),
+                    Gallery = [],
                     Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }).ToList(),
                     WebPageLink = item.WebPage,
                 });

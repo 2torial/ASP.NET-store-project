@@ -91,7 +91,21 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     SortingMethods = Enum.GetValues<SortingMethod>(),
                     SelectedSortingMethod = pageData.SortBy,
                 },
-                Filters = new StoreFilters(selectedProducts),
+                Filters = new StoreFilters
+                {
+                    PriceRange = new PriceRange(
+                        selectedProducts.Min(prod => prod.Price), 
+                        selectedProducts.Max(prod => prod.Price)),
+                    Tags = selectedProducts
+                        .SelectMany(prod => prod.Tags)
+                        .Distinct(EqualityComparer<ProductTag>.Create(
+                            (tag1, tag2) => tag1.Label.Equals(tag2.Label) && tag1.Parameter.Equals(tag2.Parameter)))
+                        .GroupBy(
+                            tag => tag.Label,
+                            tag => tag.Parameter,
+                            (label, parameters) => new KeyValuePair<string, IEnumerable<string>>(label, parameters))
+                        .ToDictionary()
+                },
                 Products = selectedProducts
             };
 
