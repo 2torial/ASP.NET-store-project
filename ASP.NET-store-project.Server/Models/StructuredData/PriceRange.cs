@@ -9,7 +9,8 @@
             set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
-                _from = To < value ? To : value;
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, To);
+                _from = value;
             }
         }
         public decimal To
@@ -18,7 +19,8 @@
             set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
-                _to = value < _from ? From : value;
+                ArgumentOutOfRangeException.ThrowIfLessThan(value, From);
+                _to = value;
             }
         }
 
