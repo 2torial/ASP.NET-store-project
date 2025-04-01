@@ -5,52 +5,49 @@ import Settings from './Settings';
 import ItemList from './ItemList';
 import { useLocation } from 'react-router-dom';
 import { FormID, collectData } from '../../shared/FormDataCollection';
+import { ProductCategory } from '../../shared/StoreEnum/StoreProductCategory';
+import { PageSize } from '../../shared/StoreEnum/StorePageSize';
+import { SortingMethod } from '../../shared/StoreEnum/StoreSortingMethod';
+import { SortingOrder } from '../../shared/StoreEnum/StoreSortingOrder';
 
 interface StoreComponentData {
 	settings: StoreSettings;
 	filters: StoreFilters;
-	items: StoreItems;
+	products: Product[];
 }
 
 interface StoreSettings {
-	categories: Category[];
-	selectedCategory: Category;
-	pages: number;
-	selectedPage: number;
-	sortingMethods: string[];
-	selectedSortingMethod: string;
-}
-type Category = {
-	type: string;
-	label: string;
+	selectedCategory: ProductCategory;
+	selectedPageSize: PageSize;
+	numberOfPages: number;
+	selectedPageIndex: number;
+	selectedSortingMethod: SortingMethod;
+	selectedSortingOrder: SortingOrder;
 }
 
 interface StoreFilters {
-	priceRange: ValueRange;
-    configurations: PossibleConfiguration[];
+	priceRange: PriceRange;
+    relatedTags: RelatedTags[];
 }
-type ValueRange = {
+type PriceRange = {
 	from: number;
 	to: number;
 }
-type PossibleConfiguration = {
+type RelatedTags = {
 	label: string;
-	parameters: string[];
+	relatedParameters: string[];
 }
 
-interface StoreItems {
-	numberOfRecords: number;
-	records: Item[];
-}
-type Item = {
+type Product = {
 	id: number,
 	name: string;
 	price: number;
+	tags: ProductTag[];
 	gallery: string[];
-	specification: Configuration[];
+	thumbnail: string;
 	pageLink?: string;
 }
-type Configuration = {
+type ProductTag = {
 	label: string;
 	parameter: string;
 }
@@ -59,7 +56,7 @@ export function Store() {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
-	const [items, setItems] = useState<StoreItems>();
+	const [items, setItems] = useState<Product[]>();
 
 	useEffect(() => {
 		reloadStorePage(new FormData());
@@ -85,9 +82,10 @@ export function Store() {
 			return;
 		}
 		const data: StoreComponentData = await response.json();
+		
 		setSettings(data.settings);
 		setFilters(data.filters);
-		setItems(data.items);
+		setItems(data.products);
 	});
 
 	const updateFilters = (async () => {

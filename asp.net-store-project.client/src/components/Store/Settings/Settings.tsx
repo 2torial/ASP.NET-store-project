@@ -1,29 +1,29 @@
 import Paginator from './Paginator';
 import SelectList from './SelectList';
-import './Settings.css'
+import './Settings.css';
+import { ProductCategory, productCategoryLabel } from '../../../shared/StoreEnum/StoreProductCategory';
+import { convertEnumToChoosable } from '../../../shared/InputChoosable';
+import { SortingMethod, sortingMethodLabel } from '../../../shared/StoreEnum/StoreSortingMethod';
+import { SortingOrder } from '../../../shared/StoreEnum/StoreSortingOrder';
 
 interface SettingsProps {
-	categories: Category[];
-	selectedCategory: Category;
-	pages: number;
-	selectedPage: number;
-	sortingMethods: string[];
-	selectedSortingMethod: string;
+    selectedCategory: ProductCategory;
+    selectedPageSize: number;
+	numberOfPages: number;
+    selectedPageIndex: number;
+    selectedSortingMethod: SortingMethod;
+    selectedSortingOrder: SortingOrder;
     updateSettings: () => void;
 }
-type Category = {
-	type: string;
-	label: string;
-}
 
-function Settings({ categories, selectedCategory, pages, selectedPage, sortingMethods, selectedSortingMethod, updateSettings } : SettingsProps) {
+function Settings({ selectedCategory, numberOfPages, selectedPageIndex, selectedSortingMethod, updateSettings } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
         name: "Category",
-        options: categories.map(category => ({ label: category.label, value: category.type })),
+        options: Object.values(ProductCategory).map(cat => convertEnumToChoosable(cat as ProductCategory, productCategoryLabel)),
         icons: undefined,
-        selectedOption: { label: selectedCategory.label, value: selectedCategory.type },
+        selectedOption: convertEnumToChoosable(selectedCategory as ProductCategory, productCategoryLabel),
         updateSettings: updateSettings,
     }
 
@@ -31,15 +31,15 @@ function Settings({ categories, selectedCategory, pages, selectedPage, sortingMe
         label: "Sort by",
         id: "sortby",
         name: "SortBy",
-        options: sortingMethods.map(method => ({ label: method, value: method })),
+        options: Object.values(SortingMethod).map(met => convertEnumToChoosable(met as SortingMethod, sortingMethodLabel)),
         icons: undefined,
-        selectedOption: { label: selectedSortingMethod, value: selectedSortingMethod },
+        selectedOption: convertEnumToChoosable(selectedSortingMethod as SortingMethod, sortingMethodLabel),
         updateSettings: updateSettings,
     }
 
     const pageSelect = {
-        pages: pages,
-        selectedPage: selectedPage,
+        pages: numberOfPages,
+        selectedPageIndex: selectedPageIndex,
         updateSettings: updateSettings,
     }
 

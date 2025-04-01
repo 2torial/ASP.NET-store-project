@@ -18,8 +18,8 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         {
             products = SortBy switch
             {
-                SortingMethod.Price => products.OrderBy(prod => prod.Price),
-                SortingMethod.Name => products.OrderBy(prod => prod.Name),
+                SortingMethod.ByPrice => products.OrderBy(prod => prod.Price),
+                SortingMethod.ByName => products.OrderBy(prod => prod.Name),
                 _ => throw new InvalidEnumArgumentException()
             };
             products = OrderBy switch

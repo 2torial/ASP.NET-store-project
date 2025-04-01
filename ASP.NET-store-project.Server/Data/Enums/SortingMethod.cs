@@ -2,7 +2,7 @@
 {
     public enum SortingMethod
     {
-        Name,
-        Price,
+        ByName,
+        ByPrice,
     }
 }
