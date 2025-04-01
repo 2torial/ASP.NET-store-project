@@ -2,25 +2,25 @@ import Item from './Item';
 import './ItemList.css';
 
 interface ItemListProps {
-	numberOfRecords: number;
-	records: Item[];
+	products: Product[];
 }
-type Item = {
+type Product = {
 	id: number,
 	name: string;
 	price: number;
+	tags: ProductTag[];
 	gallery: string[];
-	specification: Configuration[];
+	thumbnail: string;
 	pageLink?: string;
 }
-type Configuration = {
+type ProductTag = {
 	label: string;
 	parameter: string;
 }
 
-function ItemList({ records }: ItemListProps) {  
+function ItemList({ products }: ItemListProps) {  
     return <section className="item-list">
-		{records.map(item => <Item {...item} key={item.id} />)}
+		{products.map(product => <Item {...product} key={product.id} />)}
     </section>;
 }
 

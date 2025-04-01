@@ -56,7 +56,7 @@ export function Store() {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
-	const [items, setItems] = useState<Product[]>();
+	const [products, setProducts] = useState<Product[]>();
 
 	useEffect(() => {
 		reloadStorePage(new FormData());
@@ -85,7 +85,7 @@ export function Store() {
 		
 		setSettings(data.settings);
 		setFilters(data.filters);
-		setItems(data.products);
+		setProducts(data.products);
 	});
 
 	const updateFilters = (async () => {
@@ -96,7 +96,7 @@ export function Store() {
 		reloadStorePage(collectData(FormID.Settings));
 	});
 
-	if (settings === undefined || filters === undefined || items === undefined)
+	if (settings === undefined || filters === undefined || products === undefined)
 		return <main><p>Store component is loading</p></main>;
 	
 	const filterProps = {
@@ -111,7 +111,7 @@ export function Store() {
 	return <main id="store">
 		<Filters {...filterProps}/>
 		<Settings {...settingsProps} />
-		<ItemList {...items} />
+		<ItemList products={ products } />
 	</main>;
 }
 
