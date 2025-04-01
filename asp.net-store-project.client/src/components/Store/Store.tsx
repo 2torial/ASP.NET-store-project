@@ -27,15 +27,15 @@ interface StoreSettings {
 
 interface StoreFilters {
 	priceRange: PriceRange;
-    relatedTags: RelatedTags[];
+	relatedTags: KeyValuePair[];
 }
 type PriceRange = {
 	from: number;
 	to: number;
 }
-type RelatedTags = {
-	label: string;
-	relatedParameters: string[];
+type KeyValuePair = {
+	key: string;
+	Value: string[];
 }
 
 type Product = {
@@ -82,7 +82,7 @@ export function Store() {
 			return;
 		}
 		const data: StoreComponentData = await response.json();
-		
+		console.log(data);
 		setSettings(data.settings);
 		setFilters(data.filters);
 		setProducts(data.products);

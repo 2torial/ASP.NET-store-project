@@ -1,5 +1,4 @@
 using ASP.NET_store_project.Server.Data;
-using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
@@ -92,7 +91,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 Filters = new StoreFilters
                 {
                     PriceRange = new PriceRange(
-                        selectedProducts.Min(prod => prod.Price), 
+                        selectedProducts.Min(prod => prod.Price),
                         selectedProducts.Max(prod => prod.Price)),
                     RelatedTags = selectedProducts
                         .SelectMany(prod => prod.Tags)
@@ -102,10 +101,12 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                             tag => tag.Label,
                             tag => tag.Parameter,
                             (label, parameters) => new KeyValuePair<string, IEnumerable<string>>(label, parameters))
-                        .ToDictionary()
+                        .AsEnumerable()
                 },
                 Products = selectedProducts
             };
+
+            Console.Error.WriteLine(storeComponentData.Filters.RelatedTags);
 
             return Ok(storeComponentData);
         }
