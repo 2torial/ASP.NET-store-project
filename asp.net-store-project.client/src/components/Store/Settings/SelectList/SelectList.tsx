@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import './SelectList.css'
+import './SelectList.css';
 
 interface SelectListProps {
     label?: string;

@@ -4,21 +4,21 @@ import './Filters.css'
 import React from 'react';
 
 interface FiltersProps {
-	priceRange: ValueRange;
-    configurations: PossibleConfiguration[];
+	priceRange: PriceRange;
+    relatedTags: RelatedTags[];
     updateFilters: () => void;
     resetFilters: () => void;
 }
-type ValueRange = {
+type PriceRange = {
 	from: number;
 	to: number;
 }
-type PossibleConfiguration = {
+type RelatedTags = {
 	label: string;
-	parameters: string[];
+	relatedParameters: string[];
 }
 
-function Filters({ priceRange, configurations, updateFilters, resetFilters }: FiltersProps) {
+function Filters({ priceRange, relatedTags, updateFilters, resetFilters }: FiltersProps) {
     const handleSubmit = (handler: () => void) => {
         return (event: React.MouseEvent) => {
             event.preventDefault();
@@ -32,7 +32,7 @@ function Filters({ priceRange, configurations, updateFilters, resetFilters }: Fi
             <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
-        {configurations.map(config => <CheckBoxFilter label={config.label} options={config.parameters} key={config.label} />)}
+        {relatedTags.map(config => <CheckBoxFilter label={config.label} options={config.relatedParameters} key={config.label} />)}
         <div className="apply-section">
             <input type="submit" onClick={handleSubmit(updateFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
             <input type="submit" onClick={handleSubmit(resetFilters)}  className="default-button" id="reset-filters" value="Return default" />
