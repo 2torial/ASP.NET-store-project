@@ -2,11 +2,11 @@ import './Paginator.css'
 
 interface PaginatorProps {
     pages: number;
-    selectedPage: number;
+    selectedPageIndex: number;
     updateSettings(): void;
 }
 
-function Paginator({selectedPage}: PaginatorProps) {
+function Paginator({selectedPageIndex}: PaginatorProps) {
     const focusPageIndex = (event: React.MouseEvent) => {
         const pageIndex = (event.target as HTMLInputElement);
         pageIndex.classList.remove("idle");
@@ -31,8 +31,8 @@ function Paginator({selectedPage}: PaginatorProps) {
             <span className="page-changer">&#x25C2;</span>
             <input type="text" className="page-index idle" 
                 onClick={focusPageIndex} onBlur={unfocusPageIndex} 
-                name="PageIndex" defaultValue={selectedPage} 
-                data-current-page={selectedPage} readOnly />
+                name="PageIndex" defaultValue={selectedPageIndex} 
+                data-current-page={selectedPageIndex} readOnly />
             <span className="page-changer">&#x25B8;</span>
         </div>
     </div>;
