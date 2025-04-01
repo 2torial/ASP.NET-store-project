@@ -6,7 +6,15 @@ namespace ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData
     {
         public PriceRange PriceRange { get; set; }
 
-        public IEnumerable<KeyValuePair<string, IEnumerable<string>>> RelatedTags { get; set; }
+        public IEnumerable<RelatedParameters> RelatedTags { get; set; }
+
+    }
+
+    public class RelatedParameters(string label, IEnumerable<string> parameters)
+    {
+        public string Label { get; set; } = label;
+
+        public IEnumerable<string> Parameters { get; set; } = parameters;
 
     }
 }

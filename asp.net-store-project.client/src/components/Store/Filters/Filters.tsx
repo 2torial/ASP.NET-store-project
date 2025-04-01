@@ -5,7 +5,7 @@ import React from 'react';
 
 interface FiltersProps {
 	priceRange: PriceRange;
-    relatedTags: KeyValuePair[];
+    relatedTags: RelatedParameters[];
     updateFilters: () => void;
     resetFilters: () => void;
 }
@@ -13,9 +13,9 @@ type PriceRange = {
 	from: number;
 	to: number;
 }
-type KeyValuePair = {
-    key: string;
-    value: string[];
+type RelatedParameters = {
+    label: string;
+    parameters: string[];
 }
 
 function Filters({ priceRange, relatedTags, updateFilters, resetFilters }: FiltersProps) {
@@ -32,7 +32,7 @@ function Filters({ priceRange, relatedTags, updateFilters, resetFilters }: Filte
             <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
-        {relatedTags.map(relatedParameters => <CheckBoxFilter label={relatedParameters.key} options={relatedParameters.value} key={relatedParameters.key} />)}
+        {relatedTags.map(relatedParameters => <CheckBoxFilter label={relatedParameters.label} options={relatedParameters.parameters} key={relatedParameters.label} />)}
         <div className="apply-section">
             <input type="submit" onClick={handleSubmit(updateFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
             <input type="submit" onClick={handleSubmit(resetFilters)}  className="default-button" id="reset-filters" value="Return default" />

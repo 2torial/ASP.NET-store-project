@@ -100,7 +100,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         .GroupBy(
                             tag => tag.Label,
                             tag => tag.Parameter,
-                            (label, parameters) => new KeyValuePair<string, IEnumerable<string>>(label, parameters))
+                            (label, parameters) => new RelatedParameters(label, parameters))
                         .AsEnumerable()
                 },
                 Products = selectedProducts

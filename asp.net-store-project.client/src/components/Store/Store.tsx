@@ -27,15 +27,15 @@ interface StoreSettings {
 
 interface StoreFilters {
 	priceRange: PriceRange;
-	relatedTags: KeyValuePair[];
+	relatedTags: RelatedParameters[];
 }
 type PriceRange = {
 	from: number;
 	to: number;
 }
-type KeyValuePair = {
-	key: string;
-	Value: string[];
+type RelatedParameters = {
+	label: string;
+	parameters: string[];
 }
 
 type Product = {
