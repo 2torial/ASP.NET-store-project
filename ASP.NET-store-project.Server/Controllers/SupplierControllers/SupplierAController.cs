@@ -26,13 +26,12 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             categorizedProducts = categorizedProducts.Where(item => !item.IsDeleted);
 
             //// Price range min and max values evaluation
-            var priceRange = new PriceRange();
-            if (Request.Form.TryGetValue("PriceFrom", out var from))
-                if (int.TryParse(from.ToString(), out var priceFrom))
-                    priceRange.From = priceFrom;
-            if (Request.Form.TryGetValue("PriceTo", out var to))
-                if (int.TryParse(to.ToString(), out var priceTo))
-                    priceRange.To = priceTo;
+            decimal from = 0, to = decimal.MaxValue;
+            if (Request.Form.TryGetValue("PriceFrom", out var priceFrom))
+                _ = decimal.TryParse(priceFrom.ToString(), out from);
+            if (Request.Form.TryGetValue("PriceTo", out var priceTo))
+                _ = decimal.TryParse(priceTo.ToString(), out to);
+            var priceRange = new PriceRange(from, to);
 
             // Searchbar filtering
             if (Request.Form.TryGetValue("SearchBar", out var searchbar))

@@ -2,32 +2,14 @@
 {
     public class PriceRange
     {
-        private decimal _from, _to;
-        public decimal From
-        {
-            get => _from;
-            set
-            {
-                ArgumentOutOfRangeException.ThrowIfNegative(value);
-                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, To);
-                _from = value;
-            }
-        }
-        public decimal To
-        {
-            get => _to;
-            set
-            {
-                ArgumentOutOfRangeException.ThrowIfNegative(value);
-                ArgumentOutOfRangeException.ThrowIfLessThan(value, From);
-                _to = value;
-            }
-        }
+        public decimal From { get; private init; }
+        public decimal To { get; private init; }
 
-        public PriceRange(decimal from = 0, decimal to = decimal.MaxValue)
+        public PriceRange(decimal from, decimal to)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(from);
-
+            ArgumentOutOfRangeException.ThrowIfNegative(to);
+            ArgumentOutOfRangeException.ThrowIfLessThan(to, from);
             From = from;
             To = to;
         }
