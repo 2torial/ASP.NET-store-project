@@ -15,7 +15,9 @@
                         requestAdress ?? kvp.Value.RequestAdress,
                         content ?? kvp.Value.Content))));
 
-            return await Task.WhenAll(messages
+            var succeededMessages = messages.Where(kvp => kvp.Value.IsSuccessStatusCode);
+
+            return await Task.WhenAll(succeededMessages
                 .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await kvp.Value.Content.ReadFromJsonAsync<T>())));
         }
 
