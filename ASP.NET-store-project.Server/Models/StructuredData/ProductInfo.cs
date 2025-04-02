@@ -12,9 +12,9 @@
 
         public string? Thumbnail { get; set; }
 
-        public List<string>? Gallery { get; set; } // To be changed to List<Base64>
+        public IEnumerable<string>? Gallery { get; set; } // To be changed to List<Base64>
 
-        public List<ProductTag>? Tags { get; set; }
+        public IEnumerable<ProductTag>? Tags { get; set; }
 
         public string? WebPageLink { get; set; }
 

@@ -95,18 +95,14 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         selectedProducts.Max(prod => prod.Price)),
                     RelatedTags = selectedProducts
                         .SelectMany(prod => prod.Tags)
-                        .Distinct(EqualityComparer<ProductTag>.Create(
-                            (tag1, tag2) => tag1.Label.Equals(tag2.Label) && tag1.Parameter.Equals(tag2.Parameter)))
+                        .Distinct(new ProductTagComparer())
                         .GroupBy(
                             tag => tag.Label,
                             tag => tag.Parameter,
                             (label, parameters) => new RelatedParameters(label, parameters))
-                        .AsEnumerable()
                 },
                 Products = selectedProducts
             };
-
-            Console.Error.WriteLine(storeComponentData.Filters.RelatedTags);
 
             return Ok(storeComponentData);
         }

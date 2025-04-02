@@ -1,6 +1,7 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
 {
@@ -65,11 +66,12 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         {
             var selectedProducts = context.Items
                 .Where(item => selectedProductIds.Contains(item.Id))
+                .Include(item => item.Configurations)
                 .AsEnumerable()
                 .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
                 {
                     Gallery = [],
-                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }).ToList(),
+                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }),
                     WebPageLink = item.WebPage,
                 });
             return Ok(selectedProducts);
