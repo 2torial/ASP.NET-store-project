@@ -8,6 +8,7 @@ namespace ASP.NET_store_project.Server.Models.StructuredData
 
         public string Parameter { get; set; }
 
+        public int Order { get; set; }
     }
 
     public class ProductTagComparer : IEqualityComparer<ProductTag>

@@ -50,6 +50,7 @@ type Product = {
 type ProductTag = {
 	label: string;
 	parameter: string;
+	order: number;
 }
 
 export function Store() {

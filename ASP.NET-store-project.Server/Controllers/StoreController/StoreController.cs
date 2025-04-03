@@ -3,6 +3,7 @@ using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -98,8 +99,8 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         .Distinct(new ProductTagComparer())
                         .GroupBy(
                             tag => tag.Label,
-                            tag => tag.Parameter,
-                            (label, parameters) => new RelatedParameters(label, parameters))
+                            tag => tag,
+                            (label, tags) => new RelatedParameters(label, tags.OrderBy(tag => tag.Order).Select(tag => tag.Parameter)))
                 },
                 Products = selectedProducts
             };

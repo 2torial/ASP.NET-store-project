@@ -71,7 +71,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
                 {
                     Gallery = [],
-                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }),
+                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter, Order = config.Order }),
                     WebPageLink = item.WebPage,
                 });
             return Ok(selectedProducts);
