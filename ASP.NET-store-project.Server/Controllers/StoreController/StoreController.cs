@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ASP.NET_store_project.Server.Controllers.StoreController
 {
@@ -26,16 +28,12 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     })
                 .AsEnumerable();
 
-            var content = Request.ReadFormAsync().Result
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
-            var contentEncoded = new FormUrlEncodedContent(content);
-
             var filterRequestClientsData = suppliers
                 .ToDictionary(
                     sup => sup.Id,
                     sup => new ClientData(sup.Client)
                     {
-                        Content = contentEncoded,
+                        Content = new StringContent(JsonSerializer.Serialize(pageData), Encoding.UTF8, "application/json"),
                         RequestAdress = sup.FilteredProductsRequestAdress,
                     });
 
@@ -85,7 +83,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     SelectedCategory = pageData.Category,
                     SelectedPageSize = pageData.PageSize,
                     NumberOfPages = filteredProducts.Count(),
-                    SelectedPageIndex = pageData.PageNumber,
+                    SelectedPageIndex = pageData.PageIndex,
                     SelectedSortingMethod = pageData.SortBy,
                     SelectedSortingOrder = pageData.OrderBy
                 },
