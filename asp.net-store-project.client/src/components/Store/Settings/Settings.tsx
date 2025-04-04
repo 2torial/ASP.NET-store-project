@@ -7,23 +7,23 @@ import { SortingMethod, sortingMethodLabel } from '../../../shared/StoreEnum/Sto
 import { SortingOrder } from '../../../shared/StoreEnum/StoreSortingOrder';
 
 interface SettingsProps {
-    selectedCategory: ProductCategory;
-    selectedPageSize: number;
-	numberOfPages: number;
-    selectedPageIndex: number;
-    selectedSortingMethod: SortingMethod;
-    selectedSortingOrder: SortingOrder;
+    category: ProductCategory;
+    pageSize: number;
+    pageCount: number;
+    pageIndex: number;
+    sortingMethod: SortingMethod;
+    sortingOrder: SortingOrder;
     updateSettings: () => void;
 }
 
-function Settings({ selectedCategory, numberOfPages, selectedPageIndex, selectedSortingMethod, updateSettings } : SettingsProps) {
+function Settings({ category, pageCount, pageIndex, sortingMethod, updateSettings } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
         name: "Category",
         options: Object.values(ProductCategory).map(cat => convertEnumToChoosable(cat as ProductCategory, productCategoryLabel)),
         icons: undefined,
-        selectedOption: convertEnumToChoosable(selectedCategory as ProductCategory, productCategoryLabel),
+        selectedOption: convertEnumToChoosable(category as ProductCategory, productCategoryLabel),
         updateSettings: updateSettings,
     }
 
@@ -33,13 +33,13 @@ function Settings({ selectedCategory, numberOfPages, selectedPageIndex, selected
         name: "SortBy",
         options: Object.values(SortingMethod).map(met => convertEnumToChoosable(met as SortingMethod, sortingMethodLabel)),
         icons: undefined,
-        selectedOption: convertEnumToChoosable(selectedSortingMethod as SortingMethod, sortingMethodLabel),
+        selectedOption: convertEnumToChoosable(sortingMethod as SortingMethod, sortingMethodLabel),
         updateSettings: updateSettings,
     }
 
     const pageSelect = {
-        pages: numberOfPages,
-        selectedPageIndex: selectedPageIndex,
+        pages: pageCount,
+        selectedPageIndex: pageIndex,
         updateSettings: updateSettings,
     }
 

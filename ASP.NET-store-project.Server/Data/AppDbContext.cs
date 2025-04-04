@@ -52,9 +52,9 @@ namespace ASP.NET_store_project.Server.Data
                 new("SupplierC", "https://localhost:5173/", "filter", "select") { Id = supplierId3 });
 
             modelBuilder.Entity<Category>().HasData(
-                new("Laptops", "Laptops/Notebooks/Ultrabooks"),
-                new("Headsets", "Headsets"),
-                new("Microphones", "Microphones"));
+                new("Laptop"),
+                new("Headset"),
+                new("Microphone"));
 
             Guid[] configs = new Guid[28];
             for (int i = 0; i < configs.Length; i++)
@@ -95,18 +95,18 @@ namespace ASP.NET_store_project.Server.Data
                 items[i] = Guid.NewGuid();
 
             modelBuilder.Entity<Item>().HasData(
-                new("Laptops", "Laptop #1", 900, 10, "") { Id = items[0] },
-                new("Microphones", "Microphone #2", 20, 10, "") { Id = items[1] },
-                new("Laptops", "Laptop #2", 650, 10, "") { Id = items[2] },
-                new("Laptops", "Laptop #3", 800, 10, "") { Id = items[3] },
-                new("Laptops", "Laptop #4", 500, 10, "") { Id = items[4] },
-                new("Laptops", "Laptop #5", 660, 10, "") { Id = items[5] },
-                new("Laptops", "Laptop #6", 500, 10, "") { Id = items[6] },
-                new("Laptops", "Laptop #7", 450, 10, "") { Id = items[7] },
-                new("Headsets", "Headset #1", 100, 10, "") { Id = items[8] },
-                new("Headsets", "Headset #2", 300, 10, "") { Id = items[9] },
-                new("Headsets", "Headset #3", 50, 10, "") { Id = items[10] },
-                new("Microphones", "Microphone #1", 50, 10, "") { Id = items[11] });
+                new("Laptop", "Laptop #1", 900, 10, "") { Id = items[0] },
+                new("Microphone", "Microphone #2", 20, 10, "") { Id = items[1] },
+                new("Laptop", "Laptop #2", 650, 10, "") { Id = items[2] },
+                new("Laptop", "Laptop #3", 800, 10, "") { Id = items[3] },
+                new("Laptop", "Laptop #4", 500, 10, "") { Id = items[4] },
+                new("Laptop", "Laptop #5", 660, 10, "") { Id = items[5] },
+                new("Laptop", "Laptop #6", 500, 10, "") { Id = items[6] },
+                new("Laptop", "Laptop #7", 450, 10, "") { Id = items[7] },
+                new("Headset", "Headset #1", 100, 10, "") { Id = items[8] },
+                new("Headset", "Headset #2", 300, 10, "") { Id = items[9] },
+                new("Headset", "Headset #3", 50, 10, "") { Id = items[10] },
+                new("Microphone", "Microphone #1", 50, 10, "") { Id = items[11] });
 
             modelBuilder.Entity<Image>().HasData(
                 new("https://placehold.co/150x150", items[0]) { Id = Guid.NewGuid() },

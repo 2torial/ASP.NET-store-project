@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './Store.css';
 import Filters from './Filters';
 import Settings from './Settings';
@@ -17,25 +17,21 @@ interface StoreComponentData {
 }
 
 interface StoreSettings {
-	selectedCategory: ProductCategory;
-	selectedPageSize: PageSize;
-	numberOfPages: number;
-	selectedPageIndex: number;
-	selectedSortingMethod: SortingMethod;
-	selectedSortingOrder: SortingOrder;
+	category: ProductCategory;
+	pageSize: PageSize;
+	pageCount: number;
+	pageIndex: number;
+	sortingMethod: SortingMethod;
+	sortingOrder: SortingOrder;
 }
 
 interface StoreFilters {
 	priceRange: PriceRange;
-	relatedTags: RelatedParameters[];
+	relatedTags: { [label: string]: ProductTag[] };
 }
 type PriceRange = {
 	from: number;
 	to: number;
-}
-type RelatedParameters = {
-	label: string;
-	parameters: string[];
 }
 
 type Product = {
@@ -58,17 +54,28 @@ export function Store() {
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
 	const [products, setProducts] = useState<Product[]>();
-
-	useEffect(() => {
-		reloadStorePage(new FormData());
-	}, []);
+	const isFirstLoad = useRef(true);
 
 	useEffect(() => {
 		if (location.pathname !== "/store") return;
-		const queryParams = new URLSearchParams(location.search);
-		if (!queryParams.has("search")) return;
-		const data = collectData(FormID.Filters, FormID.Settings);
-		data.append("SearchBar", queryParams.get("search")!)
+		let data;
+		if (isFirstLoad.current) {
+			isFirstLoad.current = false;
+			data = new FormData();
+			data.append("Category", ProductCategory.Laptop.toString());
+			data.append("PriceFrom", "0");
+			data.append("PriceTo", "99999999");
+			data.append("SortBy", SortingMethod.ByPrice.toString());
+			data.append("OrderBy", SortingOrder.Ascending.toString());
+			data.append("PageSize", PageSize.Take20.toString());
+			data.append("PageIndex", "1");
+			console.log(data.get("Category"));
+		} else {
+			const queryParams = new URLSearchParams(location.search);
+			if (!queryParams.has("search")) return;
+			data = collectData(FormID.Filters, FormID.Settings);
+			data.append("SearchBar", queryParams.get("search") ?? "")
+		} 
 		reloadStorePage(data);
 	}, [location])
 	
@@ -83,7 +90,6 @@ export function Store() {
 			return;
 		}
 		const data: StoreComponentData = await response.json();
-		console.log(data);
 		setSettings(data.settings);
 		setFilters(data.filters);
 		setProducts(data.products);

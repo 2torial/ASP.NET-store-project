@@ -15,26 +15,20 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         public IActionResult FilteredProducts([FromBody] PageReloadData pageData)
         {
             // Category filtering
-            var categorizedProducts = context.Items
+            var filteredProducts = context.Items
                 .Where(item => item.Category.Type == pageData.Category.GetDisplayName())
                 .Where(item => !item.IsDeleted)
-                .Where(item => pageData.PriceRange.From <= item.Price && item.Price <= pageData.PriceRange.To)
+                .Where(item => pageData.PriceFrom <= item.Price && item.Price <= pageData.PriceTo)
                 .Include(item => item.Configurations)
-                .Select(item => new ProductInfo(item.Id, item.Name, item.Price) 
-                { 
-                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter }) 
+                .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
+                {
+                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter })
                 })
                 .AsEnumerable();
 
-            var searchedProducts = categorizedProducts
-                .Where(item => pageData.SearchBar.ToLower().Split(null)
+            if (pageData.SearchBar != null)
+                filteredProducts = filteredProducts.Where(item => pageData.SearchBar.ToLower().Split(null)
                     .All(word => item.Name.Contains(word, StringComparison.CurrentCultureIgnoreCase)));
-
-            // Specification filtering
-            var filteredProducts = categorizedProducts
-                .Where(item => pageData.RelatedTags
-                    .All(kvp => kvp.Value.Any(tag => item.Tags.Contains(tag))))
-                .Select(item => new ProductInfo(item.Id, item.Name, item.Price));
 
             return Ok(filteredProducts);
         }

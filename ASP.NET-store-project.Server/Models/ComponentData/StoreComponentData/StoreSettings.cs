@@ -4,17 +4,17 @@ namespace ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData
 {
     public class StoreSettings
     {
-        public ProductCategory SelectedCategory { get; set; }
+        public ProductCategory Category { get; set; }
 
-        public PageSize SelectedPageSize { get; set; }
+        public PageSize PageSize { get; set; }
 
-        public int NumberOfPages { get; set; }
+        public int PageCount { get; set; }
 
-        public int SelectedPageIndex { get; set; }
+        public int PageIndex { get; set; }
 
-        public SortingMethod SelectedSortingMethod { get; set; }
+        public SortingMethod SortingMethod { get; set; }
 
-        public SortingOrder SelectedSortingOrder { get; set; }
+        public SortingOrder SortingOrder { get; set; }
 
     }
 }

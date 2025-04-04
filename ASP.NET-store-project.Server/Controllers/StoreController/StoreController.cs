@@ -3,11 +3,9 @@ using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ASP.NET_store_project.Server.Controllers.StoreController
 {
@@ -18,6 +16,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         [HttpPost("/api/reload")]
         public async Task<IActionResult> Reload([FromForm] PageReloadData pageData)
         {
+            Console.WriteLine(pageData.Category);
             var suppliers = context.Suppliers
                 .Select(sup => new
                     {
@@ -43,9 +42,15 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 .SelectMany(
                     kvp => kvp.Value,
                     (batch, prod) =>
-                        new ProductInfo(prod.Id, prod.Name, prod.Price) { SupplierId = batch.Key });
+                        new ProductInfo(prod.Id, prod.Name, prod.Price) { SupplierId = batch.Key, Tags = prod.Tags });
+
+            filteredProducts = filteredProducts
+                .Where(prod => prod.Tags?.All(tag =>
+                    !Request.Form.TryGetValue(tag.Label, out var parameters) || // if label is not present, there are no restrictions for the parameter type
+                    parameters.Any(param => param == tag.Parameter)) ?? false); // if it is present, product parameters must provide at least one of a kind
 
             filteredProducts = pageData.ModifyAwaited(filteredProducts);
+
             var selectedProductsData = filteredProducts
                 .GroupBy(
                     prod => prod.SupplierId,
@@ -61,9 +66,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         Content = new StringContent(selectedData.Value, Encoding.UTF8, "application/json"),
                         RequestAdress = sup.SelectedProductsRequestAdress,
                     }))
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value);
+                .ToDictionary();
 
             var selectedProductsBatch = await MultipleRequestsAsJsonEndpoint<List<ProductInfo>>
                 .SendAsync(selectRequestClientsData);
@@ -80,12 +83,12 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             {
                 Settings = new StoreSettings
                 {
-                    SelectedCategory = pageData.Category,
-                    SelectedPageSize = pageData.PageSize,
-                    NumberOfPages = filteredProducts.Count(),
-                    SelectedPageIndex = pageData.PageIndex,
-                    SelectedSortingMethod = pageData.SortBy,
-                    SelectedSortingOrder = pageData.OrderBy
+                    Category = pageData.Category,
+                    PageSize = pageData.PageSize,
+                    PageCount = !filteredProducts.Any() ? 0 : (filteredProducts.Count() - 1) % pageData.NumericPageSize() + 1,
+                    PageIndex = pageData.PageIndex,
+                    SortingMethod = pageData.SortBy,
+                    SortingOrder = pageData.OrderBy
                 },
                 Filters = new StoreFilters
                 {
@@ -93,12 +96,13 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         selectedProducts.Min(prod => prod.Price),
                         selectedProducts.Max(prod => prod.Price)),
                     RelatedTags = selectedProducts
-                        .SelectMany(prod => prod.Tags)
+                        .SelectMany(prod => prod.Tags ?? [])
                         .Distinct(new ProductTagComparer())
                         .GroupBy(
                             tag => tag.Label,
                             tag => tag,
-                            (label, tags) => new RelatedParameters(label, tags.OrderBy(tag => tag.Order).Select(tag => tag.Parameter)))
+                            (label, tags) => new KeyValuePair<string, IEnumerable<ProductTag>>(label, tags))
+                        .ToDictionary()
                 },
                 Products = selectedProducts
             };

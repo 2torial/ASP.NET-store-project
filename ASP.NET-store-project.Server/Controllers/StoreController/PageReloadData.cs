@@ -1,7 +1,6 @@
 using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Extensions;
 using System.ComponentModel;
 
 namespace ASP.NET_store_project.Server.Controllers.StoreController
@@ -12,11 +11,12 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         public ProductCategory Category { get; init; }
 
         [FromForm]
-        public PriceRange PriceRange { get; init; }
+        public decimal PriceFrom { get; init; }
         [FromForm]
-        public string SearchBar { get; init; }
+        public decimal PriceTo { get; init; }
+
         [FromForm]
-        public IDictionary<string, IEnumerable<ProductTag>> RelatedTags { get; init; }
+        public string? SearchBar { get; init; }
 
         [FromForm]
         public SortingMethod SortBy { get; init; }
@@ -41,26 +41,22 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
         [FromForm]
         public PageSize PageSize { get; init; }
-        [FromForm]
-        public int PageIndex { get; init; }
-        private IEnumerable<ProductInfo> Slice(IEnumerable<ProductInfo> products)
+        public int NumericPageSize() => PageSize switch
         {
-            int numberOfRecords = PageSize switch
-            {
-                PageSize.Take20 => 20,
-                PageSize.Take50 => 50,
-                PageSize.Take100 => 100,
-                _ => throw new InvalidEnumArgumentException()
-            };
-            products = products
-                .Skip(numberOfRecords * (PageIndex - 1))
-                .Take(numberOfRecords);
-            return products;
-        }
+            PageSize.Take20 => 20,
+            PageSize.Take50 => 50,
+            PageSize.Take100 => 100,
+            _ => throw new InvalidEnumArgumentException()
+        };
+
+        [FromForm]
+        public int PageIndex { get; init; } = 1;
+        private IEnumerable<ProductInfo> Slice(IEnumerable<ProductInfo> products) => products
+            .Skip(NumericPageSize() * (PageIndex - 1))
+            .Take(NumericPageSize());
 
         public IEnumerable<ProductInfo> ModifyAwaited(IEnumerable<ProductInfo> products)
         {
-            Console.Error.WriteLine("!!!! >>> " + Category.GetDisplayName() +":"+ PageSize.GetDisplayName() +":"+ PageIndex + ":" + SortBy.GetDisplayName() +":"+ OrderBy.GetDisplayName());
             products = Sort(products);
             products = Slice(products);
             return products;
