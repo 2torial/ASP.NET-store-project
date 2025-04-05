@@ -26,8 +26,9 @@ interface StoreSettings {
 }
 
 interface StoreFilters {
+	viablePriceRange: PriceRange;
 	priceRange: PriceRange;
-	relatedTags: { [label: string]: ProductTag[] };
+	groupedTags: { [label: string]: ProductTag[] };
 }
 type PriceRange = {
 	from: number;
@@ -61,25 +62,33 @@ export function Store() {
 		let data;
 		if (isFirstLoad.current) {
 			isFirstLoad.current = false;
-			data = new FormData();
-			data.append("Category", ProductCategory.Laptop.toString());
-			data.append("PriceFrom", "0");
-			data.append("PriceTo", "99999999");
-			data.append("SortBy", SortingMethod.ByPrice.toString());
-			data.append("OrderBy", SortingOrder.Ascending.toString());
-			data.append("PageSize", PageSize.Take20.toString());
-			data.append("PageIndex", "1");
-			console.log(data.get("Category"));
+			reloadStorePage(true, true);
 		} else {
 			const queryParams = new URLSearchParams(location.search);
 			if (!queryParams.has("search")) return;
 			data = collectData(FormID.Filters, FormID.Settings);
 			data.append("SearchBar", queryParams.get("search") ?? "")
+			reloadStorePage(false, false)
 		} 
-		reloadStorePage(data);
 	}, [location])
 	
-	const reloadStorePage = (async (formData: FormData) => {
+	const reloadStorePage = async (defaultFilters: boolean, defaultSettings: boolean) => {
+		const formData = collectData(
+			defaultFilters ? FormID.Nil : FormID.Filters,
+			defaultSettings ? FormID.Nil : FormID.Settings);
+
+		if (defaultFilters) {
+			formData.append("PriceFrom", "0");
+			formData.append("PriceTo", "99999999");
+		}
+		if (defaultSettings) {
+			formData.append("Category", ProductCategory.Laptop.toString());
+			formData.append("SortBy", SortingMethod.ByPrice.toString());
+			formData.append("OrderBy", SortingOrder.Ascending.toString());
+			formData.append("PageSize", PageSize.Take20.toString());
+			formData.append("PageIndex", "1");
+		}
+
 		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
@@ -91,34 +100,32 @@ export function Store() {
 		}
 		const data: StoreComponentData = await response.json();
 		setSettings(data.settings);
-		setFilters(data.filters);
 		setProducts(data.products);
-	});
+		setFilters(data.filters);
+	};
 
-	const updateFilters = (async () => {
-		reloadStorePage(collectData(FormID.Filters, FormID.Settings));
-	});
+	const updateStorePage = async () =>
+		reloadStorePage(false, false);
 
-	const updateSettings = (async () => {
-		reloadStorePage(collectData(FormID.Settings));
-	});
+	const resetStoreFilters = async () => 
+		reloadStorePage(true, false);
 
 	if (settings === undefined || filters === undefined || products === undefined)
 		return <main><p>Store component is loading</p></main>;
 	
 	const filterProps = {
 		...filters,
-		updateFilters,
-		resetFilters: updateSettings
+		updateStorePage,
+		resetStoreFilters
 	}
 	const settingsProps = {
 		...settings,
-		updateSettings
+		updateStorePage
 	}
 	return <main id="store">
-		<Filters {...filterProps}/>
+		<Filters {...filterProps} />
 		<Settings {...settingsProps} />
-		<ItemList products={ products } />
+		<ItemList products={products} />
 	</main>;
 }
 

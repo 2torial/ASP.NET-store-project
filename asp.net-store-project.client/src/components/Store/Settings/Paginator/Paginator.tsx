@@ -3,7 +3,7 @@ import './Paginator.css'
 interface PaginatorProps {
     pages: number;
     selectedPageIndex: number;
-    updateSettings(): void;
+    updateStorePage(): void;
 }
 
 function Paginator({selectedPageIndex}: PaginatorProps) {

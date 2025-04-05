@@ -8,14 +8,14 @@ interface SelectListProps {
     options: Option[];
     icons?: { [id: string]: string }
     selectedOption: Option;
-    updateSettings(): void;
+    updateStorePage(): void;
 }
 type Option = {
     label: string;
     value: string;
 }
 
-function SelectList({ label, id, name, options, icons, selectedOption, updateSettings }: SelectListProps) {
+function SelectList({ label, id, name, options, icons, selectedOption, updateStorePage }: SelectListProps) {
     const toggleSelectList = () => {
         (selectListRef.current! as HTMLElement).classList.toggle("expanded");
     }
@@ -26,7 +26,7 @@ function SelectList({ label, id, name, options, icons, selectedOption, updateSet
         toggleSelectList();
         const input: HTMLInputElement = inputRef.current!;
         input.value = value;
-        updateSettings();
+        updateStorePage();
     };
     
     const labelContent = label !== undefined

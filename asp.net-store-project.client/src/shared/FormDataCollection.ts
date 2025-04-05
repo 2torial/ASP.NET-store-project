@@ -1,6 +1,7 @@
 export const collectData = (...ids: string[]): FormData => {
 	let data = undefined;
 	for (const id of ids) {
+		if (id == "") continue;
 		const form: HTMLFormElement | null = document.querySelector(`form#${id}`);
 		if (form !== null) {
 			if (data === undefined) data = new FormData(form);
@@ -18,4 +19,5 @@ export enum FormID {
 	SignIn = "sign-in",
 	SignUp = "sign-up",
 	Summary = "summary",
+	Nil = ""
 }

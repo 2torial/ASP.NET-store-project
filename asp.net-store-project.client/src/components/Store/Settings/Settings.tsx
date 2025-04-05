@@ -13,10 +13,10 @@ interface SettingsProps {
     pageIndex: number;
     sortingMethod: SortingMethod;
     sortingOrder: SortingOrder;
-    updateSettings: () => void;
+    updateStorePage: () => void;
 }
 
-function Settings({ category, pageCount, pageIndex, sortingMethod, updateSettings } : SettingsProps) {
+function Settings({ category, pageCount, pageIndex, sortingMethod, updateStorePage } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
@@ -24,7 +24,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, updateSetting
         options: Object.values(ProductCategory).map(cat => convertEnumToChoosable(cat as ProductCategory, productCategoryLabel)),
         icons: undefined,
         selectedOption: convertEnumToChoosable(category as ProductCategory, productCategoryLabel),
-        updateSettings: updateSettings,
+        updateStorePage: updateStorePage,
     }
 
     const sortSelect = {
@@ -34,13 +34,13 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, updateSetting
         options: Object.values(SortingMethod).map(met => convertEnumToChoosable(met as SortingMethod, sortingMethodLabel)),
         icons: undefined,
         selectedOption: convertEnumToChoosable(sortingMethod as SortingMethod, sortingMethodLabel),
-        updateSettings: updateSettings,
+        updateStorePage: updateStorePage,
     }
 
     const pageSelect = {
         pages: pageCount,
         selectedPageIndex: pageIndex,
-        updateSettings: updateSettings,
+        updateStorePage: updateStorePage,
     }
 
     const viewSelect = {
@@ -50,7 +50,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, updateSetting
         options: ["Gallery", "List"].map(view => ({ label: view, value: view })),
         icons: { "Gallery": "https://placehold.co/20x20", "List": "https://placehold.co/20x20" },
         selectedOption: { label: "Gallery", value: "Gallery" },
-        updateSettings: updateSettings,
+        updateStorePage: updateStorePage,
     }
 
     return <form className="settings" id="settings">

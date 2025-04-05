@@ -5,9 +5,9 @@ import React from 'react';
 
 interface FiltersProps {
 	priceRange: PriceRange;
-    relatedTags: { [label: string]: ProductTag[] };
-    updateFilters: () => void;
-    resetFilters: () => void;
+    groupedTags: { [label: string]: ProductTag[] };
+    updateStorePage(): void;
+    resetStoreFilters(): void;
 }
 type PriceRange = {
 	from: number;
@@ -19,7 +19,7 @@ type ProductTag = {
     order: number;
 }
 
-function Filters({ priceRange, relatedTags, updateFilters, resetFilters }: FiltersProps) {
+function Filters({ priceRange, groupedTags, updateStorePage, resetStoreFilters }: FiltersProps) {
     const handleSubmit = (handler: () => void) => {
         return (event: React.MouseEvent) => {
             event.preventDefault();
@@ -27,18 +27,16 @@ function Filters({ priceRange, relatedTags, updateFilters, resetFilters }: Filte
         }
     }
 
-    console.log(relatedTags)
-
     return <form className="filters" id="filters">
         <div className="title-section">
             <h2>Filters</h2>
             <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
-        {Object.keys(relatedTags).map(label => <CheckBoxFilter label={label} options={relatedTags[label].map(tag => tag.parameter) ?? []} key={label} />)}
+        {Object.keys(groupedTags).map(label => <CheckBoxFilter label={label} options={groupedTags[label].map(tag => tag.parameter) ?? []} key={label} />)}
         <div className="apply-section">
-            <input type="submit" onClick={handleSubmit(updateFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
-            <input type="submit" onClick={handleSubmit(resetFilters)}  className="default-button" id="reset-filters" value="Return default" />
+            <input type="submit" onClick={handleSubmit(updateStorePage)} className="apply-button" id="apply-filters" value="Apply filters" />
+            <input type="submit" onClick={handleSubmit(resetStoreFilters)}  className="default-button" id="reset-filters" value="Return default" />
         </div>
     </form>;
 }

@@ -12,25 +12,20 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
     public class SupplierAController(AppDbContext context) : ControllerBase
     {
         [HttpPost("/api/supplier/A/filter")]
-        public IActionResult FilteredProducts([FromBody] PageReloadData pageData)
+        public IActionResult CategorizedProducts([FromBody] PageReloadData pageData)
         {
             // Category filtering
-            var filteredProducts = context.Items
+            var categorizedProducts = context.Items
                 .Where(item => item.Category.Type == pageData.Category.GetDisplayName())
                 .Where(item => !item.IsDeleted)
-                .Where(item => pageData.PriceFrom <= item.Price && item.Price <= pageData.PriceTo)
+                .Where(item => item.Configurations.Count != 0)
                 .Include(item => item.Configurations)
-                .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
-                {
-                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter })
-                })
-                .AsEnumerable();
-
-            if (pageData.SearchBar != null)
-                filteredProducts = filteredProducts.Where(item => pageData.SearchBar.ToLower().Split(null)
-                    .All(word => item.Name.Contains(word, StringComparison.CurrentCultureIgnoreCase)));
-
-            return Ok(filteredProducts);
+                .AsEnumerable()
+                .Select(item => new ProductInfo(item.Id, item.Name, item.Price) 
+                { 
+                    Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter, Order = config.Order })
+                });
+            return Ok(categorizedProducts);
         }
 
         [HttpPost("/api/supplier/A/select")]

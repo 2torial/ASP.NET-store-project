@@ -13,5 +13,8 @@
             From = from;
             To = to;
         }
+
+        public bool IsInRange(decimal value) =>
+            From <= value && value <= To;
     }
 }
