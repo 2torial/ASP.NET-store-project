@@ -58,7 +58,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             var keyWords = pageData.SearchBar?.ToLower().Split(null) ?? [];
             filteredProducts = filteredProducts
-                .Where(prod => keyWords.All(word => word.Contains(prod.Name)));
+                .Where(prod => keyWords.All(word => prod.Name.Contains(word)));
 
             var viableTags = categorizedProducts
                 .SelectMany(prod => prod.Tags ?? [])
