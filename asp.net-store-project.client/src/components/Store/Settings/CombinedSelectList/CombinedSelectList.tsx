@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import './SelectList.css';
-import { InputChoosable } from '../../../../shared/InputChoosable';
 
 interface CombinedSelectListProps {
     id: string;
@@ -12,6 +11,10 @@ interface CombinedSelectListProps {
     selectedOptionA: InputChoosable;
     selectedOptionB: InputChoosable;
     updateStorePage(): void;
+}
+type InputChoosable = {
+    label: string;
+    value: string;
 }
 
 function CombinedSelectList({ label, id, nameA, nameB, optionsA, optionsB, selectedOptionA, selectedOptionB, updateStorePage }: CombinedSelectListProps) {
