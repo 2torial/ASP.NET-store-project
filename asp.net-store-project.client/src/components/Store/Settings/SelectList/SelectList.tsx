@@ -1,18 +1,15 @@
 import { useRef } from 'react';
 import './SelectList.css';
+import { InputChoosable } from '../../../../shared/InputChoosable';
 
 interface SelectListProps {
     label?: string;
     id: string;
     name: string;
-    options: Option[];
+    options: InputChoosable[];
     icons?: { [id: string]: string }
-    selectedOption: Option;
+    selectedOption: InputChoosable;
     updateStorePage(): void;
-}
-type Option = {
-    label: string;
-    value: string;
 }
 
 function SelectList({ label, id, name, options, icons, selectedOption, updateStorePage }: SelectListProps) {

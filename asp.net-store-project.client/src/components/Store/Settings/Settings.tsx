@@ -2,9 +2,9 @@ import Paginator from './Paginator';
 import SelectList from './SelectList';
 import './Settings.css';
 import { ProductCategory, productCategoryLabel } from '../../../shared/StoreEnum/StoreProductCategory';
-import { convertEnumToChoosable } from '../../../shared/InputChoosable';
 import { SortingMethod, sortingMethodLabel } from '../../../shared/StoreEnum/StoreSortingMethod';
-import { SortingOrder } from '../../../shared/StoreEnum/StoreSortingOrder';
+import { SortingOrder, sortingOrderLabel } from '../../../shared/StoreEnum/StoreSortingOrder';
+import CombinedSelectList from './CombinedSelectList';
 
 interface SettingsProps {
     category: ProductCategory;
@@ -16,24 +16,26 @@ interface SettingsProps {
     updateStorePage: () => void;
 }
 
-function Settings({ category, pageCount, pageIndex, sortingMethod, updateStorePage } : SettingsProps) {
+function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder, updateStorePage } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
         name: "Category",
-        options: Object.values(ProductCategory).map(cat => convertEnumToChoosable(cat as ProductCategory, productCategoryLabel)),
+        options: [...productCategoryLabel.entries()].map((kvp) => ({ label: kvp[1], value: kvp[0].toString() })),
         icons: undefined,
-        selectedOption: convertEnumToChoosable(category as ProductCategory, productCategoryLabel),
+        selectedOption: { label: productCategoryLabel.get(category) as string, value: category.toString() },
         updateStorePage: updateStorePage,
     }
 
     const sortSelect = {
         label: "Sort by",
         id: "sortby",
-        name: "SortBy",
-        options: Object.values(SortingMethod).map(met => convertEnumToChoosable(met as SortingMethod, sortingMethodLabel)),
-        icons: undefined,
-        selectedOption: convertEnumToChoosable(sortingMethod as SortingMethod, sortingMethodLabel),
+        nameA: "SortBy",
+        nameB: "OrderBy",
+        optionsA: [...sortingMethodLabel.entries()].map((kvp) => ({ label: kvp[1], value: kvp[0].toString() })),
+        optionsB: [...sortingOrderLabel.entries()].map((kvp) => ({ label: kvp[1], value: kvp[0].toString() })),
+        selectedOptionA: { label: sortingMethodLabel.get(sortingMethod) as string, value: sortingMethod.toString() },
+        selectedOptionB: { label: sortingOrderLabel.get(sortingOrder) as string, value: sortingOrder.toString() },
         updateStorePage: updateStorePage,
     }
 
@@ -55,7 +57,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, updateStorePa
 
     return <form className="settings" id="settings">
         <SelectList {...categorySelect} />
-        <SelectList {...sortSelect} />
+        <CombinedSelectList {...sortSelect} />
         <Paginator {...pageSelect} />
         <SelectList {...viewSelect} />        
     </form>;
