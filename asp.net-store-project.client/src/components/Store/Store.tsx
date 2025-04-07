@@ -50,6 +50,18 @@ type ProductTag = {
 	order: number;
 }
 
+const configMockupFilters = (formData: FormData) => {
+	formData.append("PriceFrom", "0");
+	formData.append("PriceTo", "99999999");
+}
+const configMockupSettings = (formData: FormData) => {
+	formData.append("Category", ProductCategory.Laptop.toString());
+	formData.append("SortBy", SortingMethod.ByPrice.toString());
+	formData.append("OrderBy", SortingOrder.Ascending.toString());
+	formData.append("PageSize", PageSize.Take20.toString());
+	formData.append("PageIndex", "1");
+}
+
 export function Store() {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
@@ -62,32 +74,23 @@ export function Store() {
 		let data;
 		if (isFirstLoad.current) {
 			isFirstLoad.current = false;
-			reloadStorePage(true, true);
+			reloadStorePage([], (formData) => {
+				configMockupFilters(formData);
+				configMockupSettings(formData);
+			});
 		} else {
 			const queryParams = new URLSearchParams(location.search);
 			if (!queryParams.has("search")) return;
 			data = collectData(FormID.Filters, FormID.Settings);
 			data.append("SearchBar", queryParams.get("search") ?? "")
-			reloadStorePage(false, false)
+			reloadStorePage([FormID.Settings, FormID.Filters])
 		} 
 	}, [location])
 	
-	const reloadStorePage = async (defaultFilters: boolean, defaultSettings: boolean) => {
-		const formData = collectData(
-			defaultFilters ? FormID.Nil : FormID.Filters,
-			defaultSettings ? FormID.Nil : FormID.Settings);
+	const reloadStorePage = async (formsToLoad: FormID[] = [], configMockup: ((a: FormData) => void) = (_ => void _)) => {
+		const formData = collectData(...formsToLoad);
 
-		if (defaultFilters) {
-			formData.append("PriceFrom", "0");
-			formData.append("PriceTo", "99999999");
-		}
-		if (defaultSettings) {
-			formData.append("Category", ProductCategory.Laptop.toString());
-			formData.append("SortBy", SortingMethod.ByPrice.toString());
-			formData.append("OrderBy", SortingOrder.Ascending.toString());
-			formData.append("PageSize", PageSize.Take20.toString());
-			formData.append("PageIndex", "1");
-		}
+		configMockup(formData);
 
 		const response = await fetch('/api/reload', {
 			method: "post",
@@ -105,10 +108,10 @@ export function Store() {
 	};
 
 	const updateStorePage = async () =>
-		reloadStorePage(false, false);
+		reloadStorePage([FormID.Settings, FormID.Filters]);
 
 	const resetStoreFilters = async () => 
-		reloadStorePage(true, false);
+		reloadStorePage([FormID.Settings], configMockupFilters);
 
 	if (settings === undefined || filters === undefined || products === undefined)
 		return <main><p>Store component is loading</p></main>;
