@@ -70,7 +70,6 @@ export function Store() {
 	const isFirstLoad = useRef(true);
 
 	useEffect(() => {
-		if (location.pathname !== "/store") return;
 		if (isFirstLoad.current) {
 			isFirstLoad.current = false;
 			reloadStorePage(new FormData(), formData => {
