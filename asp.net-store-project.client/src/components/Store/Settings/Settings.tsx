@@ -13,10 +13,12 @@ interface SettingsProps {
     pageIndex: number;
     sortingMethod: SortingMethod;
     sortingOrder: SortingOrder;
-    updateStorePage: () => void;
+    resetCategory(): void;
+    applySorting(): void;
+    selectPage(): void;
 }
 
-function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder, updateStorePage } : SettingsProps) {
+function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder, resetCategory, selectPage, applySorting } : SettingsProps) {
     const categorySelect = {
         label: "Category",
         id: "category",
@@ -24,7 +26,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder,
         options: [...productCategoryLabel.entries()].map((kvp) => ({ label: kvp[1], value: kvp[0].toString() })),
         icons: undefined,
         selectedOption: { label: productCategoryLabel.get(category) as string, value: category.toString() },
-        updateStorePage: updateStorePage,
+        handler: resetCategory
     }
 
     const sortSelect = {
@@ -36,13 +38,13 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder,
         optionsB: [...sortingOrderLabel.entries()].map((kvp) => ({ label: kvp[1], value: kvp[0].toString() })),
         selectedOptionA: { label: sortingMethodLabel.get(sortingMethod) as string, value: sortingMethod.toString() },
         selectedOptionB: { label: sortingOrderLabel.get(sortingOrder) as string, value: sortingOrder.toString() },
-        updateStorePage: updateStorePage,
+        handler: applySorting
     }
 
     const pageSelect = {
         pages: pageCount,
         selectedPageIndex: pageIndex,
-        updateStorePage: updateStorePage,
+        handler: selectPage
     }
 
     const viewSelect = {
@@ -52,7 +54,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder,
         options: ["Gallery", "List"].map(view => ({ label: view, value: view })),
         icons: { "Gallery": "https://placehold.co/20x20", "List": "https://placehold.co/20x20" },
         selectedOption: { label: "Gallery", value: "Gallery" },
-        updateStorePage: updateStorePage,
+        handler: (() => void null)
     }
 
     return <form className="settings" id="settings">

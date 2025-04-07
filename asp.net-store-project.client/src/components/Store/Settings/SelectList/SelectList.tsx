@@ -8,14 +8,14 @@ interface SelectListProps {
     options: InputChoosable[];
     icons?: { [id: string]: string }
     selectedOption: InputChoosable;
-    updateStorePage(): void;
+    handler: () => void;
 }
 type InputChoosable = {
     label: string;
     value: string;
 }
 
-function SelectList({ label, id, name, options, icons, selectedOption, updateStorePage }: SelectListProps) {
+function SelectList({ label, id, name, options, icons, selectedOption, handler }: SelectListProps) {
     const toggleSelectList = () => {
         (selectListRef.current! as HTMLElement).classList.toggle("expanded");
     }
@@ -26,7 +26,7 @@ function SelectList({ label, id, name, options, icons, selectedOption, updateSto
         toggleSelectList();
         const input: HTMLInputElement = inputRef.current!;
         input.value = value;
-        updateStorePage();
+        handler();
     };
     
     const labelContent = label !== undefined
@@ -49,7 +49,7 @@ function SelectList({ label, id, name, options, icons, selectedOption, updateSto
         </div>
         <input style={{ display: "none" }} ref={inputRef}
             type="text" className="option" name={name} id={id}
-            onClick={toggleSelectList} defaultValue={selectedOption.value} />
+            defaultValue={selectedOption.value} />
     </div>;
 }
 

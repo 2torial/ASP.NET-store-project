@@ -49,9 +49,11 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 Console.WriteLine($"{prod.Name}:{prod.Price}");
             }
 
-            var viablePriceRange = new PriceRange(
-                categorizedProducts.Min(prod => prod.Price),
-                categorizedProducts.Max(prod => prod.Price));
+            var viablePriceRange = !categorizedProducts.Any() 
+                ? new PriceRange(0, decimal.MaxValue) 
+                : new PriceRange(
+                    categorizedProducts.Min(prod => prod.Price),
+                    categorizedProducts.Max(prod => prod.Price));
             var selectedPriceRange = new PriceRange(
                 Math.Max(viablePriceRange.From, pageData.PriceFrom),
                 Math.Min(viablePriceRange.To, pageData.PriceTo));
@@ -59,9 +61,11 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             filteredProducts = filteredProducts
                 .Where(prod => selectedPriceRange.IsInRange(prod.Price));
 
-            var adjustedPriceRange = new PriceRange(
-                filteredProducts.Min(prod => prod.Price),
-                filteredProducts.Max(prod => prod.Price));
+            var adjustedPriceRange = !filteredProducts.Any()
+                ? viablePriceRange
+                : new PriceRange(
+                    filteredProducts.Min(prod => prod.Price),
+                    filteredProducts.Max(prod => prod.Price));
 
             var keyWords = pageData.SearchBar?.ToLower().Split(null) ?? [];
             filteredProducts = filteredProducts

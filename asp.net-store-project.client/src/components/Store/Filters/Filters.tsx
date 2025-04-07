@@ -6,8 +6,8 @@ import React from 'react';
 interface FiltersProps {
 	priceRange: PriceRange;
     groupedTags: { [label: string]: ProductTag[] };
-    updateStorePage(): void;
-    resetStoreFilters(): void;
+    applyFilters(): void,
+    defaultFilters(): void,
 }
 type PriceRange = {
 	from: number;
@@ -19,7 +19,7 @@ type ProductTag = {
     order: number;
 }
 
-function Filters({ priceRange, groupedTags, updateStorePage, resetStoreFilters }: FiltersProps) {
+function Filters({ priceRange, groupedTags, applyFilters, defaultFilters }: FiltersProps) {
     const handleSubmit = (handler: () => void) => {
         return (event: React.MouseEvent) => {
             event.preventDefault();
@@ -35,8 +35,8 @@ function Filters({ priceRange, groupedTags, updateStorePage, resetStoreFilters }
         <RangeFilter from={priceRange.from} to={priceRange.to} />
         {Object.keys(groupedTags).map(label => <CheckBoxFilter label={label} options={groupedTags[label].map(tag => tag.parameter) ?? []} key={label} />)}
         <div className="apply-section">
-            <input type="submit" onClick={handleSubmit(updateStorePage)} className="apply-button" id="apply-filters" value="Apply filters" />
-            <input type="submit" onClick={handleSubmit(resetStoreFilters)}  className="default-button" id="reset-filters" value="Return default" />
+            <input type="submit" onClick={handleSubmit(applyFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
+            <input type="submit" onClick={handleSubmit(defaultFilters)}  className="default-button" id="reset-filters" value="Return default" />
         </div>
     </form>;
 }

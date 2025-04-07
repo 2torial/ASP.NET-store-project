@@ -10,14 +10,14 @@ interface CombinedSelectListProps {
     optionsB: InputChoosable[];
     selectedOptionA: InputChoosable;
     selectedOptionB: InputChoosable;
-    updateStorePage(): void;
+    handler(): void;
 }
 type InputChoosable = {
     label: string;
     value: string;
 }
 
-function CombinedSelectList({ label, id, nameA, nameB, optionsA, optionsB, selectedOptionA, selectedOptionB, updateStorePage }: CombinedSelectListProps) {
+function CombinedSelectList({ label, id, nameA, nameB, optionsA, optionsB, selectedOptionA, selectedOptionB, handler }: CombinedSelectListProps) {
     const toggleSelectList = () => {
         (selectListRef.current! as HTMLElement).classList.toggle("expanded");
     }
@@ -31,11 +31,11 @@ function CombinedSelectList({ label, id, nameA, nameB, optionsA, optionsB, selec
         const inputB: HTMLInputElement = inputRefB.current!;
         inputA.value = valueA;
         inputB.value = valueB;
-        updateStorePage();
+        handler();
     };
     
     const labelContent = label !== undefined
-        ? <label htmlFor={id}>{label}</label>
+        ? <label htmlFor={id+"-A"}>{label}</label>
         : <></>;
 
     let combinedIdx = 0;
@@ -52,10 +52,10 @@ function CombinedSelectList({ label, id, nameA, nameB, optionsA, optionsB, selec
             )}
         </div>
         <input style={{ display: "none" }} ref={inputRefA}
-            type="text" className="option" name={nameA} id={id}
-            defaultValue={selectedOptionA.value} />
+            type="text" className="option" name={nameA} id={id + "-A"}
+            onClick={toggleSelectList} defaultValue={selectedOptionA.value} />
         <input style={{ display: "none" }} ref={inputRefB}
-            type="text" className="option" name={nameB} id={id}
+            type="text" className="option" name={nameB} id={id + "-B"}
             defaultValue={selectedOptionB.value} />
     </div>;
 }

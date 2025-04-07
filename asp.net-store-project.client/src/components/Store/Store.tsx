@@ -103,23 +103,24 @@ export function Store() {
 		setFilters(data.filters);
 	};
 
-	const updateStorePage = async () =>
-		reloadStorePage(collectData(FormID.Settings, FormID.Filters));
-
-	const resetStoreFilters = async () => 
-		reloadStorePage(collectData(FormID.Settings), configMockupFilters);
-
 	if (settings === undefined || filters === undefined || products === undefined)
 		return <main><p>Store component is loading</p></main>;
 	
 	const filterProps = {
 		...filters,
-		updateStorePage,
-		resetStoreFilters
+		applyFilters: async () => reloadStorePage(collectData(FormID.Settings, FormID.Filters)),
+		defaultFilters: async () => reloadStorePage(collectData(FormID.Settings), configMockupFilters),
 	}
 	const settingsProps = {
 		...settings,
-		updateStorePage
+		resetCategory: async () => reloadStorePage(new FormData(), formData => {
+			configMockupFilters(formData);
+			configMockupSettings(formData);
+			const settings = collectData(FormID.Settings);
+			formData.set("Category", settings.get("Category")!.toString())
+		}),
+		selectPage: async () => reloadStorePage(collectData(FormID.Settings, FormID.Filters)),
+		applySorting: async () => reloadStorePage(collectData(FormID.Settings, FormID.Filters)),
 	}
 	const itemsProps = {
 		sortBy: settings.sortingMethod,

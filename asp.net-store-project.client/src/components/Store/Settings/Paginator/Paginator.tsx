@@ -3,27 +3,27 @@ import './Paginator.css'
 interface PaginatorProps {
     pages: number;
     selectedPageIndex: number;
-    updateStorePage(): void;
+    handler(): void;
 }
 
-function Paginator({selectedPageIndex}: PaginatorProps) {
+function Paginator({ selectedPageIndex, handler }: PaginatorProps) {
     const focusPageIndex = (event: React.MouseEvent) => {
         const pageIndex = (event.target as HTMLInputElement);
         pageIndex.classList.remove("idle");
         pageIndex.readOnly = false;
         pageIndex.select();
         pageIndex.focus();
-        console.log(pageIndex);
     }
 
     const unfocusPageIndex = (event: React.FocusEvent) => {
         const pageIndex = (event.target as HTMLInputElement);
         const onlyPositiveNumbersPattern = /^[1-9][0-9]*/;
-        if (!onlyPositiveNumbersPattern.test(pageIndex.value))
+        if (!onlyPositiveNumbersPattern.test(pageIndex.value)) {
             pageIndex.value = pageIndex.dataset.currentPage!;
+            handler();
+        } 
         pageIndex.classList.add("idle");
         pageIndex.readOnly = true;
-        console.log(pageIndex);
     }
 
     return <div className="setting-section">
