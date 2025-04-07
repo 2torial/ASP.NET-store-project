@@ -1,20 +1,15 @@
 # Internet Store ASP.NET Project based on Dropshipping Model
-Work in progress. \
-\
-Project is currently being modified to adjust to dropshipping business model.
-Some of the previously stated goals listed below are going to be neglected while main focus is shifted to backend API features.
+Work in progress.
 
 ## Milestones
-:white_check_mark: Working searchbar \
+:white_check_mark: Searchbar \
+:white_check_mark: Filters \
+:white_check_mark: Categories \
 :white_check_mark: User registration and authorization \
-:white_check_mark: Item ordering and basket functionalities \
-:white_check_mark: Expanded database \
-:white_check_mark: Order summarization \
-:hourglass: Adding/editing/removing items (admin panel) \
-:white_check_mark: User list (admin panel) \
-:white_check_mark: Order review (admin panel) \
-\
-Some time is going to be devoted to improving already implemented features.
+:hourglass: Page size and page select \
+:hourglass: Product ordering and basket \
+:hourglass: Order summarization \
+:hourglass: Order review
 
 ## Technologies Used
 - ASP.NET Core 8
