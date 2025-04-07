@@ -50,6 +50,18 @@ type ProductTag = {
 	order: number;
 }
 
+const configMockupFilters = (formData: FormData) => {
+	formData.append("PriceFrom", "0");
+	formData.append("PriceTo", "99999999");
+}
+const configMockupSettings = (formData: FormData) => {
+	formData.append("Category", ProductCategory.Laptop.toString());
+	formData.append("SortBy", SortingMethod.ByPrice.toString());
+	formData.append("OrderBy", SortingOrder.Ascending.toString());
+	formData.append("PageSize", PageSize.Take20.toString());
+	formData.append("PageIndex", "1");
+}
+
 export function Store() {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
@@ -59,36 +71,24 @@ export function Store() {
 
 	useEffect(() => {
 		if (location.pathname !== "/store") return;
-		let data;
 		if (isFirstLoad.current) {
 			isFirstLoad.current = false;
-			reloadStorePage(true, true);
+			reloadStorePage(new FormData(), formData => {
+				configMockupFilters(formData);
+				configMockupSettings(formData);
+			});
 		} else {
 			const queryParams = new URLSearchParams(location.search);
 			if (!queryParams.has("search")) return;
-			data = collectData(FormID.Filters, FormID.Settings);
-			data.append("SearchBar", queryParams.get("search") ?? "")
-			reloadStorePage(false, false)
+			reloadStorePage(
+				collectData(FormID.Settings, FormID.Filters),
+				formData => formData.append("SearchBar", queryParams.get("search") ?? ""));
 		} 
 	}, [location])
 	
-	const reloadStorePage = async (defaultFilters: boolean, defaultSettings: boolean) => {
-		const formData = collectData(
-			defaultFilters ? FormID.Nil : FormID.Filters,
-			defaultSettings ? FormID.Nil : FormID.Settings);
-
-		if (defaultFilters) {
-			formData.append("PriceFrom", "0");
-			formData.append("PriceTo", "99999999");
-		}
-		if (defaultSettings) {
-			formData.append("Category", ProductCategory.Laptop.toString());
-			formData.append("SortBy", SortingMethod.ByPrice.toString());
-			formData.append("OrderBy", SortingOrder.Ascending.toString());
-			formData.append("PageSize", PageSize.Take20.toString());
-			formData.append("PageIndex", "1");
-		}
-
+	const reloadStorePage = async (formData: FormData, configData: ((a: FormData) => void) = (_ => void _)) => {
+		configData(formData);
+		console.log(formData.get("SearchBar"));
 		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
@@ -105,10 +105,10 @@ export function Store() {
 	};
 
 	const updateStorePage = async () =>
-		reloadStorePage(false, false);
+		reloadStorePage(collectData(FormID.Settings, FormID.Filters));
 
 	const resetStoreFilters = async () => 
-		reloadStorePage(true, false);
+		reloadStorePage(collectData(FormID.Settings), configMockupFilters);
 
 	if (settings === undefined || filters === undefined || products === undefined)
 		return <main><p>Store component is loading</p></main>;

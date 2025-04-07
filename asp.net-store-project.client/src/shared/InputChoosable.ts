@@ -12,4 +12,4 @@ type ConvertableEnum = ProductCategory | PageSize | SortingMethod | SortingOrder
 type LabelMap<T extends ConvertableEnum> = Map<T, string>;
 
 export const convertEnumToChoosable = <T extends ConvertableEnum>(enumValue: T, labelMap: LabelMap<T>): InputChoosable =>
-    ({ label: labelMap.get(enumValue as T) as string, value: Object.keys(typeof enumValue)[enumValue as T] });
+    ({ label: labelMap.get(enumValue as T) as string, value: enumValue.toString() });
