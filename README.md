@@ -27,9 +27,7 @@ Work in progress.
 - JSON Web Token
   - Microsoft.AspNetCore.Authentication.JwtBearer
 - React Router
-- Vite \
-\
-*Yet to be implemented
+- Vite
 
 ### Testing and CI/CD
 Carried out using NUnit* and GitHub Actions*. \
