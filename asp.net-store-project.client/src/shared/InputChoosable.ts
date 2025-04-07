@@ -9,7 +9,6 @@ export interface InputChoosable {
 }
 
 type ConvertableEnum = ProductCategory | PageSize | SortingMethod | SortingOrder; // Can be extended to accept more Enum types
-type LabelMap<T extends ConvertableEnum> = Map<T, string>;
 
-export const convertEnumToChoosable = <T extends ConvertableEnum>(enumValue: T, labelMap: LabelMap<T>): InputChoosable =>
-    ({ label: labelMap.get(enumValue as T) as string, value: enumValue.toString() });
+export const convertEnumToChoosable = (enumValue: ConvertableEnum, labelMap: Map<ConvertableEnum, string>): InputChoosable =>
+    ({ label: labelMap.get(enumValue as ConvertableEnum) as string, value: enumValue.toString() });
