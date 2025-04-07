@@ -1,8 +1,8 @@
-# Internet Store ASP.NET Project for College Classes
+# Internet Store ASP.NET Project based on Dropshipping Model
 Work in progress. \
 \
-Stage of the project changed from *setting up* to *adding features*. \
-Next phase is going to focus on UI overhaul and implementing tests.
+Project is currently being modified to adjust to dropshipping business model.
+Some of the previously stated goals listed below are going to be neglected while main focus is shifted to backend API features.
 
 ## Milestones
 :white_check_mark: Working searchbar \

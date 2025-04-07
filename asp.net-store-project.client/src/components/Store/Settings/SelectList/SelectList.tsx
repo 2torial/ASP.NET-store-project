@@ -1,21 +1,21 @@
 import { useRef } from 'react';
-import './SelectList.css'
+import './SelectList.css';
 
 interface SelectListProps {
     label?: string;
     id: string;
     name: string;
-    options: Option[];
+    options: InputChoosable[];
     icons?: { [id: string]: string }
-    selectedOption: Option;
-    updateSettings(): void;
+    selectedOption: InputChoosable;
+    handler: () => void;
 }
-type Option = {
+type InputChoosable = {
     label: string;
     value: string;
 }
 
-function SelectList({ label, id, name, options, icons, selectedOption, updateSettings }: SelectListProps) {
+function SelectList({ label, id, name, options, icons, selectedOption, handler }: SelectListProps) {
     const toggleSelectList = () => {
         (selectListRef.current! as HTMLElement).classList.toggle("expanded");
     }
@@ -26,7 +26,7 @@ function SelectList({ label, id, name, options, icons, selectedOption, updateSet
         toggleSelectList();
         const input: HTMLInputElement = inputRef.current!;
         input.value = value;
-        updateSettings();
+        handler();
     };
     
     const labelContent = label !== undefined
@@ -49,7 +49,7 @@ function SelectList({ label, id, name, options, icons, selectedOption, updateSet
         </div>
         <input style={{ display: "none" }} ref={inputRef}
             type="text" className="option" name={name} id={id}
-            onClick={toggleSelectList} defaultValue={selectedOption.value} />
+            defaultValue={selectedOption.value} />
     </div>;
 }
 

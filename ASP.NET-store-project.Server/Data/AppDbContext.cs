@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
+using ASP.NET_store_project.Server.Data.DataRevised;
+using ASP.NET_store_project.Server.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_store_project.Server.Data
 {
@@ -9,18 +12,8 @@ namespace ASP.NET_store_project.Server.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>()
-                .Property(b => b.IsAdmin)
+                .Property(p => p.IsAdmin)
                 .HasDefaultValue(false);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(e => e.AdressDetails)
-                .WithOne()
-                .HasForeignKey<Order>(e => e.OrderId);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(e => e.CustomerDetails)
-                .WithOne()
-                .HasForeignKey<Order>(e => e.OrderId);
 
             modelBuilder.Entity<Category>()
                 .ToTable("Category");
@@ -31,158 +24,148 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<User>()
                 .ToTable("User");
 
-            modelBuilder.Entity<Order>()
-                .ToTable("Order");
+            modelBuilder.Entity<OrderedProduct>()
+                .ToTable("OrderedProduct");
 
-            modelBuilder.Entity<SortingMethod>()
-                .ToTable("SortingMethod");
-
-            modelBuilder.Entity<SelectedItem>()
-                .ToTable("SelectedItem");
+            modelBuilder.Entity<Supplier>()
+                .ToTable("Supplier");
 
             modelBuilder.Entity<Item>()
                 .HasMany(e => e.Configurations)
                 .WithMany(e => e.Items)
                 .UsingEntity<ItemConfiguration>();
 
-            modelBuilder.Entity<Order>()
-                .HasMany(e => e.StatusHistory)
-                .WithMany()
-                .UsingEntity<OrderStatus>(
-                    e => {
-                        e.Property(e => e.DateOfChange).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                    });
+            var userId1 = Guid.NewGuid();
+            var userId2 = Guid.NewGuid();
 
             modelBuilder.Entity<User>().HasData(
-                new("user", "user"),
-                new("root", "root", true));
+                new("user", new SimplePasswordHasher().HashPassword("user")) { Id = userId1 },
+                new("root", new SimplePasswordHasher().HashPassword("root"), true) { Id = userId2 });
+
+            var supplierId1 = Guid.NewGuid();
+            var supplierId2 = Guid.NewGuid();
+            var supplierId3 = Guid.NewGuid();
+
+            modelBuilder.Entity<Supplier>().HasData(
+                new("SupplierA","https://localhost:5173/", "filter", "select") { Id = supplierId1 },
+                new("SupplierB", "https://localhost:5173/", "filter", "select", 200) { Id = supplierId2 },
+                new("SupplierC", "https://localhost:5173/", "filter", "select") { Id = supplierId3 });
 
             modelBuilder.Entity<Category>().HasData(
-                new("Laptops", "Laptops/Notebooks/Ultrabooks"),
-                new("Headsets", "Headsets"),
-                new("Microphones", "Microphones"));
+                new("Laptop"),
+                new("Headset"),
+                new("Microphone"));
+
+            Guid[] configs = new Guid[28];
+            for (int i = 0; i < configs.Length; i++)
+                configs[i] = Guid.NewGuid();
 
             modelBuilder.Entity<Configuration>().HasData(
-                new(1, "RAM Memory", "4 GB", 4),
-                new(2, "RAM Memory", "8 GB", 8),
-                new(3, "RAM Memory", "16 GB", 16),
-                new(4, "RAM Memory", "32 GB", 32),
-                new(5, "RAM Memory", "64 GB", 64),
-                new(6, "RAM Memory", "No Memory"),
-                new(7, "System", "Windows 10", 1),
-                new(8, "System", "Windows 11", 2),
-                new(9, "System", "MacOS", 11),
-                new(10, "System", "No System"),
-                new(11, "Disk", "SSD", 1),
-                new(12, "Disk", "SSD", 2),
-                new(13, "Disk", "No Disk"),
-                new(14, "Disk Capacity", "512 GB", 512),
-                new(15, "Disk Capacity", "1024 GB", 1024),
-                new(16, "Disk Capacity", "2048 GB", 2048),
-                new(17, "Disk Capacity", "4096 GB", 4096),
-                new(18, "Processor", "Intel Core i3", 1),
-                new(19, "Processor", "Intel Core i5", 1),
-                new(20, "Processor", "Intel Core i7", 1),
-                new(21, "Processor", "Intel Core i9", 1),
-                new(22, "Processor", "Ryzen 3", 2),
-                new(23, "Processor", "Ryzen 5", 2),
-                new(24, "Processor", "Ryzen 7", 2),
-                new(25, "Processor", "Ryzen 9", 2),
-                new(26, "Processor", "No Processor"),
-                new(27, "Cord Length", "1 m", 1),
-                new(28, "Cord Length", "2 m", 2));
+                new("RAM Memory", "4 GB", 4) { Id = configs[0] },
+                new("RAM Memory", "8 GB", 8) { Id = configs[1] },
+                new("RAM Memory", "16 GB", 16) { Id = configs[2] },
+                new("RAM Memory", "32 GB", 32) { Id = configs[3] },
+                new("RAM Memory", "64 GB", 64) { Id = configs[4] },
+                new("RAM Memory", "No Memory") { Id = configs[5] },
+                new("System", "Windows 10", 1) { Id = configs[6] },
+                new("System", "Windows 11", 2) { Id = configs[7] },
+                new("System", "MacOS", 11) { Id = configs[8] },
+                new("System", "No System") { Id = configs[9] },
+                new("Disk", "SSD", 1) { Id = configs[10] },
+                new("Disk", "SSD", 2) { Id = configs[11] },
+                new("Disk", "No Disk") { Id = configs[12] },
+                new("Disk Capacity", "512 GB", 512) { Id = configs[13] },
+                new("Disk Capacity", "1024 GB", 1024) { Id = configs[14] },
+                new("Disk Capacity", "2048 GB", 2048) { Id = configs[15] },
+                new("Disk Capacity", "4096 GB", 4096) { Id = configs[16] },
+                new("Processor", "Intel Core i3", 1) { Id = configs[17] },
+                new("Processor", "Intel Core i5", 1) { Id = configs[18] },
+                new("Processor", "Intel Core i7", 1) { Id = configs[19] },
+                new("Processor", "Intel Core i9", 1) { Id = configs[20] },
+                new("Processor", "Ryzen 3", 2) { Id = configs[21] },
+                new("Processor", "Ryzen 5", 2) { Id = configs[22] },
+                new("Processor", "Ryzen 7", 2) { Id = configs[23] },
+                new("Processor", "Ryzen 9", 2) { Id = configs[24] },
+                new("Processor", "No Processor") { Id = configs[25] },
+                new("Cord Length", "1 m", 1) { Id = configs[26] },
+                new("Cord Length", "2 m", 2) { Id = configs[27] });
+
+            Guid[] items = new Guid[12];
+            for (int i = 0; i < items.Length; i++)
+                items[i] = Guid.NewGuid();
 
             modelBuilder.Entity<Item>().HasData(
-                new(1, "Laptops", "Laptop #1", 900),
-                new(2, "Laptops", "Laptop #2", 650),
-                new(3, "Laptops", "Laptop #3", 800),
-                new(4, "Laptops", "Laptop #4", 500),
-                new(5, "Laptops", "Laptop #5", 660),
-                new(6, "Laptops", "Laptop #6", 500),
-                new(7, "Laptops", "Laptop #7", 450),
-                new(8, "Headsets", "Headset #1", 100),
-                new(9, "Headsets", "Headset #2", 300),
-                new(10, "Headsets", "Headset #3", 50),
-                new(11, "Microphones", "Microphone #1", 50),
-                new(12, "Microphones", "Microphone #2", 20));
+                new("Laptop", "Laptop #1", 900, 10, "") { Id = items[0] },
+                new("Microphone", "Microphone #2", 20, 10, "") { Id = items[1] },
+                new("Laptop", "Laptop #2", 650, 10, "") { Id = items[2] },
+                new("Laptop", "Laptop #3", 800, 10, "") { Id = items[3] },
+                new("Laptop", "Laptop #4", 500, 10, "") { Id = items[4] },
+                new("Laptop", "Laptop #5", 660, 10, "") { Id = items[5] },
+                new("Laptop", "Laptop #6", 500, 10, "") { Id = items[6] },
+                new("Laptop", "Laptop #7", 450, 10, "") { Id = items[7] },
+                new("Headset", "Headset #1", 100, 10, "") { Id = items[8] },
+                new("Headset", "Headset #2", 300, 10, "") { Id = items[9] },
+                new("Headset", "Headset #3", 50, 10, "") { Id = items[10] },
+                new("Microphone", "Microphone #1", 50, 10, "") { Id = items[11] });
 
             modelBuilder.Entity<Image>().HasData(
-                new(1, "https://placehold.co/150x150", 1),
-                new(2, "https://placehold.co/150x150", 2),
-                new(3, "https://placehold.co/150x150", 2),
-                new(4, "https://placehold.co/150x150", 2),
-                new(5, "https://placehold.co/150x150", 3),
-                new(6, "https://placehold.co/150x150", 4),
-                new(7, "https://placehold.co/150x150", 5),
-                new(8, "https://placehold.co/150x150", 6),
-                new(9, "https://placehold.co/150x150", 7),
-                new(10, "https://placehold.co/150x150", 8),
-                new(11, "https://placehold.co/150x150", 9),
-                new(12, "https://placehold.co/150x150", 9),
-                new(13, "https://placehold.co/150x150", 10),
-                new(14, "https://placehold.co/150x150", 11),
-                new(15, "https://placehold.co/150x150", 12));
+                new("https://placehold.co/150x150", items[0]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[1]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[1]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[1]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[2]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[3]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[4]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[5]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[6]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[7]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[8]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[8]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[9]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[10]) { Id = Guid.NewGuid() },
+                new("https://placehold.co/150x150", items[11]) { Id = Guid.NewGuid() });
 
             modelBuilder.Entity<ItemConfiguration>().HasData(
-                new(1, 5),
-                new(1, 8),
-                new(1, 10),
-                new(1, 16),
-                new(1, 19),
-                new(2, 3),
-                new(2, 7),
-                new(2, 11),
-                new(2, 14),
-                new(2, 21),
-                new(3, 1),
-                new(3, 6),
-                new(4, 3),
-                new(4, 8),
-                new(5, 5),
-                new(5, 9),
-                new(6, 10),
-                new(6, 15),
-                new(7, 11),
-                new(7, 15),
-                new(7, 22));
-
-            modelBuilder.Entity<Status>().HasData(
-                new("Pending"),
-                new("Preparing"),
-                new("Awaiting Delivery"),
-                new("Sent"),
-                new("Delivered"),
-                new("Returned"),
-                new("Canceled"));
+                new(items[0], configs[4]),
+                new(items[0], configs[7]),
+                new(items[0], configs[9]),
+                new(items[0], configs[15]),
+                new(items[0], configs[18]),
+                new(items[1], configs[2]),
+                new(items[1], configs[6]),
+                new(items[1], configs[10]),
+                new(items[1], configs[13]),
+                new(items[1], configs[20]),
+                new(items[2], configs[0]),
+                new(items[2], configs[5]),
+                new(items[3], configs[2]),
+                new(items[3], configs[7]),
+                new(items[4], configs[4]),
+                new(items[4], configs[8]),
+                new(items[5], configs[9]),
+                new(items[5], configs[14]),
+                new(items[6], configs[10]),
+                new(items[6], configs[14]),
+                new(items[6], configs[21]));
 
             modelBuilder.Entity<AdressDetails>().HasData(
-                new(1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
-                new(2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
+                new(userId1, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91") { Id = Guid.NewGuid() },
+                new(userId2, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15") { Id = Guid.NewGuid() });
 
             modelBuilder.Entity<CustomerDetails>().HasData(
-                new(1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
-                new(2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
+                new(userId1, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2") { Id = Guid.NewGuid() },
+                new(userId2, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on") { Id = Guid.NewGuid() });
 
-            modelBuilder.Entity<Order>().HasData(
-                new(1, "user"),
-                new(2, "root"));
-
-            modelBuilder.Entity<SelectedItem>().HasData(
-                new(1, 1, "user", 1, 1),
-                new(2, 8, "user", 1, 1),
-                new(3, 12, "user", 1, 1),
-                new(4, 4, "root", 10, 2),
-                new(5, 1, "root", 1, 2),
-                new(6, 2, "user", 1),
-                new(7, 9, "user", 2),
-                new(8, 3, "root", 4),
-                new(9, 9, "root", 3));
-
-            modelBuilder.Entity<SortingMethod>().HasData(
-                new("Price: Lowest to Highest", "Price", true),
-                new("Price: Highest to Lowest", "Price", false),
-                new("Name: Ascending", "Name", true),
-                new("Name: Descending", "Name", false));
+            modelBuilder.Entity<OrderedProduct>().HasData(
+                new(userId1, supplierId1, "aaa", 2, 50) { Id = Guid.NewGuid() },
+                new(userId1, supplierId1, "aab", 1, 250) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "aac", 1, 500) { Id = Guid.NewGuid() },
+                new(userId2, supplierId2, "aba", 3, 150) { Id = Guid.NewGuid() },
+                new(userId1, supplierId2, "aba", 1, 150) { Id = Guid.NewGuid() },
+                new(userId2, supplierId2, "abb", 4, 50) { Id = Guid.NewGuid() },
+                new(userId1, supplierId1, "baa", 1, 500) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "bab", 1, 350) { Id = Guid.NewGuid() },
+                new(userId2, supplierId1, "aab", 2, 150) { Id = Guid.NewGuid() });
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -191,14 +174,12 @@ namespace ASP.NET_store_project.Server.Data
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Order> Orders { get; set; }
-
-        public DbSet<SortingMethod> SortingMethods { get; set; }
-
-        public DbSet<SelectedItem> SelectedItems { get; set; }
+        public DbSet<OrderedProduct> OrderedProducts { get; set; }
 
         public DbSet<AdressDetails> AdressDetails { get; set; }
 
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
+
+        public DbSet<Supplier> Suppliers { get; set; }
     }
 }

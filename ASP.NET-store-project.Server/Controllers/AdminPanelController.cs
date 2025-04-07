@@ -1,8 +1,10 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
+using ASP.NET_store_project.Server.Models.ComponentData;
+using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static ASP.NET_store_project.Server.Models.UserListComponentData;
+using static ASP.NET_store_project.Server.Models.ComponentData.UserListComponentData;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
@@ -30,31 +32,30 @@ namespace ASP.NET_store_project.Server.Controllers
         {
             return Ok(new OrderListComponentData()
             {
-                Orders = context.Orders
-                    .Select(order => new OrderListComponentData.OrderData
-                    {
-                        OrderId = order.OrderId,
-                        CustomerDetails = new OrderListComponentData.OrderData.UserData
-                        {
-                            CustomerId = order.CustomerId,
-                            Name = order.CustomerDetails.Name,
-                            Surname = order.CustomerDetails.Surname,
-                            PhoneNumber = order.CustomerDetails.PhoneNumber,
-                            Email = order.CustomerDetails.Email,
-                        },
-                        AdressDetails = new OrderListComponentData.OrderData.AdressData
-                        {
-                            Region = order.AdressDetails.Region,
-                            City = order.AdressDetails.City,
-                            PostalCode = order.AdressDetails.PostalCode,
-                            StreetName = order.AdressDetails.StreetName,
-                            HouseNumber = order.AdressDetails.HouseNumber,
-                            ApartmentNumber = order.AdressDetails.ApartmentNumber,
-                        },
-                        CurrentStatus = order.StatusChangeHistory
-                            .OrderBy(status => status.DateOfChange)
-                            .Last().StatusCode
-                    }).ToList(),
+                //Orders = context.Orders
+                //    .Select(order => new OrderListComponentData.OrderData
+                //    {
+                //        OrderId = order.Id,
+                //        CustomerDetails = new OrderListComponentData.OrderData.UserData
+                //        {
+                //            CustomerId = order.Customer.Id,
+                //            UserName = order.Customer.UserName,
+                //            Name = order.Customer.CustomerDetails.Name,
+                //            Surname = order.Customer.CustomerDetails.Surname,
+                //            PhoneNumber = order.Customer.CustomerDetails.PhoneNumber,
+                //            Email = order.Customer.CustomerDetails.Email,
+                //        },
+                //        AdressDetails = new OrderListComponentData.OrderData.AdressData
+                //        {
+                //            Region = order.Customer.AdressDetails.Region,
+                //            City = order.Customer.AdressDetails.City,
+                //            PostalCode = order.Customer.AdressDetails.PostalCode,
+                //            StreetName = order.Customer.AdressDetails.StreetName,
+                //            HouseNumber = order.Customer.AdressDetails.HouseNumber,
+                //            ApartmentNumber = order.Customer.AdressDetails.ApartmentNumber,
+                //        },
+                //        CurrentStatus = null,
+                //    }).ToList(),
             });
         }
         [HttpGet("/api/admin/items")]
@@ -65,22 +66,19 @@ namespace ASP.NET_store_project.Server.Controllers
                 Items = context.Items
                     .Select(item => new ItemListComponentData.ItemData
                     {
-                        Item = new StoreItems.Item
+                        Item = new ProductInfo(item.Id, item.Name, item.Price)
                         {
-                            Id = item.Id,
-                            Name = item.Name,
-                            Price = item.Price,
                             Gallery = item.Gallery
-                            .Select(image => image.Content)
-                            .ToList(),
-                            Specification = item.Configurations
-                            .Select(config => new StoreItems.Item.Configuration
-                            {
-                                Label = config.Label,
-                                Parameter = config.Parameter,
-                            })
-                            .ToList(),
-                            PageLink = item.Page,
+                                .Select(image => image.Content)
+                                .ToList(),
+                            Tags = item.Configurations
+                                .Select(config => new ProductTag
+                                {
+                                    Label = config.Label,
+                                    Parameter = config.Parameter,
+                                })
+                                .ToList(),
+                            WebPageLink = item.WebPage,
                         },
                         IsDeleted = item.IsDeleted,
                     }).ToList(),
@@ -88,7 +86,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/admin/items/set/unavaliable/{itemId}")]
-        public IActionResult SetUnavaliable([FromRoute] int itemId)
+        public IActionResult SetUnavaliable([FromRoute] Guid itemId)
         {
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())
@@ -99,7 +97,7 @@ namespace ASP.NET_store_project.Server.Controllers
         }
 
         [HttpGet("/api/admin/items/set/avaliable/{itemId}")]
-        public IActionResult SetAvaliable([FromRoute] int itemId)
+        public IActionResult SetAvaliable([FromRoute] Guid itemId)
         {
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())

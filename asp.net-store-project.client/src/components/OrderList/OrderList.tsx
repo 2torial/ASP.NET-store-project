@@ -13,6 +13,7 @@ interface Order {
 }
 type UserData = {
     customerId: string;
+    userName: string;
     name: string;
     surname: string;
     phoneNumber: string;
@@ -31,7 +32,7 @@ function UserList() {
     const [orders, setOrders] = useState<Order[]>([]);
 
     useEffect(() => {
-		collectOrdersData();
+        collectOrdersData();
     }, []);
 
     const collectOrdersData = async () => {
@@ -42,13 +43,14 @@ function UserList() {
 			return;
 		}
 		const data: OrderListComponentData = await response.json();
-		setOrders(data.orders);
+        setOrders(data.orders);
 	};
 
 	return <main className="orders">
         <table>
             <tr>
                 <th>Order ID</th>
+                <th>User ID</th>
                 <th>Username</th>
                 <th>Name</th>
                 <th>Surname</th>
@@ -65,6 +67,7 @@ function UserList() {
             {orders.map((order, i) => <tr key={i}>
                 <td>{order.orderId}</td>
                 <td>{order.customerDetails.customerId}</td>
+                <td>{order.customerDetails.userName}</td>
                 <td>{order.customerDetails.name}</td>
                 <td>{order.customerDetails.surname}</td>
                 <td>{order.customerDetails.phoneNumber}</td>

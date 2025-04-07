@@ -1,26 +1,38 @@
+import { SortingMethod } from '../../../shared/StoreEnum/StoreSortingMethod';
+import { SortingOrder } from '../../../shared/StoreEnum/StoreSortingOrder';
 import Item from './Item';
 import './ItemList.css';
 
 interface ItemListProps {
-	numberOfItems: number;
-	displayedItems: Item[];
+	products: Product[];
+	sortBy: SortingMethod;
+	orderBy: SortingOrder;
 }
-type Item = {
+type Product = {
 	id: number,
 	name: string;
 	price: number;
+	tags: ProductTag[];
 	gallery: string[];
-	specification: Configuration[];
+	thumbnail: string;
 	pageLink?: string;
 }
-type Configuration = {
+type ProductTag = {
 	label: string;
 	parameter: string;
 }
 
-function ItemList({ displayedItems }: ItemListProps) {  
+function ItemList({ products, sortBy, orderBy }: ItemListProps) {  
     return <section className="item-list">
-		{displayedItems.map(item => <Item {...item} key={item.id} />)}
+		{products.sort((a, b) => {
+			const order = orderBy === SortingOrder.Ascending ? 1 : -1;
+			switch (sortBy) {
+				case SortingMethod.ByName:
+					return order * a.name.localeCompare(b.name);
+				case SortingMethod.ByPrice:
+					return order * (a.price - b.price)
+			}
+		}).map(product => <Item {...product} key={product.id} />)}
     </section>;
 }
 
