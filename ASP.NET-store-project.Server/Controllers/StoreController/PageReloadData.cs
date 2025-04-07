@@ -22,7 +22,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         public SortingMethod SortBy { get; init; }
         [FromForm]
         public SortingOrder OrderBy { get; init; }
-        private IEnumerable<ProductInfo> Sort(IEnumerable<ProductInfo> products)
+        public IEnumerable<ProductInfo> Sort(IEnumerable<ProductInfo> products)
         {
             products = SortBy switch
             {
@@ -51,15 +51,9 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
         [FromForm]
         public int PageIndex { get; init; } = 1;
-        private IEnumerable<ProductInfo> Slice(IEnumerable<ProductInfo> products) => products
+        public IEnumerable<ProductInfo> Slice(IEnumerable<ProductInfo> products) => products
             .Skip(NumericPageSize() * (PageIndex - 1))
             .Take(NumericPageSize());
 
-        public IEnumerable<ProductInfo> ModifyAwaited(IEnumerable<ProductInfo> products)
-        {
-            products = Sort(products);
-            products = Slice(products);
-            return products;
-        }
     }
 }

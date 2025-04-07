@@ -42,6 +42,13 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     kvp => kvp.Value ?? [],
                     (batch, prod) =>  new ProductInfo(prod.Id, prod.Name, prod.Price) { SupplierId = batch.Key, Tags = prod.Tags });
 
+            var filteredProducts = pageData.Sort(categorizedProducts);
+
+            foreach (var prod in filteredProducts)
+            {
+                Console.WriteLine($"{prod.Name}:{prod.Price}");
+            }
+
             var viablePriceRange = new PriceRange(
                 categorizedProducts.Min(prod => prod.Price),
                 categorizedProducts.Max(prod => prod.Price));
@@ -49,7 +56,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 Math.Max(viablePriceRange.From, pageData.PriceFrom),
                 Math.Min(viablePriceRange.To, pageData.PriceTo));
 
-            var filteredProducts = categorizedProducts
+            filteredProducts = filteredProducts
                 .Where(prod => selectedPriceRange.IsInRange(prod.Price));
 
             var adjustedPriceRange = new PriceRange(
@@ -84,7 +91,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             filteredProducts = filteredProducts
                 .Where(prod => groupedSelectedTags.All(kvp => kvp.Value.Any(tag => prod.Tags?.Contains(tag) ?? false)));
 
-            filteredProducts = pageData.ModifyAwaited(filteredProducts);
+            filteredProducts = pageData.Slice(filteredProducts);
 
             var selectedProductsData = filteredProducts
                 .GroupBy(
@@ -135,6 +142,13 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 },
                 Products = selectedProducts
             };
+
+            Console.WriteLine($"SELECTED");
+            foreach (var prod in filteredProducts)
+            {
+                Console.WriteLine($"{prod.Name}:{prod.Price}");
+            }
+            Console.WriteLine($"======");
 
             return Ok(storeComponentData);
         }

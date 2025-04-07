@@ -88,7 +88,6 @@ export function Store() {
 	
 	const reloadStorePage = async (formData: FormData, configData: ((a: FormData) => void) = (_ => void _)) => {
 		configData(formData);
-		console.log(formData.get("SearchBar"));
 		const response = await fetch('/api/reload', {
 			method: "post",
 			body: formData
@@ -122,10 +121,15 @@ export function Store() {
 		...settings,
 		updateStorePage
 	}
+	const itemsProps = {
+		sortBy: settings.sortingMethod,
+		orderBy: settings.sortingOrder,
+		products
+	}
 	return <main id="store">
 		<Filters {...filterProps} />
 		<Settings {...settingsProps} />
-		<ItemList products={products} />
+		<ItemList {...itemsProps} />
 	</main>;
 }
 
