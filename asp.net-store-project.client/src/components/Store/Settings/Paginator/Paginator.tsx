@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import './Paginator.css'
 
 interface PaginatorProps {
@@ -10,6 +10,11 @@ interface PaginatorProps {
 function Paginator({ pageCount, pageIndex, handler }: PaginatorProps) {
     const pageIndexInput = useRef(null);
     const pageIndexDisplay = useRef(null);
+
+    useEffect(() => {
+        (pageIndexInput.current! as HTMLInputElement).value = String(pageIndex);
+        (pageIndexDisplay.current! as HTMLInputElement).value = String(pageIndex + "/" + pageCount);
+    });
 
     const focusPageIndex = () => {
         const input = pageIndexInput.current! as HTMLInputElement;
@@ -53,12 +58,9 @@ function Paginator({ pageCount, pageIndex, handler }: PaginatorProps) {
             <span className="page-selector">
                 <input ref={pageIndexInput} type="text" className="page-index hidden"
                     onBlur={unfocusPageIndex} onKeyDown={unfocusOnEnter}
-                    name="PageIndex" defaultValue={pageIndex}
-                    data-current-page={pageIndex} />
+                    name="PageIndex" data-current-page={pageIndex} />
                 <input ref={pageIndexDisplay} type="text" className="page-display"
-                    onClick={focusPageIndex}
-                    defaultValue={pageIndex + "/" + pageCount}
-                    data-current-page={pageIndex} readOnly />
+                    onClick={focusPageIndex} data-current-page={pageIndex} readOnly />
             </span>
             <button onClick={moveUp} className="page-changer">&#x25B8;</button>
         </div>
