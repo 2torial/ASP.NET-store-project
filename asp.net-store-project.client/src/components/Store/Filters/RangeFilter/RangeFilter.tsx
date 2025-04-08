@@ -27,13 +27,10 @@ function RangeFilter({ from, to }: RangeFilterProps) {
     return <div className="filter-section drop-down-section expanded">
         <label className="drop-down-label" onClick={toggleSection} htmlFor="price-from">Price</label>
         <div className="range-setting drop-down-content">
-            <span className="range-input">
-                <input ref={inputFrom} type="text" id="price-from" name="PriceFrom" onKeyDown={unfocusOnEnter} />
-            </span>
-            <span className="range-dash">&ndash;</span>
-            <span className="range-input">
-                <input ref={inputTo} type="text" id="price-to" name="PriceTo" onKeyDown={unfocusOnEnter} />$
-            </span>
+            <input ref={inputFrom} type="text" className="range-from" id="range-from" name="PriceFrom" onKeyDown={unfocusOnEnter} />
+            <input type="text" className="range-separator" value="&ndash;" readOnly />
+            <input ref={inputTo} type="text" className="range-to" id="range-to" name="PriceTo" onKeyDown={unfocusOnEnter} />
+            <input type="text" className="range-currency" value="$" readOnly />
         </div>
     </div>;
 }
