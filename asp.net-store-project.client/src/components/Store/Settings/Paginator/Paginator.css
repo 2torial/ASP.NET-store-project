@@ -10,6 +10,16 @@
 	align-items: center;
 	width: 20px;
 	border: 1px solid grey;
+	cursor: pointer;
+	background: white;
+}
+
+.paginator .page-changer:hover {
+	background-color: lightgray;
+}
+
+.paginator .page-changer:active {
+	background-color: gray;
 }
 
 .paginator .page-changer:first-of-type {
@@ -22,15 +32,37 @@
 	border-radius: 0 15px 15px 0 / 0 15px 15px 0;
 }
 
-.paginator .page-index {
+.paginator .page-selector {
+	position: relative;
+	display: flex;
+	height: 30px;
+	width: 37px;
+}
+
+.paginator .page-selector .page-index, .paginator .page-selector .page-display {
+	position: absolute;
 	text-align: center;
-	width: 25px;
+	height: 100%;
+	width: 37px;
 	border: 0;
 	border-top: 1px solid grey;
 	border-bottom: 1px solid grey;
 	outline: 0;
+	box-sizing: border-box;
 }
 
-.paginator .page-index.idle {
+.paginator .page-selector .page-index {
+	z-index: 1;
+}
+
+.paginator .page-selector .page-display {
+	z-index: 0;
+}
+
+.paginator .page-selector .page-index.hidden {
+	z-index: -1;
+}
+
+.paginator .page-display {
 	cursor: pointer;
 }
