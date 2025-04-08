@@ -42,8 +42,8 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder,
     }
 
     const pageSelect = {
-        pages: pageCount,
-        selectedPageIndex: pageIndex,
+        pageCount: pageCount,
+        pageIndex: pageIndex,
         handler: selectPage
     }
 
@@ -61,7 +61,7 @@ function Settings({ category, pageCount, pageIndex, sortingMethod, sortingOrder,
         <SelectList {...categorySelect} />
         <CombinedSelectList {...sortSelect} />
         <Paginator {...pageSelect} />
-        <SelectList {...viewSelect} />        
+        <SelectList {...viewSelect} />
     </form>;
 }
 

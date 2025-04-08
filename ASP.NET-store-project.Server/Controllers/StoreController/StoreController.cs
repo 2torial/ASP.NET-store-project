@@ -133,7 +133,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 {
                     Category = pageData.Category,
                     PageSize = pageData.PageSize,
-                    PageCount = !filteredProducts.Any() ? 0 : (filteredProducts.Count() - 1) % pageData.NumericPageSize() + 1,
+                    PageCount = !filteredProducts.Any() ? 1 : (filteredProducts.Count() - 1) / pageData.NumericPageSize() + 1,
                     PageIndex = pageData.PageIndex,
                     SortingMethod = pageData.SortBy,
                     SortingOrder = pageData.OrderBy

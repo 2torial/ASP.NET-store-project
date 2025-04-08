@@ -97,9 +97,10 @@ export function Store() {
 			return;
 		}
 		const data: StoreComponentData = await response.json();
-		setSettings(data.settings);
+		setSettings({ ...data.settings });
 		setProducts(data.products);
-		setFilters(data.filters);
+		setFilters({ ...data.filters });
+		console.log(data);
 	};
 
 	if (settings === undefined || filters === undefined || products === undefined)
