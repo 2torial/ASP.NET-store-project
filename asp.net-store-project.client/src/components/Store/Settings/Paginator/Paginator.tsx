@@ -28,9 +28,9 @@ function Paginator({ pageCount, pageIndex, handler }: PaginatorProps) {
         input.classList.add("hidden");
 
         const onlyPositiveNumbersPattern = /^[1-9][0-9]*/;
-        if (!onlyPositiveNumbersPattern.test(input.value))
-            input.value = input.dataset.currentPage!;
-        else handler();
+        if (onlyPositiveNumbersPattern.test(input.value) && parseInt(input.value) <= pageCount)
+            handler();
+        else input.value = input.dataset.currentPage!;
     }
 
     const unfocusOnEnter = (event: React.KeyboardEvent) => {
