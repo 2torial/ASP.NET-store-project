@@ -1,5 +1,5 @@
-using ASP.NET_store_project.Server.Controllers.StoreController;
 using ASP.NET_store_project.Server.Data;
+using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +11,13 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
     [Route("[controller]")]
     public class SupplierAController(AppDbContext context) : ControllerBase
     {
-        [HttpPost("/api/supplier/A/filter")]
-        public IActionResult CategorizedProducts([FromBody] PageReloadData pageData)
+        [HttpGet("/api/supplier/A/filter/{category}")]
+        public IActionResult CategorizedProducts([FromRoute] ProductCategory category)
         {
+            Console.WriteLine("AAA" + category);
             // Category filtering
             var categorizedProducts = context.Items
-                .Where(item => item.Category.Type == pageData.Category.GetDisplayName())
+                .Where(item => item.Category.Type == category.GetDisplayName())
                 .Where(item => !item.IsDeleted)
                 .Where(item => item.Configurations.Count != 0)
                 .Include(item => item.Configurations)

@@ -3,6 +3,7 @@ using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -15,7 +16,6 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         [HttpPost("/api/reload")]
         public async Task<IActionResult> Reload([FromForm] PageReloadData pageData)
         {
-            Console.WriteLine(pageData.Category);
             var suppliers = context.Suppliers
                 .Select(sup => new
                     {
@@ -31,12 +31,11 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     sup => sup.Id,
                     sup => new ClientData(sup.Client)
                     {
-                        Content = new StringContent(JsonSerializer.Serialize(pageData), Encoding.UTF8, "application/json"),
-                        RequestAdress = sup.FilteredProductsRequestAdress,
+                        RequestAdress = $"{sup.FilteredProductsRequestAdress}/{pageData.Category}",
                     });
 
             var categorizedProductsBatch = await MultipleRequestsAsJsonEndpoint<IEnumerable<ProductInfo>>
-                .SendAsync(filterRequestClientsData);
+                .GetAsync(filterRequestClientsData);
             var categorizedProducts = categorizedProductsBatch
                 .SelectMany(
                     kvp => kvp.Value ?? [],
@@ -133,7 +132,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 {
                     Category = pageData.Category,
                     PageSize = pageData.PageSize,
-                    PageCount = !filteredProducts.Any() ? 1 : (filteredProducts.Count() - 1) / pageData.NumericPageSize() + 1,
+                    PageCount = pageData.CountPages(filteredProducts.Count()),
                     PageIndex = pageData.PageIndex,
                     SortingMethod = pageData.SortBy,
                     SortingOrder = pageData.OrderBy
@@ -146,13 +145,6 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 },
                 Products = selectedProducts
             };
-
-            Console.WriteLine($"SELECTED");
-            foreach (var prod in filteredProducts)
-            {
-                Console.WriteLine($"{prod.Name}:{prod.Price}");
-            }
-            Console.WriteLine($"======");
 
             return Ok(storeComponentData);
         }
