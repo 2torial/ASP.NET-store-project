@@ -16,7 +16,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         public decimal PriceTo { get; init; }
 
         [FromForm]
-        public string? SearchBar { get; init; }
+        public string[]? SearchBar { get; init; }
 
         [FromForm]
         public SortingMethod SortBy { get; init; }

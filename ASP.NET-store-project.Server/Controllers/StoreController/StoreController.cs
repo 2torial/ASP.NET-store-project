@@ -3,7 +3,6 @@ using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -66,9 +65,9 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     filteredProducts.Min(prod => prod.Price),
                     filteredProducts.Max(prod => prod.Price));
 
-            var keyWords = pageData.SearchBar?.ToLower().Split(null) ?? [];
+            var keyWords = pageData.SearchBar ?? [];
             filteredProducts = filteredProducts
-                .Where(prod => keyWords.All(word => prod.Name.Contains(word)));
+                .Where(prod => keyWords.All(keyWord => prod.Name.Contains(keyWord, StringComparison.CurrentCultureIgnoreCase)));
 
             var viableTags = categorizedProducts
                 .SelectMany(prod => prod.Tags ?? [])
