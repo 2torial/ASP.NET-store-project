@@ -81,7 +81,8 @@ export function Store() {
 			if (!queryParams.has("search")) return;
 			reloadStorePage(
 				collectData(FormID.Settings, FormID.Filters),
-				formData => formData.append("SearchBar", queryParams.get("search") ?? ""));
+				formData => (queryParams.get("search")?.split(" ") ?? [])
+					.forEach(keyWord => formData.append("SearchBar", keyWord)));
 		} 
 	}, [location])
 	

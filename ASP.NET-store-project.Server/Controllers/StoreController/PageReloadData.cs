@@ -16,7 +16,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         public decimal PriceTo { get; init; }
 
         [FromForm]
-        public string? SearchBar { get; init; }
+        public string[]? SearchBar { get; init; }
 
         [FromForm]
         public SortingMethod SortBy { get; init; }
@@ -48,6 +48,9 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             PageSize.Take100 => 100,
             _ => throw new InvalidEnumArgumentException()
         };
+        public int CountPages(int productCount) => productCount > 0
+            ? 1 + (productCount - 1) / NumericPageSize()
+            : 1;
 
         [FromForm]
         public int PageIndex { get; init; } = 1;

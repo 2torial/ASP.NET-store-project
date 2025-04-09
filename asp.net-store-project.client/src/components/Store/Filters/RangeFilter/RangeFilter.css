@@ -1,23 +1,31 @@
 .range-setting {
-	display: flex;
-	justify-content: space-between;
+    display: flex;
+    justify-content: center;
 }
 
-.range-setting .range-input {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.range-setting input {
+    text-align: center;
+    height: 27px;
+    border: 1px solid black;
+    box-sizing: border-box;
 }
 
-.range-setting .range-input input {
-	height: 30px;
-	width: 120px;
+.range-setting .range-from {
+    width: 37%;
+    border-top-left-radius: 11px;
+    border-bottom-left-radius: 11px;
 }
 
-.range-setting .range-dash {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 5%;
-	margin: 0 5px;
+.range-setting .range-separator {
+    width: 8%;
+}
+
+.range-setting .range-to {
+    width: 37%;
+}
+
+.range-setting .range-currency {
+    border-top-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+    width: 8%;
 }
