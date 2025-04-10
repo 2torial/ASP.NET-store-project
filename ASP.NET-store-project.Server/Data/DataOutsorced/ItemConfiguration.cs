@@ -2,7 +2,7 @@
 {
     public class Configuration(string label, string parameter, int order = 9999)
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public string Label { get; set; } = label;
 

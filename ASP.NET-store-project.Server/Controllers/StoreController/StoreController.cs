@@ -42,11 +42,6 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             var filteredProducts = pageData.Sort(categorizedProducts);
 
-            foreach (var prod in filteredProducts)
-            {
-                Console.WriteLine($"{prod.Name}:{prod.Price}");
-            }
-
             var viablePriceRange = !categorizedProducts.Any() 
                 ? new PriceRange(0, decimal.MaxValue) 
                 : new PriceRange(
@@ -93,7 +88,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             filteredProducts = filteredProducts
                 .Where(prod => groupedSelectedTags.All(kvp => kvp.Value.Any(tag => prod.Tags?.Contains(tag) ?? false)));
 
-            filteredProducts = pageData.Slice(filteredProducts);
+            var selectedProducts = pageData.Slice(filteredProducts);
 
             var selectedProductsData = filteredProducts
                 .GroupBy(
@@ -114,7 +109,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             var selectedProductsBatch = await MultipleRequestsAsJsonEndpoint<List<ProductInfo>>
                 .SendAsync(selectRequestClientsData);
-            var selectedProducts = selectedProductsBatch
+            selectedProducts = selectedProductsBatch
                 .SelectMany(
                     kvp => kvp.Value ?? [], 
                     (batch, prod) => new ProductInfo(prod.Id, prod.Name, prod.Price)
