@@ -14,7 +14,6 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         [HttpGet("/api/supplier/{supplierKey}/filter/{category}")] // supplierKey is not part of an API it is used solely for this project to differentiate "virtual" suppliers
         public IActionResult CategorizedProducts([FromRoute] ProductCategory category, [FromRoute] string supplierKey)
         {
-            Console.WriteLine(supplierKey);
             // Category filtering
             var categorizedProducts = context.Items
                 .Where(item => item.SupplierKey == supplierKey) // Technically its prone to SQL Injection but it should not be consider a part of thi API, it's a trick to make calls to "external APIs" kept locally
