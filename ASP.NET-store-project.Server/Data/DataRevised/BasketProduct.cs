@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     
-    public class OrderedProduct(Guid customerId, Guid supplierId, string supplierProductId, int quantity, decimal supplierCost)
+    public class BasketProduct(Guid customerId, Guid supplierId, string supplierProductId, int quantity, decimal supplierCost)
     {
-        private OrderedProduct() : this(Guid.NewGuid(), Guid.NewGuid(), "", 0, 0) { }
+        private BasketProduct() : this(Guid.NewGuid(), Guid.NewGuid(), "", 0, 0) { }
 
         public Guid Id { get; set; }
 

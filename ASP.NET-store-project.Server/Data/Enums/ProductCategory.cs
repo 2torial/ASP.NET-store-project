@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace ASP.NET_store_project.Server.Data.Enums
+﻿namespace ASP.NET_store_project.Server.Data.Enums
 {
     public enum ProductCategory
     {

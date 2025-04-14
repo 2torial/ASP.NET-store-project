@@ -102,8 +102,6 @@ namespace ASP.NET_store_project.Server.Controllers
             if (!user.Any())
                 return Ok(IdentityData.AnonymousUserPolicyName);
 
-            Console.WriteLine(username);
-
             return Ok(user.Single().IsAdmin 
                 ? IdentityData.AdminUserPolicyName
                 : IdentityData.RegularUserPolicyName);

@@ -40,39 +40,19 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     kvp => kvp.Value ?? [],
                     (batch, prod) =>  new ProductInfo(prod.Id, prod.Name, prod.Price) { SupplierId = batch.Key, Tags = prod.Tags });
 
-            var filteredProducts = pageData.Sort(categorizedProducts);
-
-            foreach (var prod in filteredProducts)
-            {
-                Console.WriteLine($"{prod.Name}:{prod.Price}");
-            }
-
-            var viablePriceRange = !categorizedProducts.Any() 
-                ? new PriceRange(0, decimal.MaxValue) 
-                : new PriceRange(
-                    categorizedProducts.Min(prod => prod.Price),
-                    categorizedProducts.Max(prod => prod.Price));
+            var viablePriceRange = !categorizedProducts.Any()
+               ? new PriceRange(0, decimal.MaxValue)
+               : new PriceRange(
+                   categorizedProducts.Min(prod => prod.Price),
+                   categorizedProducts.Max(prod => prod.Price));
             var selectedPriceRange = new PriceRange(
                 Math.Max(viablePriceRange.From, pageData.PriceFrom),
                 Math.Min(viablePriceRange.To, pageData.PriceTo));
 
-            filteredProducts = filteredProducts
-                .Where(prod => selectedPriceRange.IsInRange(prod.Price));
-
-            var adjustedPriceRange = !filteredProducts.Any()
-                ? viablePriceRange
-                : new PriceRange(
-                    filteredProducts.Min(prod => prod.Price),
-                    filteredProducts.Max(prod => prod.Price));
-
-            var keyWords = pageData.SearchBar ?? [];
-            filteredProducts = filteredProducts
-                .Where(prod => keyWords.All(keyWord => prod.Name.Contains(keyWord, StringComparison.CurrentCultureIgnoreCase)));
-
             var viableTags = categorizedProducts
                 .SelectMany(prod => prod.Tags ?? [])
                 .Distinct(new ProductTagComparer());
-            var groupedViableTags = viableTags
+            var labeledViableTags = viableTags
                 .GroupBy(
                     tag => tag.Label,
                     tag => tag,
@@ -87,15 +67,26 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 .GroupBy(
                     tag => tag.Label,
                     tag => tag,
-                    (label, groupedTags) => new KeyValuePair<string, IEnumerable<ProductTag>>(label, groupedTags.OrderBy(tag => tag.Order)))
-                .ToDictionary();
+                    (label, groupedTags) => groupedTags)
+                .AsEnumerable();
+
+            var keyWords = pageData.SearchBar ?? [];
+            var filteredProducts = categorizedProducts
+                .Where(prod => keyWords.All(keyWord => prod.Name.Contains(keyWord, StringComparison.CurrentCultureIgnoreCase)));
 
             filteredProducts = filteredProducts
-                .Where(prod => groupedSelectedTags.All(kvp => kvp.Value.Any(tag => prod.Tags?.Contains(tag) ?? false)));
+                .Where(prod => selectedPriceRange.IsInRange(prod.Price));
 
-            filteredProducts = pageData.Slice(filteredProducts);
+            filteredProducts = filteredProducts
+                .Where(prod => groupedSelectedTags
+                    .All(groupedTags => groupedTags
+                        .Any(tag => prod.Tags!.Contains(tag, new ProductTagComparer()))));
 
-            var selectedProductsData = filteredProducts
+            filteredProducts = pageData.Sort(filteredProducts);
+
+            var selectedProducts = pageData.Slice(filteredProducts);
+
+            var selectedProductsData = selectedProducts
                 .GroupBy(
                     prod => prod.SupplierId,
                     prod => prod.Id,
@@ -114,7 +105,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             var selectedProductsBatch = await MultipleRequestsAsJsonEndpoint<List<ProductInfo>>
                 .SendAsync(selectRequestClientsData);
-            var selectedProducts = selectedProductsBatch
+            selectedProducts = selectedProductsBatch
                 .SelectMany(
                     kvp => kvp.Value ?? [], 
                     (batch, prod) => new ProductInfo(prod.Id, prod.Name, prod.Price)
@@ -139,8 +130,8 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 Filters = new StoreFilters
                 {
                     ViablePriceRange = viablePriceRange,
-                    PriceRange = adjustedPriceRange,
-                    GroupedTags = groupedViableTags
+                    PriceRange = selectedPriceRange,
+                    GroupedTags = labeledViableTags
                 },
                 Products = selectedProducts
             };

@@ -6,7 +6,7 @@ Work in progress.
 :white_check_mark: Filters \
 :white_check_mark: Categories \
 :white_check_mark: User registration and authorization \
-:hourglass: Page size and page select \
+:white_check_mark: Page size and page select \
 :hourglass: Product ordering and basket \
 :hourglass: Order summarization \
 :hourglass: Order review

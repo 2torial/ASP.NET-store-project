@@ -17,9 +17,9 @@ var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
         HeaderNames.Accept, "application/json");
 };
 
-builder.Services.AddHttpClient("SupplierA", configSupplier("https://localhost:5173/api/supplier/A/"));
-builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:5173/api/supplier/B/"));
-builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/C/"));
+builder.Services.AddHttpClient("SupplierA", configSupplier("https://localhost:5173/api/supplier/[A]/"));
+builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:5173/api/supplier/[B]/"));
+builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/[C]/"));
 
 builder.Services.AddAuthentication(auth =>
 {
