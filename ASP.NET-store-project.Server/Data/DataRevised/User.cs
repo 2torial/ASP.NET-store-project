@@ -19,7 +19,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 
         public AdressDetails AdressDetails { get; set; } = null!;
 
-        public List<OrderedProduct> OrderedProducts { get; set; } = [];
+        public List<BasketProduct> OrderedProducts { get; set; } = [];
 
     }
 }
