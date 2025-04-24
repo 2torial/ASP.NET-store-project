@@ -11,38 +11,48 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
     [Route("[controller]")]
     public class ExternalSupplierController(AppDbContext context) : ControllerBase
     {
-        [HttpGet("/api/supplier/{supplierKey}/filter/{category}")] // supplierKey is not part of an API it is used solely for this project to differentiate "virtual" suppliers
+        [HttpGet("/api/supplier/{supplierKey}/filter/{category}")] // supplierKey is not part of an API, it is used solely for this project to differentiate "virtual" suppliers
         public IActionResult CategorizedProducts([FromRoute] ProductCategory category, [FromRoute] string supplierKey)
         {
             // Category filtering
             var categorizedProducts = context.Items
-                .Where(item => item.SupplierKey == supplierKey) // Technically its prone to SQL Injection but it should not be consider a part of thi API, it's a trick to make calls to "external APIs" kept locally
+                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
                 .Where(item => item.Category.Type == category.GetDisplayName())
                 .Where(item => !item.IsDeleted)
                 .Where(item => item.Configurations.Count != 0)
                 .Include(item => item.Configurations)
                 .AsEnumerable()
-                .Select(item => new ProductInfo(item.Id, item.Name, item.Price) 
-                { 
+                .Select(item => new ProductInfo() 
+                {
+                    Name = item.Name, 
+                    Price = item.Price,
+                    Id = item.Id.ToString(),
                     Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter, Order = config.Order })
                 });
+
             return Ok(categorizedProducts);
         }
 
         [HttpPost("/api/supplier/{supplierKey}/select")]
-        public IActionResult SelectedProducts([FromBody] List<Guid> selectedProductIds, [FromRoute] string supplierKey)
+        public IActionResult SelectedProducts([FromBody] IEnumerable<ProductInfo> selectedProductInfos, [FromRoute] string supplierKey)
         {
+            var selectedIds = selectedProductInfos
+                .Select(prod => prod.Id);
+                
             var selectedProducts = context.Items
-                .Where(item => item.SupplierKey == supplierKey) // Technically its prone to SQL Injection but it should not be consider a part of thi API, it's a trick to make calls to "external APIs" kept locally
-                .Where(item => selectedProductIds.Contains(item.Id))
+                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .Where(item => selectedIds.Contains(item.Id.ToString()))
                 .Include(item => item.Configurations)
                 .AsEnumerable()
-                .Select(item => new ProductInfo(item.Id, item.Name, item.Price)
+                .Select(item => new ProductInfo()
                 {
+                    Name = item.Name,
+                    Price = item.Price,
                     Gallery = [],
                     Tags = item.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter, Order = config.Order }),
-                    WebPageLink = item.WebPage,
+                    PageContent = item.WebPage,
                 });
+
             return Ok(selectedProducts);
         }
     }

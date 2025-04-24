@@ -2,7 +2,6 @@
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace ASP.NET_store_project.Server.Data
 {
@@ -43,9 +42,9 @@ namespace ASP.NET_store_project.Server.Data
 
             string[] supplierKeys = ["[A]", "[B]", "[C]"];
             Supplier[] suppliers = [
-                new("SupplierA", "https://localhost:5173/", "filter", "select") { Id = Guid.NewGuid() },
-                new("SupplierB", "https://localhost:5173/", "filter", "select") { Id = Guid.NewGuid() },
-                new("SupplierC", "https://localhost:5173/", "filter", "select") { Id = Guid.NewGuid() }];
+                new("SupplierA", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() },
+                new("SupplierB", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() },
+                new("SupplierC", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() }];
             modelBuilder.Entity<Supplier>().HasData(suppliers);
 
             var labeledSuppliers = new Dictionary<string, Supplier>()
@@ -161,7 +160,7 @@ namespace ASP.NET_store_project.Server.Data
                     continue;
                 var user = i < 28 ? users[0] : users[1];
                 var supplier = labeledSuppliers[item.SupplierKey];
-                orderedProducts[i] = new BasketProduct(user.Id, supplier.Id, item.Id.ToString(), rand.Next(1, 2), item.Price) { Id = Guid.NewGuid() };
+                orderedProducts[i] = new BasketProduct(user.Id, supplier.Id, item.Id.ToString(), rand.Next(1, 2)) { Id = Guid.NewGuid() };
                 i++;
             }
             modelBuilder.Entity<BasketProduct>().HasData(orderedProducts);
@@ -180,6 +179,8 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
+
+        public DbSet<BasketProduct> BasketProducts { get; set; }
 
     }
 }

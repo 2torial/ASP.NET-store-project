@@ -66,8 +66,10 @@ namespace ASP.NET_store_project.Server.Controllers
                 Items = context.Items
                     .Select(item => new ItemListComponentData.ItemData
                     {
-                        Item = new ProductInfo(item.Id, item.Name, item.Price)
+                        Item = new ProductInfo()
                         {
+                            Name = item.Name,
+                            Price = item.Price,
                             Gallery = item.Gallery
                                 .Select(image => image.Content)
                                 .ToList(),
@@ -78,7 +80,7 @@ namespace ASP.NET_store_project.Server.Controllers
                                     Parameter = config.Parameter,
                                 })
                                 .ToList(),
-                            WebPageLink = item.WebPage,
+                            PageContent = item.WebPage,
                         },
                         IsDeleted = item.IsDeleted,
                     }).ToList(),

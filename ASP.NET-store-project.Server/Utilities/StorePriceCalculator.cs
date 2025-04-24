@@ -1,6 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Utilities
 {
-    public static class ProfitCalculator
+    public static class StorePriceCalculator
     {
         public static decimal Calculate(decimal cost, decimal multiplier)
         {
@@ -10,12 +10,13 @@
             if (profitBase <= 5)
                 profitBase = 5;
 
-            return profitBase + AmountUntilGoodLookingReminder(cost + profitBase);
+            var profit = profitBase + AmountUntilGoodLookingReminder(cost + profitBase);
+            return cost + profit;
         }
 
         private static decimal AmountUntilGoodLookingReminder(decimal price)
         {
-            var reminder = Math.Floor(price) - price;
+            var reminder = Math.Ceiling(price) - price;
             return reminder switch
             {
                 0 or 0.5m or 0.99m => 0,

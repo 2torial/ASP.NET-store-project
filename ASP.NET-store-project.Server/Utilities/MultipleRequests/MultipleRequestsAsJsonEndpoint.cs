@@ -1,4 +1,4 @@
-﻿namespace ASP.NET_store_project.Server.Utilities
+﻿namespace ASP.NET_store_project.Server.Utilities.MultipleRequests
 {
     public static class MultipleRequestsAsJsonEndpoint<T>
     {
@@ -39,12 +39,5 @@
                 .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await kvp.Value.Content.ReadFromJsonAsync<T>())));
         }
 
-    }
-
-    public class ClientData(HttpClient client)
-    {
-        public HttpClient Client { get; } = client;
-        public string? RequestAdress { get; set; }
-        public HttpContent? Content { get; set; }
     }
 }

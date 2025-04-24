@@ -1,14 +1,18 @@
-﻿namespace ASP.NET_store_project.Server.Models.StructuredData
+﻿using ASP.NET_store_project.Server.Data.DataRevised;
+
+namespace ASP.NET_store_project.Server.Models.StructuredData
 {
-    public class ProductInfo(Guid id, string name, decimal price)
+    public class ProductInfo
     {
-        public Guid Id { get; set; } = id;
+        public string? Id { get; set; }
 
-        public string Name { get; set; } = name;
+        public string? Name { get; set; }
 
-        public decimal Price { get; set; } = price;
+        public decimal Price { get; set; }
 
-        public Guid SupplierId { get; set; } = Guid.Empty;
+        public int Quantity { get; set; }
+
+        public Guid? SupplierId { get; set; }
 
         public string? Thumbnail { get; set; }
 
@@ -16,7 +20,28 @@
 
         public IEnumerable<ProductTag>? Tags { get; set; }
 
-        public string? WebPageLink { get; set; }
+        public string? PageContent { get; set; }
+
+        public ProductInfo() { }
+
+        public ProductInfo(ProductInfo prev)
+        {
+            Id = prev.Id;
+            Name = prev.Name;
+            Price = prev.Price;
+            Quantity = prev.Quantity;
+            SupplierId = prev.SupplierId;
+            Gallery = prev.Gallery;
+            Thumbnail = prev.Thumbnail;
+            Tags = prev.Tags;
+            PageContent = prev.PageContent;
+        }
+
+        public ProductInfo Modify(Supplier supplier) => new(this)
+        {
+            Price = supplier.CalculateStorePrice(Price),
+            SupplierId = supplier.Id,
+        };
 
     }
 }
