@@ -33,7 +33,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             var categorizedProducts = categorizedProductsBatch
                 .SelectMany(
                     kvp => kvp.Value ?? [],
-                    (batch, prod) =>  new ProductInfo(prod) { SupplierId = batch.Key.Id });
+                    (batch, prod) => new ProductInfo(prod).Modify(batch.Key));
 
             var viablePriceRange = !categorizedProducts.Any()
                ? new PriceRange(0, decimal.MaxValue)
