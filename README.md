@@ -24,6 +24,9 @@ Work in progress.
   - Microsoft.EntityFrameworkCore
   - Microsoft.EntityFrameworkCore.Tools
   - Npgsql.EntityFrameworkCore.PostgreSQL
+- Fluent Validation
+  - FluentValidation
+  - FluentValidation.AspNetCore
 - JSON Web Token
   - Microsoft.AspNetCore.Authentication.JwtBearer
 - React Router
