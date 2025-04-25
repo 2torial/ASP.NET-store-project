@@ -4,6 +4,8 @@
     {
         public static async Task<KeyValuePair<U, T?>[]> GetAsync<U, T>(IDictionary<U, ClientData> clientsData, Func<HttpResponseMessage, Task<T?>>? resolve = null)
         {
+            if (clientsData.Any(kvp => kvp.Value.Content != null))
+                throw new InvalidDataException("GetAsync doesn't accept ClientData.Content, did you mean to use SendAsync?");
             if (clientsData.Any(kvp => kvp.Value.RequestAdress == null))
                 throw new NullReferenceException("Found empty RequestAdress!");
 

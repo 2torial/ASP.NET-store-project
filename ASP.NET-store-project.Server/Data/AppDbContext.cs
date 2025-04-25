@@ -25,7 +25,7 @@ namespace ASP.NET_store_project.Server.Data
                 .ToTable("User");
 
             modelBuilder.Entity<BasketProduct>()
-                .ToTable("OrderedProduct");
+                .ToTable("BasketProduct");
 
             modelBuilder.Entity<Supplier>()
                 .ToTable("Supplier");
@@ -156,11 +156,11 @@ namespace ASP.NET_store_project.Server.Data
             while (i < 40)
             {
                 var item = items[rand.Next(0, items.Length)];
-                if (orderedProducts.Any(orderedItem => orderedItem?.SupplierProductId == item.Id.ToString()))
+                if (orderedProducts.Any(orderedItem => orderedItem?.ProductId == item.Id.ToString()))
                     continue;
                 var user = i < 28 ? users[0] : users[1];
                 var supplier = labeledSuppliers[item.SupplierKey];
-                orderedProducts[i] = new BasketProduct(user.Id, supplier.Id, item.Id.ToString(), rand.Next(1, 2)) { Id = Guid.NewGuid() };
+                orderedProducts[i] = new BasketProduct(item.Id.ToString(), user.Id, supplier.Id, rand.Next(1, 2)) { DatabaseId = Guid.NewGuid() };
                 i++;
             }
             modelBuilder.Entity<BasketProduct>().HasData(orderedProducts);

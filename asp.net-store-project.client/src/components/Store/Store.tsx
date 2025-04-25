@@ -9,11 +9,12 @@ import { ProductCategory } from '../../shared/StoreEnum/StoreProductCategory';
 import { PageSize } from '../../shared/StoreEnum/StorePageSize';
 import { SortingMethod } from '../../shared/StoreEnum/StoreSortingMethod';
 import { SortingOrder } from '../../shared/StoreEnum/StoreSortingOrder';
+import { ProductInfo, ProductTag } from '../../shared/StoreObject/ProductInfo';
 
 interface StoreComponentData {
 	settings: StoreSettings;
 	filters: StoreFilters;
-	products: Product[];
+	products: ProductInfo[];
 }
 
 interface StoreSettings {
@@ -35,21 +36,6 @@ type PriceRange = {
 	to: number;
 }
 
-type Product = {
-	id: number,
-	name: string;
-	price: number;
-	tags: ProductTag[];
-	gallery: string[];
-	thumbnail: string;
-	pageLink?: string;
-}
-type ProductTag = {
-	label: string;
-	parameter: string;
-	order: number;
-}
-
 const configMockupFilters = (formData: FormData) => {
 	formData.append("PriceFrom", "0");
 	formData.append("PriceTo", "99999999");
@@ -66,7 +52,7 @@ export function Store() {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
-	const [products, setProducts] = useState<Product[]>();
+	const [products, setProducts] = useState<ProductInfo[]>();
 	const isFirstLoad = useRef(true);
 
 	useEffect(() => {

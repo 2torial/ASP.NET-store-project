@@ -1,25 +1,13 @@
 import { SortingMethod } from '../../../shared/StoreEnum/StoreSortingMethod';
 import { SortingOrder } from '../../../shared/StoreEnum/StoreSortingOrder';
+import { ProductInfo } from '../../../shared/StoreObject/ProductInfo';
 import Item from './Item';
 import './ItemList.css';
 
 interface ItemListProps {
-	products: Product[];
+	products: ProductInfo[];
 	sortBy: SortingMethod;
 	orderBy: SortingOrder;
-}
-type Product = {
-	id: number,
-	name: string;
-	price: number;
-	tags: ProductTag[];
-	gallery: string[];
-	thumbnail: string;
-	pageLink?: string;
-}
-type ProductTag = {
-	label: string;
-	parameter: string;
 }
 
 function ItemList({ products, sortBy, orderBy }: ItemListProps) {  
@@ -32,7 +20,7 @@ function ItemList({ products, sortBy, orderBy }: ItemListProps) {
 				case SortingMethod.ByPrice:
 					return order * (a.price - b.price)
 			}
-		}).map(product => <Item {...product} key={product.id} />)}
+		}).map(product => <Item product={product} key={product.supplierId + product.id} />)}
     </section>;
 }
 

@@ -5,11 +5,10 @@ using System.IdentityModel.Tokens.Jwt;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using ASP.NET_store_project.Server.Utilities.MultipleRequests;
-using System.Text;
-using System.Text.Json;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models.ComponentData.BasketComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
+using ASP.NET_store_project.Server.Utilities;
 
 namespace ASP.NET_store_project.Server.Controllers.BasketController
 {
@@ -38,15 +37,15 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             var orders = basket
                 .GroupBy(
                     prod => prod.Supplier,
-                    prod => prod,
-                    (sup, prods) => new { Supplier = sup, Products = prods, ProductsContent = JsonSerializer.Serialize(prods) });
+                    prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
+                    (sup, prods) => new { Supplier = sup, Products = prods });
 
             var summaryRequestClientsData = orders
                 .ToDictionary(
                     order => order.Supplier.Id,
                     order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
                     {
-                        Content = new StringContent(order.ProductsContent, Encoding.UTF8, "application/json"),
+                        Content = JsonContentConverter.Convert(order.Products),
                         RequestAdress = order.Supplier.OrderSummaryRequestAdress,
                     });
 
@@ -62,7 +61,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                     order => order.Supplier.Id,
                     order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
                     {
-                        Content = new StringContent(order.ProductsContent, Encoding.UTF8, "application/json"),
+                        Content = JsonContentConverter.Convert(order.Products),
                         RequestAdress = order.Supplier.OrderAcceptRequestAdress,
                     });
 
@@ -80,7 +79,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                         order => order.Supplier.Id,
                         order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
                         {
-                            Content = new StringContent(order.ProductsContent, Encoding.UTF8, "application/json"),
+                            Content = JsonContentConverter.Convert(order.Products),
                             RequestAdress = order.Supplier.OrderCancelRequestAdress,
                         });
                 var orderCancelStatusCodes = await MultipleRequestsEndpoint
@@ -102,14 +101,14 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 .RemoveRange(context.BasketProducts
                     .Where(basketProd => orderedProducts
                         .Select(orderedProd => orderedProd.Id)
-                        .Contains(basketProd.Id)));
+                        .Contains(basketProd.ProductId)));
             context.SaveChanges();
 
             return Ok("Order summarized successfuly.");
         }
 
-        [HttpPost("/api/basket/add")]
-        public IActionResult AddItem([FromForm] Guid supplierId, [FromForm] string supplierProductId)
+        [HttpGet("/api/basket/add/{supplierId}/{productId}")]
+        public IActionResult AddItem([FromRoute] Guid supplierId, [FromRoute] string productId)
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
@@ -119,20 +118,20 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 return BadRequest("This customer does not exist!");
 
             var selectedProduct = customer.BasketProducts
-                .SingleOrDefault(item => item.SupplierId == supplierId && item.SupplierProductId == supplierProductId);
+                .SingleOrDefault(item => item.SupplierId == supplierId && item.ProductId == productId);
 
             if (selectedProduct != null)
                 selectedProduct.Quantity += 1;
             else
                 context.BasketProducts.Add(
-                    new BasketProduct(customer.Id, supplierId, supplierProductId, 1));
+                    new BasketProduct(productId, customer.Id, supplierId, 1));
             context.SaveChanges();
 
-            return Ok($"Added product {supplierId}:{supplierProductId} (user: {customer.UserName}).");
+            return Ok($"Added product {supplierId}:{productId} (user: {customer.UserName}).");
         }
 
-        [HttpGet("/api/basket/remove")]
-        public IActionResult RemoveItem([FromForm] Guid supplierId, [FromForm] string supplierProductId)
+        [HttpGet("/api/basket/remove/{supplierId}/{productId}")]
+        public IActionResult RemoveItem([FromRoute] Guid supplierId, [FromRoute] string productId)
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
@@ -142,7 +141,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 return BadRequest("This customer does not exist!");
 
             var selectedProduct = customer.BasketProducts
-                .SingleOrDefault(prod => prod.SupplierId == supplierId && prod.SupplierProductId == supplierProductId);
+                .SingleOrDefault(prod => prod.SupplierId == supplierId && prod.ProductId == productId);
 
             if (selectedProduct != null)
             {
@@ -152,7 +151,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 context.SaveChanges();
             }
             
-            return Ok($"Removed product {supplierId}:{supplierProductId} (user: {customer.UserName}).");
+            return Ok($"Removed product {supplierId}:{productId} (user: {customer.UserName}).");
         }
 
         [HttpGet("/api/basket")]
@@ -161,7 +160,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
-                .Include(cust => cust.BasketProducts.Select(prod => prod.Supplier))
+                .ThenInclude(basket => basket.Supplier)
                 .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
             if (customer == null)
                 return BadRequest("This customer does not exist!");
@@ -169,25 +168,33 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             var groupedBasketProducts = customer.BasketProducts
                 .GroupBy(
                     prod => prod.Supplier,
-                    prod => prod.Id,
-                    (sup, prodIds) => new { Supplier = sup, BasketContent = JsonSerializer.Serialize(prodIds) });
+                    prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
+                    (sup, prods) => new { Supplier = sup, Products = prods });
 
             var basketProductsRequestClientsData = groupedBasketProducts
                 .ToDictionary(
                     basket => basket.Supplier,
                     basket => new ClientData(httpClientFactory.CreateClient(basket.Supplier.Name))
                     {
-                        Content = new StringContent(basket.BasketContent, Encoding.UTF8, "application/json"),
+                        Content = JsonContentConverter.Convert(basket.Products),
                         RequestAdress = basket.Supplier.SelectedProductsRequestAdress,
                     });
 
             var basketProductsBatch = await MultipleRequestsEndpoint
-                .GetAsync<Supplier, IEnumerable<ProductInfo>>(basketProductsRequestClientsData);
+                .SendAsync<Supplier, IEnumerable<ProductInfo>>(basketProductsRequestClientsData);
 
             var basketProducts = basketProductsBatch
                 .SelectMany(
                     batch => batch.Value ?? [],
                     (batch, prod) => prod.Modify(batch.Key));
+
+            var innerResults = customer.BasketProducts // Checks if all requested products are recieved in appropriate quantities
+                .Join(basketProducts,
+                    serverSideProd => serverSideProd.ProductId,
+                    requestSideProd => requestSideProd.Id,
+                    (ssp, rsp) => new { ssp.ProductId, ssp.SupplierId, QuantityDifference = ssp.Quantity - rsp.Quantity });
+            if (innerResults.Count() < customer.BasketProducts.Count || innerResults.Any(res => res.QuantityDifference != 0))
+                return BadRequest(innerResults);
 
             var data = new BasketComponentData
             {

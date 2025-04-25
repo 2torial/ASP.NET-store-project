@@ -4,7 +4,6 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class AdressDetails(Guid userId, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; } = userId;

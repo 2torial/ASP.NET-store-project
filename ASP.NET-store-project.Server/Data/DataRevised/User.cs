@@ -4,7 +4,6 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class User(string userName, string passWord, bool isAdmin = false)
     {
-        [Key]
         public Guid Id { get; set; }
 
         public string UserName { get; set; } = userName;
