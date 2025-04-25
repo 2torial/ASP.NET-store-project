@@ -80,9 +80,9 @@ namespace ASP.NET_store_project.Server.Controllers
                                     Parameter = config.Parameter,
                                 })
                                 .ToList(),
-                            PageContent = item.WebPage,
+                            PageContent = item.PageContent,
                         },
-                        IsDeleted = item.IsDeleted,
+                        IsDeleted = item.IsAvaliable,
                     }).ToList(),
             });
         }
@@ -93,7 +93,7 @@ namespace ASP.NET_store_project.Server.Controllers
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())
                 return BadRequest("This item does not exists.");
-            item.Single().IsDeleted = true;
+            item.Single().IsAvaliable = true;
             context.SaveChanges();
             return Ok("Item " + item.Single().Name + " is now set as unavaliable.");
         }
@@ -104,7 +104,7 @@ namespace ASP.NET_store_project.Server.Controllers
             var item = context.Items.Where(item => item.Id == itemId);
             if (!item.Any())
                 return BadRequest("This item does not exists.");
-            item.Single().IsDeleted = false;
+            item.Single().IsAvaliable = false;
             context.SaveChanges();
             return Ok("Item " + item.Single().Name + " is now set as avaliable.");
         }

@@ -11,18 +11,21 @@ namespace ASP.NET_store_project.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>()
-                .Property(p => p.IsAdmin)
-                .HasDefaultValue(false);
-
-            modelBuilder.Entity<Category>()
-                .ToTable("Category");
+            modelBuilder.Entity<ItemCategory>()
+                .ToTable("ItemCategory");
 
             modelBuilder.Entity<Item>()
                 .ToTable("Item");
+            modelBuilder.Entity<Item>()
+                .HasMany(p => p.Configurations)
+                .WithMany()
+                .UsingEntity<ItemConfiguration>();
 
             modelBuilder.Entity<User>()
                 .ToTable("User");
+            modelBuilder.Entity<User>()
+                .Property(p => p.IsAdmin)
+                .HasDefaultValue(false);
 
             modelBuilder.Entity<BasketProduct>()
                 .ToTable("BasketProduct");
@@ -30,21 +33,24 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Supplier>()
                 .ToTable("Supplier");
 
-            modelBuilder.Entity<Item>()
-                .HasMany(e => e.Configurations)
-                .WithMany(e => e.Items)
-                .UsingEntity<ItemConfiguration>();
+            modelBuilder.Entity<Order>()
+                .HasMany(p => p.Items)
+                .WithMany()
+                .UsingEntity<ItemOrder>();
+
+            modelBuilder.Entity<OrderStage>()
+                .ToTable("OrderStage");
 
             User[] users = [
-                new("user", new SimplePasswordHasher().HashPassword("user")) { Id = Guid.NewGuid() },
-                new("root", new SimplePasswordHasher().HashPassword("root"), true) { Id = Guid.NewGuid() }];
+                new("user", new SimplePasswordHasher().HashPassword("user")),
+                new("root", new SimplePasswordHasher().HashPassword("root"), true)];
             modelBuilder.Entity<User>().HasData(users);
 
             string[] supplierKeys = ["[A]", "[B]", "[C]"];
             Supplier[] suppliers = [
-                new("SupplierA", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() },
-                new("SupplierB", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() },
-                new("SupplierC", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel") { Id = Guid.NewGuid() }];
+                new("SupplierA", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel"),
+                new("SupplierB", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel"),
+                new("SupplierC", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel")];
             modelBuilder.Entity<Supplier>().HasData(suppliers);
 
             var labeledSuppliers = new Dictionary<string, Supplier>()
@@ -54,12 +60,12 @@ namespace ASP.NET_store_project.Server.Data
                 { supplierKeys[2], suppliers[2] }
             };
 
-            Category[] categories = [
+            ItemCategory[] categories = [
                 new("Laptop"),
                 new("Headset"),
                 new("Microphone"),
                 new("PersonalComputer")];
-            modelBuilder.Entity<Category>().HasData(categories);
+            modelBuilder.Entity<ItemCategory>().HasData(categories);
 
             Dictionary<string, Configuration[]> labeledConfigurations = new()
             {
@@ -125,13 +131,13 @@ namespace ASP.NET_store_project.Server.Data
                     : category == categories[1] || category == categories[2]
                         ? otherPrices[rand.Next(0, otherPrices.Length)]
                         : 0;
-                return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey, Id = Guid.NewGuid() };
+                return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey };
             }).ToArray();
             modelBuilder.Entity<Item>().HasData(items);
 
             Image[] images = items
                 .Select(item => Enumerable.Range(1, rand.Next(1, 4))
-                    .Select(_ => new Image("https://placehold.co/150x150", item.Id) { Id = Guid.NewGuid() }))
+                    .Select(_ => new Image("https://placehold.co/150x150", item.Id)))
                 .SelectMany(imgs => imgs)
                 .ToArray();
             modelBuilder.Entity<Image>().HasData(images);
@@ -144,12 +150,12 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<ItemConfiguration>().HasData(itemConfigurations);
 
             modelBuilder.Entity<AdressDetails>().HasData(
-                new(users[0].Id, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91") { Id = Guid.NewGuid() },
-                new(users[1].Id, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15") { Id = Guid.NewGuid() });
+                new(users[0].Id, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
+                new(users[1].Id, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
 
             modelBuilder.Entity<CustomerDetails>().HasData(
-                new(users[0].Id, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2") { Id = Guid.NewGuid() },
-                new(users[1].Id, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on") { Id = Guid.NewGuid() });
+                new(users[0].Id, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
+                new(users[1].Id, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
 
             BasketProduct[] orderedProducts = new BasketProduct[40];
             int i = 0;
@@ -160,23 +166,16 @@ namespace ASP.NET_store_project.Server.Data
                     continue;
                 var user = i < 28 ? users[0] : users[1];
                 var supplier = labeledSuppliers[item.SupplierKey];
-                orderedProducts[i] = new BasketProduct(item.Id.ToString(), user.Id, supplier.Id, rand.Next(1, 2)) { DatabaseId = Guid.NewGuid() };
+                orderedProducts[i] = new BasketProduct(item.Id.ToString(), user.Id, supplier.Id, rand.Next(1, 2));
                 i++;
             }
             modelBuilder.Entity<BasketProduct>().HasData(orderedProducts);
         }
 
-        public DbSet<Category> Categories { get; set; }
 
         public DbSet<Item> Items { get; set; }
 
         public DbSet<User> Users { get; set; }
-
-        public DbSet<BasketProduct> OrderedProducts { get; set; }
-
-        public DbSet<AdressDetails> AdressDetails { get; set; }
-
-        public DbSet<CustomerDetails> CustomerDetails { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
 

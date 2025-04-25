@@ -2,8 +2,8 @@
 {
     public class AdresseeDetails(string name, string surname, string phoneNumber, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
-        public Guid Id { get; set; }
-        
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public string Name { get; set; } = name;
 
         public string Surname { get; set; } = surname;

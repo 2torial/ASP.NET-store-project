@@ -1,5 +1,4 @@
 using ASP.NET_store_project.Server.Data;
-using ASP.NET_store_project.Server.Data.DataOutsorced;
 using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             var categorizedProducts = context.Items
                 .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
                 .Where(item => item.Category.Type == category.GetDisplayName())
-                .Where(item => !item.IsDeleted)
+                .Where(item => !item.IsAvaliable)
                 .Where(item => item.Configurations.Count != 0)
                 .Include(item => item.Configurations)
                 .AsEnumerable()
@@ -60,7 +59,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                             : localProd.Quantity,
                         Gallery = [],
                         Tags = localProd.Configurations.Select(config => new ProductTag { Label = config.Label, Parameter = config.Parameter, Order = config.Order }),
-                        PageContent = localProd.WebPage,
+                        PageContent = localProd.PageContent,
                     });
 
             return Ok(selectedProducts);

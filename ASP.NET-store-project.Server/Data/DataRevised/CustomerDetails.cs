@@ -4,7 +4,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class CustomerDetails(Guid userId, string name, string surname, string phoneNumber, string email)
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public Guid UserId { get; set; } = userId;
 

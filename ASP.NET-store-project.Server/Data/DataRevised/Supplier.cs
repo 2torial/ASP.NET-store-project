@@ -12,7 +12,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         string orderCancelRequestAdress,
         decimal profitMultiplier = 0.15m) // 0.10m equals 10% profit
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public string Name { get; set; } = name;
 
