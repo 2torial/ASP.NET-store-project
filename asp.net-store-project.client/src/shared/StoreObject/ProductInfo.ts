@@ -4,7 +4,6 @@ export type ProductInfo = {
     price: number;
     quantity: number;
     supplierId: string;
-    thumbnail: string;
     gallery: string[];
     tags: ProductTag[];
     pageContent?: string;

@@ -14,8 +14,6 @@ namespace ASP.NET_store_project.Server.Models.StructuredData
 
         public Guid? SupplierId { get; set; }
 
-        public string? Thumbnail { get; set; }
-
         public IEnumerable<string>? Gallery { get; set; } // To be changed to List<Base64>
 
         public IEnumerable<ProductTag>? Tags { get; set; }
@@ -32,7 +30,6 @@ namespace ASP.NET_store_project.Server.Models.StructuredData
             Quantity = prev.Quantity;
             SupplierId = prev.SupplierId;
             Gallery = prev.Gallery;
-            Thumbnail = prev.Thumbnail;
             Tags = prev.Tags;
             PageContent = prev.PageContent;
         }
