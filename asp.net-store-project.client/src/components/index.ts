@@ -5,4 +5,3 @@ export { default as OrderList } from "./OrderList";
 export { default as AccountForm } from "./AccountForm";
 export { default as Store } from "./Store";
 export { default as UserList } from "./UserList";
-export { default as ItemList } from "./ItemList";
