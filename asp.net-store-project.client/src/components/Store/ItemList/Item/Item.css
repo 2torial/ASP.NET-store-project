@@ -46,10 +46,13 @@
 .item .store-section {
     display: flex;
     flex-direction: column;
-    width: 150px;
+    width: 130px;
 }
 
 .item .store-section .store-price {
+    text-align: right;
+    font-size: 18px;
+    font-weight: 400;
     color: blue;
     width: 100%;
 }
@@ -63,4 +66,14 @@
 
 .item .store-section .store-options input {
     border-radius: 5px;
+}
+
+.cart-icon {
+    font-size: 26px !important;
+    color: gray;
+    cursor: pointer;
+}
+
+.cart-icon:hover {
+    color: black;
 }

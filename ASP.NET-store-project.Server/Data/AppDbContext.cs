@@ -117,36 +117,35 @@ namespace ASP.NET_store_project.Server.Data
 
             var rand = new Random();
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            Item[] items = Enumerable.Range(1, 300)
-            .Select(n =>
-            {
-                var category = categories[rand.Next(0, categories.Length)];
-                var supplierKey = supplierKeys[rand.Next(0, 3)];
-                var random3 = "" + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)];
-                var name = $"{random3} {supplierKey} {category.Type}";
-                var computerPrices = new decimal[] { 300, 400, 450, 500, 600, 700, 800, 820, 850, 900, 1000 };
-                var otherPrices = new decimal[] { 20, 30, 50, 55, 60, 90, 100, 110, 115, 150, 190, 200 };
-                var price = category == categories[0] || category == categories[3]
-                    ? computerPrices[rand.Next(0, computerPrices.Length)]
-                    : category == categories[1] || category == categories[2]
-                        ? otherPrices[rand.Next(0, otherPrices.Length)]
-                        : 0;
-                return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey };
-            }).ToArray();
+            Item[] items = [.. Enumerable.Range(1, 300)
+                .Select(n =>
+                {
+                    var category = categories[rand.Next(0, categories.Length)];
+                    var supplierKey = supplierKeys[rand.Next(0, 3)];
+                    var random3 = "" + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)];
+                    var name = $"{random3} {supplierKey} {category.Type}";
+                    var computerPrices = new decimal[] { 300, 400, 450, 500, 600, 700, 800, 820, 850, 900, 1000 };
+                    var otherPrices = new decimal[] { 20, 30, 50, 55, 60, 90, 100, 110, 115, 150, 190, 200 };
+                    var price = category == categories[0] || category == categories[3]
+                        ? computerPrices[rand.Next(0, computerPrices.Length)]
+                        : category == categories[1] || category == categories[2]
+                            ? otherPrices[rand.Next(0, otherPrices.Length)]
+                            : 0;
+                    return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey };
+                })];
             modelBuilder.Entity<Item>().HasData(items);
 
-            Image[] images = items
-                .Select(item => Enumerable.Range(1, rand.Next(1, 4))
-                    .Select(_ => new Image("https://placehold.co/150x150", item.Id)))
-                .SelectMany(imgs => imgs)
-                .ToArray();
+            Image[] images = [.. items
+                //.Select(item => Enumerable.Range(1, rand.Next(1, 4))
+                //    .Select(_ => new Image("https://placehold.co/150x150", item.Id)))
+                .Select(item => Array.Empty<Image>())
+                .SelectMany(imgs => imgs)];
             modelBuilder.Entity<Image>().HasData(images);
 
-            ItemConfiguration[] itemConfigurations = items
-            .Select(item => categorizedConfigurationLabels[item.CategoryId]
-                .Select(label => new ItemConfiguration(item.Id, labeledConfigurations[label][rand.Next(0, labeledConfigurations[label].Length)].Id)))
-            .SelectMany(itemConfigs => itemConfigs)
-            .ToArray();
+            ItemConfiguration[] itemConfigurations = [.. items
+                .Select(item => categorizedConfigurationLabels[item.CategoryId]
+                    .Select(label => new ItemConfiguration(item.Id, labeledConfigurations[label][rand.Next(0, labeledConfigurations[label].Length)].Id)))
+                .SelectMany(itemConfigs => itemConfigs)];
             modelBuilder.Entity<ItemConfiguration>().HasData(itemConfigurations);
 
             modelBuilder.Entity<AdressDetails>().HasData(

@@ -12,8 +12,15 @@ type Identity = "Anonymous" | "User" | "Admin";
 export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 	const navigate = useNavigate();
 	const menuRef = useRef(null);
-	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
-	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
+	const profileIconRef = useRef(null);
+	const openMenu = () => {
+		(menuRef.current! as HTMLElement).classList.add("opened");
+		(profileIconRef.current! as HTMLElement).classList.add("activated");
+	}
+	const hideMenu = () => {
+		(menuRef.current! as HTMLElement).classList.remove("opened");
+		(profileIconRef.current! as HTMLElement).classList.remove("activated");
+	}
 
 	const signOut = async (event: React.MouseEvent) => {
 		event.preventDefault();
@@ -34,9 +41,9 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 			<SearchBar />
 			<div className="menu-section">
 				<Link to="/basket">
-					<img src="https://placehold.co/40x40" alt="basket" />
+					<span className="cart-icon fa fa-shopping-cart" />
 				</Link>
-				<img onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
+				<span ref={profileIconRef} onMouseOver={openMenu} className="profile-icon fa fa-cogs" />
 			</div>
 		</div>
 		<div className="menu" ref={menuRef}> {userIdentity === "Anonymous"
