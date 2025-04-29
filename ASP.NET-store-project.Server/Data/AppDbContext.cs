@@ -47,10 +47,16 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<User>().HasData(users);
 
             string[] supplierKeys = ["[A]", "[B]", "[C]"];
-            Supplier[] suppliers = [
-                new("SupplierA", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel"),
-                new("SupplierB", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel"),
-                new("SupplierC", "https://localhost:5173/", "filter", "select", "summary", "accept", "cancel")];
+            Supplier[] suppliers = [.. supplierKeys
+                .Select(key => new Supplier(
+                    $"Supplier{key[1]}", 
+                    "https://localhost:5173/", 
+                    "filter", 
+                    "select", 
+                    "orders", 
+                    "summary", 
+                    "accept", 
+                    "cancel"))];
             modelBuilder.Entity<Supplier>().HasData(suppliers);
 
             var labeledSuppliers = new Dictionary<string, Supplier>()
@@ -148,29 +154,68 @@ namespace ASP.NET_store_project.Server.Data
                 .SelectMany(itemConfigs => itemConfigs)];
             modelBuilder.Entity<ItemConfiguration>().HasData(itemConfigurations);
 
-            modelBuilder.Entity<AdressDetails>().HasData(
+            AdressDetails[] adressDetails = [
                 new(users[0].Id, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
-                new(users[1].Id, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15"));
+                new(users[1].Id, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15")];
+            modelBuilder.Entity<AdressDetails>().HasData(adressDetails);
 
-            modelBuilder.Entity<CustomerDetails>().HasData(
+            CustomerDetails[] customerDetails = [
                 new(users[0].Id, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
-                new(users[1].Id, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on"));
+                new(users[1].Id, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on")];
+            modelBuilder.Entity<CustomerDetails>().HasData(customerDetails);
 
-            BasketProduct[] orderedProducts = new BasketProduct[40];
-            int i = 0;
-            while (i < 40)
-            {
-                var item = items[rand.Next(0, items.Length)];
-                if (orderedProducts.Any(orderedItem => orderedItem?.ProductId == item.Id.ToString()))
-                    continue;
-                var user = i < 28 ? users[0] : users[1];
-                var supplier = labeledSuppliers[item.SupplierKey];
-                orderedProducts[i] = new BasketProduct(item.Id.ToString(), user.Id, supplier.Id, rand.Next(1, 2));
-                i++;
-            }
-            modelBuilder.Entity<BasketProduct>().HasData(orderedProducts);
+            BasketProduct[] basketProducts = [.. Enumerable.Range(1, 14)
+                .Select(n => {
+                    var item = items[rand.Next(0, items.Length)];
+                    var user = n < 7 ? users[0] : users[1];
+                    var supplier = labeledSuppliers[item.SupplierKey];
+                    return new BasketProduct(item.Id.ToString(), user.Id, supplier.Id, rand.Next(1, 2));
+                }) // in case of distinct representation of the same items
+                .GroupBy(item => item.ProductId, (_, sameItems) => sameItems.First())];
+            modelBuilder.Entity<BasketProduct>().HasData(basketProducts);
+
+            var issuerDetails = customerDetails
+                .Join(adressDetails,
+                    custDetails => custDetails.UserId,
+                    adrDetails => adrDetails.UserId,
+                    (cd, ad) => new 
+                    { 
+                        IssuerId = $"[0]:{cd.UserId}", 
+                        AdresseeDetails = new AdresseeDetails(
+                            cd.Name, cd.Surname, cd.PhoneNumber, 
+                            ad.Region, ad.City, ad.PostalCode, ad.StreetName, ad.HouseNumber, ad.ApartmentNumber) 
+                    });
+
+            AdresseeDetails[] adresseeDetails = [
+                issuerDetails.ElementAt(0).AdresseeDetails,
+                issuerDetails.ElementAt(1).AdresseeDetails];
+            modelBuilder.Entity<AdresseeDetails>().HasData(adresseeDetails);
+
+            Order[] orders = [.. Enumerable.Range(1, 12)
+                .Select(n => n < 8
+                    ? new Order(adresseeDetails[0].Id, issuerDetails.ElementAt(0).IssuerId) { SupplierKey = supplierKeys[0] }
+                    : new Order(adresseeDetails[1].Id, issuerDetails.ElementAt(1).IssuerId) { SupplierKey = supplierKeys[1] })];
+            modelBuilder.Entity<Order>().HasData(orders);
+
+            ItemOrder[] itemOrders = [.. orders
+                .Select(order => Enumerable.Range(1, rand.Next(4, 8))
+                    .Select(n => new ItemOrder(items[n].Id, order.Id, rand.Next(1, 3)))
+                    .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
+                .SelectMany(itemOrders => itemOrders)];
+            modelBuilder.Entity<ItemOrder>().HasData(itemOrders);
+
+            string[] stages = ["Created", "Pending", "Finalized", "Canceled"];
+            OrderStage[] orderStages = [.. orders
+                .Select(order =>
+                {
+                    var r = rand.Next(0, 3);
+                    return r < 3
+                        ? Enumerable.Range(0, r).Select(n => new OrderStage(stages[n], order.Id))
+                        : [new OrderStage(stages[0], order.Id), new OrderStage(stages[1], order.Id), new OrderStage(stages[3], order.Id)];
+                })
+                .SelectMany(orderStages => orderStages)];
+            modelBuilder.Entity<OrderStage>().HasData(orderStages);
         }
-
 
         public DbSet<Item> Items { get; set; }
 

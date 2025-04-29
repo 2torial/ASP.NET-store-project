@@ -1,5 +1,4 @@
 ﻿using ASP.NET_store_project.Server.Utilities;
-using System.ComponentModel.DataAnnotations;
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
@@ -7,6 +6,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         string name, string baseAdress, 
         string filteredProductsRequestAdress, 
         string selectedProductsRequestAdress, 
+        string orderListRequestAdress,
         string orderSummaryRequestAdress,
         string orderAcceptRequestAdress,
         string orderCancelRequestAdress,
@@ -21,6 +21,8 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         public string FilteredProductsRequestAdress { get; set; } = filteredProductsRequestAdress;
 
         public string SelectedProductsRequestAdress { get; set; } = selectedProductsRequestAdress;
+
+        public string OrderListRequestAdress { get; set; } = orderListRequestAdress;
 
         public string OrderSummaryRequestAdress { get; set; } = orderSummaryRequestAdress;
 

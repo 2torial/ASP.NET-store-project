@@ -1,46 +1,100 @@
 ﻿namespace ASP.NET_store_project.Server.Utilities.MultipleRequests
 {
-    public static class MultipleRequestsEndpoint
+    public static class MultipleRequestsEndpoint<T>
     {
-        public static async Task<KeyValuePair<U, T?>[]> GetAsync<U, T>(IDictionary<U, ClientData> clientsData, Func<HttpResponseMessage, Task<T?>>? resolve = null)
-        {
-            if (clientsData.Any(kvp => kvp.Value.Content != null))
-                throw new InvalidDataException("GetAsync doesn't accept ClientData.Content, did you mean to use SendAsync?");
-            if (clientsData.Any(kvp => kvp.Value.RequestAdress == null))
-                throw new NullReferenceException("Found empty RequestAdress!");
+        public static async Task<V?[]> GetAsync<U, V>(
+            IEnumerable<U> requestBases,
+            Func<U, GetRequestOptions> configureRequest,
+            Func<HttpResponseMessage, Task<T?>> resolveMessage,
+            Func<U, T?, V> modifyResult) => await Task.WhenAll(requestBases
+                .Select(async endpoint => {
+                    var settings = configureRequest.Invoke(endpoint);
+                    var message = await settings.HttpClient.GetAsync(settings.RequestAdress);
+                    var result =  await resolveMessage.Invoke(message);
+                    return modifyResult.Invoke(endpoint, result);
+                }));
 
-            var messages = await Task.WhenAll(clientsData
-                .Select(async kvp => new KeyValuePair<U, HttpResponseMessage>(
-                    kvp.Key,
-                    await kvp.Value.Client.GetAsync(kvp.Value.RequestAdress))));
+        public static async Task<V?[]> GetAsync<U, V>(
+            IEnumerable<U> requestBases,
+            Func<U, GetRequestOptions> configureRequest,
+            Func<U, T?, V> modifyResult) =>
+                await GetAsync(
+                    requestBases,
+                    configureRequest,
+                    async msg => msg.IsSuccessStatusCode 
+                        ? await msg.Content.ReadFromJsonAsync<T>() 
+                        : await Task.FromResult(default(T)), 
+                    modifyResult);
 
-            return resolve == null
-                ? await Task.WhenAll(messages.Where(kvp => kvp.Value.IsSuccessStatusCode)
-                    .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await kvp.Value.Content.ReadFromJsonAsync<T>())))
-                : await Task.WhenAll(messages
-                    .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await resolve.Invoke(kvp.Value))));
-        }
+        public static async Task<T?[]> GetAsync<U>(
+            IEnumerable<U> requestBases,
+            Func<U, GetRequestOptions> configureRequest,
+            Func<HttpResponseMessage, Task<T?>> resolveMessage) =>
+                await GetAsync(
+                    requestBases,
+                    configureRequest, 
+                    resolveMessage, 
+                    (_, res) => res);
 
-        public static async Task<KeyValuePair<U, T?>[]> SendAsync<U, T>(IDictionary<U, ClientData> clientsData, Func<HttpResponseMessage, Task<T?>>? resolve = null)
-        {
-            if (clientsData.Any(kvp => kvp.Value.RequestAdress == null))
-                throw new NullReferenceException("Found empty RequestAdress!");
-            if (clientsData.Any(kvp => kvp.Value.Content == null))
-                throw new NullReferenceException("Found empty Content!");
+        public static async Task<T?[]> GetAsync<U>(
+            IEnumerable<U> requestBases,
+            Func<U, GetRequestOptions> configureRequest) =>
+                await GetAsync(
+                    requestBases,
+                    configureRequest, 
+                    async msg => msg.IsSuccessStatusCode
+                        ? await msg.Content.ReadFromJsonAsync<T>()
+                        : await Task.FromResult(default(T)), 
+                    (_, res) => res);
 
-            var messages = await Task.WhenAll(clientsData
-                .Select(async kvp => new KeyValuePair<U, HttpResponseMessage>(
-                    kvp.Key,
-                    await kvp.Value.Client.PostAsync(
-                        kvp.Value.RequestAdress,
-                        kvp.Value.Content))));
+        public static async Task<V?[]> PostAsync<U, V>(
+            IEnumerable<U> requestBases,
+            Func<U, PostRequestOptions> configureRequest,
+            Func<HttpResponseMessage, Task<T?>> resolveMessage,
+            Func<U, T?, V> modifyResult) => await Task.WhenAll(requestBases
+                .Select(async endpoint => {
+                    var settings = configureRequest.Invoke(endpoint);
+                    var message = await settings.HttpClient.PostAsync(settings.RequestAdress, settings.Content);
+                    var result = await resolveMessage.Invoke(message);
+                    return modifyResult.Invoke(endpoint, result);
+                }));
 
-            return resolve == null
-                ? await Task.WhenAll(messages.Where(kvp => kvp.Value.IsSuccessStatusCode)
-                    .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await kvp.Value.Content.ReadFromJsonAsync<T>())))
-                : await Task.WhenAll(messages
-                    .Select(async kvp => new KeyValuePair<U, T?>(kvp.Key, await resolve.Invoke(kvp.Value))));
-        }
+        public static async Task<V?[]> PostAsync<U, V>(
+            IEnumerable<U> requestBases,
+            Func<U, PostRequestOptions> configureRequest,
+            Func<U, T?, V> modifyResult) =>
+                await PostAsync(
+                    requestBases,
+                    configureRequest,
+                    async msg => msg.IsSuccessStatusCode
+                        ? await msg.Content.ReadFromJsonAsync<T>()
+                        : await Task.FromResult(default(T)),
+                    modifyResult);
+
+        public static async Task<T?[]> PostAsync<U>(
+            IEnumerable<U> requestBases,
+            Func<U, PostRequestOptions> configureRequest,
+            Func<HttpResponseMessage, Task<T?>> resolveMessage) =>
+                await PostAsync(
+                    requestBases,
+                    configureRequest,
+                    resolveMessage,
+                    (_, res) => res);
+
+        public static async Task<T?[]> PostAsync<U>(
+            IEnumerable<U> requestBases,
+            Func<U, PostRequestOptions> configureRequest) =>
+                await PostAsync(
+                    requestBases,
+                    configureRequest,
+                    async msg => msg.IsSuccessStatusCode
+                        ? await msg.Content.ReadFromJsonAsync<T>()
+                        : await Task.FromResult(default(T)),
+                    (_, res) => res);
+
+        public record GetRequestOptions(HttpClient HttpClient, string RequestAdress);
+
+        public record PostRequestOptions(HttpClient HttpClient, string RequestAdress, HttpContent Content);
 
     }
 }

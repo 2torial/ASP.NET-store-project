@@ -2,12 +2,12 @@ import { default as SearchBar } from './SearchBar';
 import './Nav.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
+import { IdentityPolicy } from '../../shared/StoreEnum/IdentityPolicy';
 
 interface NavProps {
 	updateUserIdentity(): void,
-	userIdentity: Identity
+	userIdentity: IdentityPolicy
 }
-type Identity = "Anonymous" | "User" | "Admin";
 
 export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 	const navigate = useNavigate();
@@ -46,7 +46,7 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 				<span ref={profileIconRef} onMouseOver={openMenu} className="profile-icon fa fa-cogs" />
 			</div>
 		</div>
-		<div className="menu" ref={menuRef}> {userIdentity === "Anonymous"
+		<div className="menu" ref={menuRef}> {userIdentity === IdentityPolicy.AnonymousUser
 			? <>
 				{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
 				<div className="option-section">
@@ -56,24 +56,24 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 					<Link to="/sign-up">Sign up</Link>
 				</div>
 			</>
-			: <> {userIdentity === "Admin"
+			: <> {userIdentity === IdentityPolicy.AdminUser
 				? <>
-					{[...Array(4).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					{[...Array(5).keys()].map((i) => <div className="empty-space" key={i}></div>)}
 					<div className="option-section">
 						<Link to="/admin/users">Users</Link>
 					</div>
 					<div className="option-section">
-						<Link to="/admin/orders">Orders</Link>
-					</div>
-					<div className="option-section">
-						<Link to="/admin/items">Store items</Link>
+						<Link to="/orders">Orders</Link>
 					</div>
 					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>
 				</>
 				: <>
-					{[...Array(7).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					<div className="option-section">
+						<Link to="/orders">Orders</Link>
+					</div>
 					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>

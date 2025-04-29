@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string SupplierKey { get; set; } // Not part of the API, it's essential to create "virtual suppliers" locally
+        public required string SupplierKey { get; set; } // Not part of the API, it's essential to create "virtual suppliers" locally
 
         public string CategoryId { get; set; } = categoryId;
 

@@ -22,80 +22,69 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         {
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
-                .Where(customer => customer.UserName == jwtToken.Subject);
-            if (!customer.Any())
-                return BadRequest("Customer is missing from the database!");
+                .Include(cust => cust.BasketProducts)
+                .ThenInclude(basket => basket.Supplier)
+                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+            if (customer == null)
+                return BadRequest("This customer does not exist!");
 
-            var basket = customer
-                .SelectMany(cust => cust.BasketProducts)
-                .Include(prod => prod.Supplier)
-                .AsEnumerable();
-
-            if (!basket.Any())
-                return BadRequest("Basket is empty.");
-
-            var orders = basket
+            var basket = customer.BasketProducts
                 .GroupBy(
                     prod => prod.Supplier,
                     prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
                     (sup, prods) => new { Supplier = sup, Products = prods });
 
-            var summaryRequestClientsData = orders
-                .ToDictionary(
-                    order => order.Supplier.Id,
-                    order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
-                    {
-                        Content = JsonContentConverter.Convert(order.Products),
-                        RequestAdress = order.Supplier.OrderSummaryRequestAdress,
-                    });
+            if (!basket.Any())
+                return BadRequest("Basket is empty.");
 
-            var summaryStatusCodes = await MultipleRequestsEndpoint
-                .GetAsync(summaryRequestClientsData, async msg => await Task.FromResult(msg.IsSuccessStatusCode));
-            var failedSummaryStatusCodes = summaryStatusCodes
-                .Where(kvp => !kvp.Value);
-            if (failedSummaryStatusCodes.Any())
+            var summaryResults = await MultipleRequestsEndpoint<bool>
+                .GetAsync(basket,
+                    groupedProds => new(
+                        httpClientFactory.CreateClient(groupedProds.Supplier.Name), 
+                        groupedProds.Supplier.OrderSummaryRequestAdress),
+                    async msg => await Task.FromResult(msg.IsSuccessStatusCode),
+                    (groupedProds, res) => new { groupedProds.Supplier, IsSucces = res });
+
+            if (summaryResults.All(result => result?.IsSucces ?? false))
                 return BadRequest("Failed to issue an order.");
 
-            var orderAcceptRequestClientsData = orders
-                .ToDictionary(
-                    order => order.Supplier.Id,
-                    order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
-                    {
-                        Content = JsonContentConverter.Convert(order.Products),
-                        RequestAdress = order.Supplier.OrderAcceptRequestAdress,
-                    });
+            var orderAcceptResults = await MultipleRequestsEndpoint<bool>
+                .PostAsync(basket,
+                    groupedProds => new(
+                        httpClientFactory.CreateClient(groupedProds.Supplier.Name),
+                        groupedProds.Supplier.OrderAcceptRequestAdress,
+                        JsonContentConverter.Convert(groupedProds.Products)),
+                    async msg => await Task.FromResult(msg.IsSuccessStatusCode),
+                    (groupedProds, res) => new { groupedProds.Supplier, IsSucces = res });
 
-            var orderAcceptStatusCodes = await MultipleRequestsEndpoint
-                .GetAsync(orderAcceptRequestClientsData, async msg => await Task.FromResult(msg.IsSuccessStatusCode));
-            var failedOrderAcceptStatusCodes = orderAcceptStatusCodes
-                .Where(kvp => !kvp.Value);
-            if (failedOrderAcceptStatusCodes.Any())
+            var succeededSupplierIds = orderAcceptResults
+                .Where(result => result?.IsSucces ?? false)
+                .Select(result => result!.Supplier.Id);
+
+            var failedOrders = basket
+                .Where(groupedProds => !succeededSupplierIds.Contains(groupedProds.Supplier.Id));
+
+            if (failedOrders.Any())
             {
-                var orderCancelRequestClientsData = orders
-                    .Where(order => failedOrderAcceptStatusCodes
-                        .Select(kvp => kvp.Key)
-                        .Contains(order.Supplier.Id))
-                    .ToDictionary(
-                        order => order.Supplier.Id,
-                        order => new ClientData(httpClientFactory.CreateClient(order.Supplier.Name))
-                        {
-                            Content = JsonContentConverter.Convert(order.Products),
-                            RequestAdress = order.Supplier.OrderCancelRequestAdress,
-                        });
-                var orderCancelStatusCodes = await MultipleRequestsEndpoint
-                    .GetAsync(orderCancelRequestClientsData, async msg => await Task.FromResult(msg.IsSuccessStatusCode));
-                var failedOrderCancelStatusCodes = orderAcceptStatusCodes
-                .Where(kvp => !kvp.Value);
-                if (failedOrderCancelStatusCodes.Any())
+                var orderCancelResults = await MultipleRequestsEndpoint<bool>
+                    .PostAsync(failedOrders,
+                        groupedProds => new(
+                            httpClientFactory.CreateClient(groupedProds.Supplier.Name), 
+                            groupedProds.Supplier.OrderCancelRequestAdress, 
+                            JsonContentConverter.Convert(groupedProds.Products)), 
+                        async msg => await Task.FromResult(msg.IsSuccessStatusCode),
+                        (groupedProds, res) => new { groupedProds.Supplier, IsSucces = res });
+
+                if (!orderCancelResults.All(result => result?.IsSucces ?? false))
                 {
-                    // This is a space for an edge case situation when only some items of an order were accepted
-                    // while the other were canceled (all items should be accepted or canceled before an order resolves)
+                    // This is a space for an edge case situation where only some part of an order was accepted
+                    // while the other was canceled (all items should be accepted or canceled before the order resolves)
                     return BadRequest("Critical error occured: Some of the products ordered were issued while the others were not. Contact an administrator.");
                 }
                 return BadRequest("Failed to issue an order.");
             }
 
-            var orderedProducts = orders
+            var orderedProducts = basket
                 .SelectMany(order => order.Products);
             context.BasketProducts
                 .RemoveRange(context.BasketProducts
@@ -163,45 +152,37 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 .ThenInclude(basket => basket.Supplier)
                 .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
             if (customer == null)
-                return BadRequest("This customer does not exist!");
+                return Unauthorized("This customer does not exist!");
 
-            var groupedBasketProducts = customer.BasketProducts
+            var basket = customer.BasketProducts
                 .GroupBy(
                     prod => prod.Supplier,
                     prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
                     (sup, prods) => new { Supplier = sup, Products = prods });
 
-            var basketProductsRequestClientsData = groupedBasketProducts
-                .ToDictionary(
-                    basket => basket.Supplier,
-                    basket => new ClientData(httpClientFactory.CreateClient(basket.Supplier.Name))
-                    {
-                        Content = JsonContentConverter.Convert(basket.Products),
-                        RequestAdress = basket.Supplier.SelectedProductsRequestAdress,
-                    });
+            if (!basket.Any())
+                return Ok(new BasketComponentData() { Products = [] });
 
-            var basketProductsBatch = await MultipleRequestsEndpoint
-                .SendAsync<Supplier, IEnumerable<ProductInfo>>(basketProductsRequestClientsData);
+            var basketProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+                .PostAsync(basket,
+                    groupedProds => new(
+                        httpClientFactory.CreateClient(groupedProds.Supplier.Name),
+                        groupedProds.Supplier.SelectedProductsRequestAdress,
+                        JsonContentConverter.Convert(groupedProds.Products)),
+                    (group, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(group.Supplier)));
 
             var basketProducts = basketProductsBatch
-                .SelectMany(
-                    batch => batch.Value ?? [],
-                    (batch, prod) => prod.Modify(batch.Key));
+                .SelectMany(batch => batch ?? []);
 
             var innerResults = customer.BasketProducts // Checks if all requested products are recieved in appropriate quantities
                 .Join(basketProducts,
                     serverSideProd => serverSideProd.ProductId,
                     requestSideProd => requestSideProd.Id,
                     (ssp, rsp) => new { ssp.ProductId, ssp.SupplierId, QuantityDifference = ssp.Quantity - rsp.Quantity });
-            if (innerResults.Count() < customer.BasketProducts.Count || innerResults.Any(res => res.QuantityDifference != 0))
+            if (innerResults.Count() < customer.BasketProducts.Count() || innerResults.Any(res => res.QuantityDifference != 0))
                 return BadRequest(innerResults);
 
-            var data = new BasketComponentData
-            {
-                Products = basketProducts,
-            };
-
-            return Ok(data);
+            return Ok(new BasketComponentData() { Products = basketProducts });
         }
     }
 }

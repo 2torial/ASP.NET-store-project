@@ -16,24 +16,18 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         [HttpPost("/api/reload")]
         public async Task<IActionResult> Reload([FromForm] PageReloadData pageData)
         {
-            var suppliers = context.Suppliers
-                .Select(sup => new { Data = sup, Client = httpClientFactory.CreateClient(sup.Name) })
-                .AsEnumerable();
+            var suppliers = context.Suppliers.AsEnumerable();
 
-            var filterRequestClientsData = suppliers
-                .ToDictionary(
-                    sup => sup.Data,
-                    sup => new ClientData(sup.Client)
-                    {
-                        RequestAdress = $"{sup.Data.FilteredProductsRequestAdress}/{pageData.Category}",
-                    });
+            var categorizedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+                .GetAsync(
+                    suppliers, 
+                    sup => new(
+                        httpClientFactory.CreateClient(sup.Name),
+                        $"{sup.FilteredProductsRequestAdress}/{pageData.Category}"),
+                    (sup, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(sup)));
 
-            var categorizedProductsBatch = await MultipleRequestsEndpoint
-                .GetAsync<Supplier, IEnumerable<ProductInfo>>(filterRequestClientsData);
             var categorizedProducts = categorizedProductsBatch
-                .SelectMany(
-                    kvp => kvp.Value ?? [],
-                    (batch, prod) => new ProductInfo(prod).Modify(batch.Key));
+                .SelectMany(prod => prod ?? []);
 
             var viablePriceRange = !categorizedProducts.Any()
                ? new PriceRange(0, decimal.MaxValue)
@@ -82,29 +76,22 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             var selectedProducts = pageData.Slice(filteredProducts);
 
-            var selectedProductsData = selectedProducts
+            var groupedSelectedProducts = selectedProducts
                 .GroupBy(
                     prod => prod.SupplierId,
                     prod => prod,
-                    (supId, prodIds) => new KeyValuePair<Guid?, IEnumerable<ProductInfo>>(supId, prodIds));
+                    (supId, prods) => new KeyValuePair<Supplier, IEnumerable<ProductInfo>>(suppliers.First(sup => sup.Id == supId), prods));
 
-            var selectRequestClientsData = suppliers
-                .Join(selectedProductsData,
-                    sup => sup.Data.Id,
-                    selectedData => selectedData.Key,
-                    (sup, selectedData) => new KeyValuePair<Supplier, ClientData>(sup.Data, new ClientData(sup.Client)
-                    {
-                        Content = JsonContentConverter.Convert(selectedData.Value),
-                        RequestAdress = sup.Data.SelectedProductsRequestAdress,
-                    }))
-                .ToDictionary();
+            var selectedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+                .PostAsync(groupedSelectedProducts,
+                    kvp => new(
+                        httpClientFactory.CreateClient(kvp.Key.Name),
+                        kvp.Key.SelectedProductsRequestAdress,
+                        JsonContentConverter.Convert(kvp.Value)),
+                    (kvp, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(kvp.Key)));
 
-            var selectedProductsBatch = await MultipleRequestsEndpoint
-                .SendAsync<Supplier, IEnumerable<ProductInfo>>(selectRequestClientsData);
             selectedProducts = selectedProductsBatch
-                .SelectMany(
-                    kvp => kvp.Value ?? [], 
-                    (batch, prod) => prod.Modify(batch.Key));
+                .SelectMany(prods => prods ?? []);
 
             var storeComponentData = new StoreComponentData
             {

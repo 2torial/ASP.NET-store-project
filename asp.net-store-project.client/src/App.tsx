@@ -2,24 +2,25 @@ import { Footer, Nav, AccountForm, Store, Basket, UserList, OrderList } from './
 import './App.css';
 import { useRoutes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
-type Identity = "Anonymous" | "User" | "Admin";
+import { IdentityPolicy } from './shared/StoreEnum/IdentityPolicy';
 
 function App() {
-	const [userIdentity, setUserIdentity] = useState<Identity>("Anonymous");
+	const [userIdentity, setUserIdentity] = useState<IdentityPolicy>(IdentityPolicy.AnonymousUser);
 
 	const updateUserIdentity = async () => {
 		const request = await fetch("/api/account/identity");
-		if (!request.ok) setUserIdentity("Anonymous");
+		if (!request.ok) setUserIdentity(IdentityPolicy.AnonymousUser);
 		const text = await request.text();
 		switch (text) {
 			case "User":
-			case "Admin":
-			case "Anonymous":
-				setUserIdentity(text);
+				setUserIdentity(IdentityPolicy.RegularUser);
 				break;
+			case "Admin":
+				setUserIdentity(IdentityPolicy.AdminUser);
+				break;
+			case "Anonymous":
 			default:
-				setUserIdentity("Anonymous");
+				setUserIdentity(IdentityPolicy.AnonymousUser);
 		}
 	}
 
