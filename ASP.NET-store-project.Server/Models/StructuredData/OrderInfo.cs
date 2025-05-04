@@ -1,5 +1,8 @@
-﻿namespace ASP.NET_store_project.Server.Models.StructuredData
+﻿using System.Text.Json.Serialization;
+
+namespace ASP.NET_store_project.Server.Models.StructuredData
 {
+    [method: JsonConstructor]
     public record OrderInfo(
         string? Id, 
         IEnumerable<ProductInfo> Products, 

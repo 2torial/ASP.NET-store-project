@@ -65,7 +65,7 @@ function Basket() {
             Name <input type="text" name="Name" />
             Surname* <input type="text" name="Surname" />
             Phone number <input type="text" name="PhoneNumber" />
-            E-mail* <input type="text" name="Mail" />
+            E-mail* <input type="text" name="Email" />
             <input type="submit" value="Submit" />
         </form>
     </main>;

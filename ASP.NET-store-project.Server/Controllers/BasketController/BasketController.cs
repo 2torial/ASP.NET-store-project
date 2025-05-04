@@ -42,7 +42,10 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                     groupedProds => new(
                         httpClientFactory.CreateClient(groupedProds.Supplier.Name),
                         $"{groupedProds.Supplier.OrderAcceptRequestAdress}/[0]/{customer.Id}",
-                        JsonContentConverter.Convert(new OrderInfo(groupedProds.Products, orderData.CustomerInfo, orderData.AdressInfo))),
+                        JsonContentConverter.Convert(new OrderInfo(
+                            groupedProds.Products, 
+                            new(orderData.Name, orderData.Surname, orderData.PhoneNumber, orderData.Email),
+                            new(orderData.Region, orderData.City, orderData.PostalCode, orderData.StreetName, orderData.HouseNumber, orderData.ApartmentNumber)))),
                     async msg => msg.IsSuccessStatusCode ? await msg.Content.ReadAsStringAsync() : null,
                     (groupedProds, orderId) => new { groupedProds.Supplier, OrderId = orderId });
 

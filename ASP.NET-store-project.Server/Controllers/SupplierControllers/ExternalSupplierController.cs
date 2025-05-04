@@ -109,15 +109,17 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         public IActionResult AcceptOrder([FromBody] OrderInfo orderInfo, [FromRoute] string supplierKey, [FromRoute] string storeId, [FromRoute] string customerId)
         {
             var summaries = orderInfo.Products.Select(prod => new { prod.Id, prod.Quantity });
+            var orderedIds = summaries.Select(summary => summary.Id);
 
             var viableItems = context.Items
-                .Where(item => summaries.Any(summary => summary.Id == item.Id.ToString()))
+                .Where(item => orderedIds.Contains(item.Id.ToString()))
+                .AsEnumerable()
                 .Where(item => summaries
                     .First(summary => summary.Id == item.Id.ToString())
                     .Quantity <= item.Quantity)
-                .AsEnumerable();
+                .Count();
 
-            if (viableItems.Count() < summaries.Count())
+            if (viableItems < summaries.Count())
                 return BadRequest("Not all products are aviable for sell");
 
             AdresseeDetails adresseeDetails = new(
