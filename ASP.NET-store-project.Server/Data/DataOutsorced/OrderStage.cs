@@ -1,18 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class OrderStage(string stage, Guid orderId)
+    public class Stage(string type)
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        public string Stage { get; set; } = stage;
+        [Key]
+        public string Type { get; set; } = type;
         // Created, Pending, Finalized, Canceled
 
-        [Column(TypeName = "Date")]
-        public DateTime DateOfModification { get; set; } = DateTime.Now;
+    }
 
+    public class OrderStage(Guid orderId, string stageId)
+    {
         public Guid OrderId { get; set; } = orderId;
 
+        public string StageId { get; set; } = stageId;
+
+
+
+        [Column(TypeName = "Date")]
+        public DateTime DateOfModification { get; set; }
     }
+
 }

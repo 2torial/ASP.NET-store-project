@@ -1,10 +1,5 @@
 ﻿namespace ASP.NET_store_project.Server.Models.StructuredData
 {
-    public class UserInfo
-    {
-        public string Name { get; set; }
+    public record UserInfo(string Name, bool IsAdmin);
 
-        public bool IsAdmin { get; set; }
-
-    }
 }

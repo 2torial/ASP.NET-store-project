@@ -20,7 +20,7 @@
 
 
 
-        public ItemCategory Category { get; set; } = null!;
+        public Category Category { get; set; } = null!;
 
         public List<Configuration> Configurations { get; } = [];
 

@@ -2,7 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class ItemCategory(string type)
+    public class Category(string type)
     {
         [Key]
         public string Type { get; set; } = type;

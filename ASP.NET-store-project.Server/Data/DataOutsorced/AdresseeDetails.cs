@@ -1,6 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class AdresseeDetails(string name, string surname, string phoneNumber, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
+    public class AdresseeDetails(string name, string surname, string phoneNumber, string email, string region, string city, string postalCode, string streetName, string houseNumber, string? apartmentNumber = null)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -9,6 +9,8 @@
         public string Surname { get; set; } = surname;
 
         public string PhoneNumber { get; set; } = phoneNumber;
+
+        public string Email { get; set; } = email;
 
         public string Region { get; set; } = region;
 

@@ -2,25 +2,18 @@
 
 namespace ASP.NET_store_project.Server.Models.StructuredData
 {
-    public class ProductInfo
+    public record ProductInfo(
+        string? Id,
+        string? Name,
+        decimal Price,
+        int Quantity,
+        Guid? SupplierId,
+        IEnumerable<string>? Gallery,
+        IEnumerable<ProductTag>? Tags,
+        string? PageContent)
     {
-        public string? Id { get; set; }
 
-        public string? Name { get; set; }
-
-        public decimal Price { get; set; }
-
-        public int Quantity { get; set; }
-
-        public Guid? SupplierId { get; set; }
-
-        public IEnumerable<string>? Gallery { get; set; } // To be changed to List<Base64>
-
-        public IEnumerable<ProductTag>? Tags { get; set; }
-
-        public string? PageContent { get; set; }
-
-        public ProductInfo() { }
+        public ProductInfo() : this(null, null, 0, 0, null, null, null, null) { }
 
         public ProductInfo(ProductInfo prev)
         {

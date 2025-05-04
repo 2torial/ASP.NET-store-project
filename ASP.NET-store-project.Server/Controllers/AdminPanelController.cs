@@ -15,14 +15,9 @@ namespace ASP.NET_store_project.Server.Controllers
         [HttpGet("/api/admin/users")]
         public IActionResult GetUsers()
         {
-            return Ok(new UserListComponentData()
+            return Ok(new UserListComponentData
             {
-                Users = [.. context.Users
-                    .Select(user => new UserInfo
-                    {
-                        Name = user.UserName,
-                        IsAdmin = user.IsAdmin,
-                    })]
+                Users = [.. context.Users.Select(user => new UserInfo(user.UserName, user.IsAdmin))]
             });
         }
 

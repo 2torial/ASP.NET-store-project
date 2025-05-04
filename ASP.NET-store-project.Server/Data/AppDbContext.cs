@@ -1,7 +1,9 @@
 ﻿using ASP.NET_store_project.Server.Data.DataOutsorced;
 using ASP.NET_store_project.Server.Data.DataRevised;
+using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace ASP.NET_store_project.Server.Data
 {
@@ -11,7 +13,7 @@ namespace ASP.NET_store_project.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ItemCategory>()
+            modelBuilder.Entity<Category>()
                 .ToTable("ItemCategory");
 
             modelBuilder.Entity<Item>()
@@ -33,13 +35,20 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Supplier>()
                 .ToTable("Supplier");
 
+            modelBuilder.Entity<Stage>()
+                .ToTable("Stage");
+
             modelBuilder.Entity<Order>()
-                .HasMany(p => p.Items)
+                .ToTable("Order");
+            modelBuilder.Entity<Order>()
+                .HasMany<Item>()
                 .WithMany()
                 .UsingEntity<ItemOrder>();
-
-            modelBuilder.Entity<OrderStage>()
-                .ToTable("OrderStage");
+            modelBuilder.Entity<Order>()
+                .HasMany(p => p.Stages)
+                .WithMany()
+                .UsingEntity<OrderStage>(j => j
+                    .Property(e => e.DateOfModification).HasDefaultValueSql("CURRENT_TIMESTAMP"));
 
             User[] users = [
                 new("user", new SimplePasswordHasher().HashPassword("user")),
@@ -66,12 +75,12 @@ namespace ASP.NET_store_project.Server.Data
                 { supplierKeys[2], suppliers[2] }
             };
 
-            ItemCategory[] categories = [
+            Category[] categories = [
                 new("Laptop"),
                 new("Headset"),
                 new("Microphone"),
                 new("PersonalComputer")];
-            modelBuilder.Entity<ItemCategory>().HasData(categories);
+            modelBuilder.Entity<Category>().HasData(categories);
 
             Dictionary<string, Configuration[]> labeledConfigurations = new()
             {
@@ -180,9 +189,9 @@ namespace ASP.NET_store_project.Server.Data
                     adrDetails => adrDetails.UserId,
                     (cd, ad) => new 
                     { 
-                        IssuerId = $"[0]:{cd.UserId}", 
+                        CustomerId = cd.UserId.ToString(), 
                         AdresseeDetails = new AdresseeDetails(
-                            cd.Name, cd.Surname, cd.PhoneNumber, 
+                            cd.Name, cd.Surname, cd.PhoneNumber,  cd.Email,
                             ad.Region, ad.City, ad.PostalCode, ad.StreetName, ad.HouseNumber, ad.ApartmentNumber) 
                     });
 
@@ -193,28 +202,35 @@ namespace ASP.NET_store_project.Server.Data
 
             Order[] orders = [.. Enumerable.Range(1, 12)
                 .Select(n => n < 8
-                    ? new Order(adresseeDetails[0].Id, issuerDetails.ElementAt(0).IssuerId) { SupplierKey = supplierKeys[0] }
-                    : new Order(adresseeDetails[1].Id, issuerDetails.ElementAt(1).IssuerId) { SupplierKey = supplierKeys[1] })];
+                    ? new Order(adresseeDetails[0].Id, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
+                    : new Order(adresseeDetails[1].Id, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
             modelBuilder.Entity<Order>().HasData(orders);
 
             ItemOrder[] itemOrders = [.. orders
                 .Select(order => Enumerable.Range(1, rand.Next(4, 8))
-                    .Select(n => new ItemOrder(items[n].Id, order.Id, rand.Next(1, 3)))
+                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3)))
                     .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
                 .SelectMany(itemOrders => itemOrders)];
             modelBuilder.Entity<ItemOrder>().HasData(itemOrders);
 
-            string[] stages = ["Created", "Pending", "Finalized", "Canceled"];
+            string[] stageTypes = [StageOfOrder.Created.GetDisplayName(), 
+                StageOfOrder.Pending.GetDisplayName(), 
+                StageOfOrder.Finished.GetDisplayName(), 
+                StageOfOrder.Canceled.GetDisplayName()];
+            Stage[] stages = [.. stageTypes.Select(type =>  new Stage(type))];
+            modelBuilder.Entity<Stage>().HasData(stages);
+
             OrderStage[] orderStages = [.. orders
                 .Select(order =>
                 {
                     var r = rand.Next(0, 3);
                     return r < 3
-                        ? Enumerable.Range(0, r).Select(n => new OrderStage(stages[n], order.Id))
-                        : [new OrderStage(stages[0], order.Id), new OrderStage(stages[1], order.Id), new OrderStage(stages[3], order.Id)];
+                        ? Enumerable.Range(0, r).Select(n => new OrderStage(order.Id, stages[n].Type))
+                        : [new OrderStage(order.Id, stages[0].Type), new OrderStage(order.Id, stages[1].Type), new OrderStage(order.Id, stages[3].Type)];
                 })
                 .SelectMany(orderStages => orderStages)];
             modelBuilder.Entity<OrderStage>().HasData(orderStages);
+
         }
 
         public DbSet<Item> Items { get; set; }
@@ -224,6 +240,12 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<Supplier> Suppliers { get; set; }
 
         public DbSet<BasketProduct> BasketProducts { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<AdresseeDetails> AdresseeDetails { get; set; }
+
+        public DbSet<OrderStage> OrderStages { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.DataRevised;
-using ASP.NET_store_project.Server.Models.ComponentData.StoreComponentData;
+using ASP.NET_store_project.Server.Models.ComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using ASP.NET_store_project.Server.Utilities.MultipleRequests;
@@ -18,16 +18,14 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
         {
             var suppliers = context.Suppliers.AsEnumerable();
 
-            var categorizedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
-                .GetAsync(
-                    suppliers, 
+            var categorizedProducts = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+                .GetAsync(suppliers, 
                     sup => new(
                         httpClientFactory.CreateClient(sup.Name),
                         $"{sup.FilteredProductsRequestAdress}/{pageData.Category}"),
-                    (sup, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(sup)));
-
-            var categorizedProducts = categorizedProductsBatch
-                .SelectMany(prod => prod ?? []);
+                    (sup, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(sup)))
+                .ContinueWith(group => group.Result
+                    .SelectMany(prods => prods ?? []));
 
             var viablePriceRange = !categorizedProducts.Any()
                ? new PriceRange(0, decimal.MaxValue)
@@ -82,38 +80,28 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     prod => prod,
                     (supId, prods) => new KeyValuePair<Supplier, IEnumerable<ProductInfo>>(suppliers.First(sup => sup.Id == supId), prods));
 
-            var selectedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+            selectedProducts = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
                 .PostAsync(groupedSelectedProducts,
                     kvp => new(
                         httpClientFactory.CreateClient(kvp.Key.Name),
                         kvp.Key.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(kvp.Value)),
-                    (kvp, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(kvp.Key)));
+                    (kvp, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(kvp.Key)))
+                .ContinueWith(group => group.Result
+                    .SelectMany(prods => prods ?? []));
 
-            selectedProducts = selectedProductsBatch
-                .SelectMany(prods => prods ?? []);
-
-            var storeComponentData = new StoreComponentData
+            return Ok(new StoreComponentData
             {
-                Settings = new StoreSettings
-                {
-                    Category = pageData.Category,
-                    PageSize = pageData.PageSize,
-                    PageCount = pageData.CountPages(filteredProducts.Count()),
-                    PageIndex = pageData.PageIndex,
-                    SortingMethod = pageData.SortBy,
-                    SortingOrder = pageData.OrderBy
-                },
-                Filters = new StoreFilters
-                {
-                    ViablePriceRange = viablePriceRange,
-                    PriceRange = selectedPriceRange,
-                    GroupedTags = labeledViableTags
-                },
+                Settings = new StoreSettings(
+                    pageData.Category, 
+                    pageData.PageSize, 
+                    pageData.CountPages(filteredProducts.Count()), 
+                    pageData.PageIndex, 
+                    pageData.SortBy, 
+                    pageData.OrderBy),
+                Filters = new StoreFilters(viablePriceRange, selectedPriceRange, labeledViableTags),
                 Products = selectedProducts
-            };
-
-            return Ok(storeComponentData);
+            });
         }
     }
 }
