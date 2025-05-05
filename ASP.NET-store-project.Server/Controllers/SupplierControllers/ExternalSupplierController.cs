@@ -81,6 +81,8 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .AsEnumerable()
                 .Select(order => new OrderInfo(
                     order.Id.ToString(),
+                    null,
+                    null,
                     order.ItemOrders.Select(itemorder => new ProductInfo
                     {
                         Id = itemorder.Item.Id.ToString(),
@@ -100,7 +102,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         order.AdresseeDetails.StreetName,
                         order.AdresseeDetails.HouseNumber,
                         order.AdresseeDetails.ApartmentNumber),
-                    order.Stages.LastOrDefault()?.ToString() ?? "Unknown"));
+                    order.Stages.LastOrDefault()?.ToString()));
 
             return Ok(orderedProducts);
         }

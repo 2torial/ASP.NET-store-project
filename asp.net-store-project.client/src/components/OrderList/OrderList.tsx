@@ -1,87 +1,35 @@
 import { useEffect, useState } from 'react';
 import './OrderList.css';
+import { OrderInfo } from '../../shared/StoreObject/OrderInfo';
+import Order from './Order';
 
 interface OrderListComponentData {
-	orders: Order[];
+    orders: OrderInfo[];
 }
 
-interface Order {
-	orderId: number;
-    customerDetails: UserData;
-    adressDetails: AdressData;
-    currentStatus: string;
-}
-type UserData = {
-    customerId: string;
-    userName: string;
-    name: string;
-    surname: string;
-    phoneNumber: string;
-    email: string;
-}
-type AdressData = {
-    region: string;
-    city: string;
-    postalCode: string;
-    streetName: string;
-    houseNumber: string;
-    apartmentNumber: string;
-} 
-
-function UserList() {
-    const [orders, setOrders] = useState<Order[]>([]);
+function OrderList() {
+    const [orders, setOrders] = useState<OrderInfo[] | undefined>(undefined);
 
     useEffect(() => {
         collectOrdersData();
     }, []);
 
     const collectOrdersData = async () => {
-		const response = await fetch('/api/admin/orders');
+		const response = await fetch('/api/orders');
 		if (!response.ok) {
 			alert("Error while fetching data");
 			console.log(await response.json());
 			return;
-		}
-		const data: OrderListComponentData = await response.json();
+        }
+        const data: OrderListComponentData = await response.json();
+        console.log(data);
         setOrders(data.orders);
 	};
 
-	return <main className="orders">
-        <table>
-            <tr>
-                <th>Order ID</th>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Phone Number</th>
-                <th>E-Mail</th>
-                <th>Region</th>
-                <th>City</th>
-                <th>Postal Code</th>
-                <th>Street Name</th>
-                <th>House Number</th>
-                <th>Apartment Number</th>
-                <th>Status</th>
-            </tr>
-            {orders.map((order, i) => <tr key={i}>
-                <td>{order.orderId}</td>
-                <td>{order.customerDetails.customerId}</td>
-                <td>{order.customerDetails.userName}</td>
-                <td>{order.customerDetails.name}</td>
-                <td>{order.customerDetails.surname}</td>
-                <td>{order.customerDetails.phoneNumber}</td>
-                <td>{order.customerDetails.email}</td>
-                <td>{order.adressDetails.region}</td>
-                <td>{order.adressDetails.city}</td>
-                <td>{order.adressDetails.postalCode}</td>
-                <td>{order.adressDetails.streetName}</td>
-                <td>{order.adressDetails.houseNumber}</td>
-                <td>{order.adressDetails.apartmentNumber}</td>
-                <td>{order.currentStatus}</td>
-            </tr>)}
-        </table>
+    return <main className="orders">{orders === undefined
+        ? <p>Page is loading...</p>
+        : orders.map((order, i) => <Order order={order} key={i} />)}
 	</main>;
 }
 
-export default UserList;
+export default OrderList;

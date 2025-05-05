@@ -90,18 +90,19 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 
-            return Ok(new StoreComponentData
-            {
-                Settings = new StoreSettings(
+            return Ok(new StoreComponentData(
+                new StoreSettings(
                     pageData.Category, 
                     pageData.PageSize, 
                     pageData.CountPages(filteredProducts.Count()), 
                     pageData.PageIndex, 
                     pageData.SortBy, 
-                    pageData.OrderBy),
-                Filters = new StoreFilters(viablePriceRange, selectedPriceRange, labeledViableTags),
-                Products = selectedProducts
-            });
+                    pageData.OrderBy), 
+                new StoreFilters(
+                    viablePriceRange, 
+                    selectedPriceRange, 
+                    labeledViableTags), 
+                selectedProducts));
         }
     }
 }

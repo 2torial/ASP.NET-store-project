@@ -50,13 +50,11 @@ builder.Services.AddAuthentication(auth =>
         }
     };
 });
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(IdentityData.RegularUserPolicyName, policy =>
-        policy.RequireClaim(IdentityData.RegularUserClaimName, "true"));
-    options.AddPolicy(IdentityData.AdminUserPolicyName, policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(IdentityData.RegularUserPolicyName, policy =>
+        policy.RequireClaim(IdentityData.RegularUserClaimName, "true"))
+    .AddPolicy(IdentityData.AdminUserPolicyName, policy =>
         policy.RequireClaim(IdentityData.AdminUserClaimName, "true"));
-});
 
 
 builder.Services.AddControllers();

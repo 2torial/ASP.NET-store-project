@@ -37,7 +37,7 @@ function App() {
 			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={true} /> },
-			{ path: "/admin/orders", element: <OrderList /> },
+			{ path: "/orders", element: <OrderList /> },
 			{ path: "/admin/users", element: <UserList /> },
 		])}
 		<Footer />

@@ -14,7 +14,7 @@
 
 
 
-        public AdresseeDetails AdresseeDetails { get; } = null!;
+        public AdresseeDetails AdresseeDetails { get; set; } = null!;
 
         public List<Item> Items { get; } = [];
 

@@ -28,11 +28,18 @@ namespace ASP.NET_store_project.Server.Controllers
             var orderList = await MultipleRequestsEndpoint<IEnumerable<OrderInfo>>
                 .GetAsync(suppliers,
                     sup => new(httpClientFactory.CreateClient(sup.Name), $"{sup.OrderListRequestAdress}/[0]/{customer.Id}"),
-                    (sup, orders) => orders?.Select(order => new OrderData(sup.Id, sup.Name, order.CustomerDetails, order.AdressDetails, order.Products)))
+                    (sup, orders) => orders?.Select(order => new OrderInfo(
+                        order.Id, 
+                        sup.Id.ToString(), 
+                        sup.Name,
+                        order.Products,
+                        order.CustomerDetails, 
+                        order.AdressDetails, 
+                        order.Stage)))
                 .ContinueWith(ordersBatch => ordersBatch.Result
                     .SelectMany(orders => orders ?? []));
 
-            return Ok(orderList);
+            return Ok(new OrderListComponentData(orderList));
         }
     }
 }

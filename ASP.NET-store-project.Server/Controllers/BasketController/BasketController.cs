@@ -145,7 +145,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                     (sup, prods) => new { Supplier = sup, Products = prods });
 
             if (!basket.Any())
-                return Ok(new BasketComponentData() { Products = [] });
+                return Ok(new BasketComponentData([]));
 
             var basketProducts = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
                 .PostAsync(basket,
@@ -165,7 +165,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             if (innerResults.Count() < customer.BasketProducts.Count || innerResults.Any(res => res.QuantityDifference != 0))
                 return BadRequest(innerResults);
 
-            return Ok(new BasketComponentData { Products = basketProducts });
+            return Ok(new BasketComponentData(basketProducts));
         }
     }
 }

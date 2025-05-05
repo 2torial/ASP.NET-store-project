@@ -2,9 +2,5 @@ using ASP.NET_store_project.Server.Models.StructuredData;
 
 namespace ASP.NET_store_project.Server.Models.ComponentData
 {
-    public class UserListComponentData
-    {
-        public required IEnumerable<UserInfo> Users { get; set; }
-
-    }
+    public record UserListComponentData(IEnumerable<UserInfo> Users);
 }
