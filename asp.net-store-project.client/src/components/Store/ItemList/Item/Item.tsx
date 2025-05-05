@@ -18,7 +18,7 @@ function Item({ product }: ItemProps) {
         <div className="details-section">
             <h3 className="item-name">{product.name}</h3>
             <ul className="additional-details">
-                {product.tags.map((config, i) => <li key={i}>{`${config.label}: ${config.parameter}`}</li>)}
+                {product.tags.sort((a, b) => a.label.localeCompare(b.label)).map((config, i) => <li key={i}>{`${config.label}: ${config.parameter}`}</li>)}
             </ul>
         </div>
         <div className="store-section">
