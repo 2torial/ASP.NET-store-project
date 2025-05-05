@@ -2,14 +2,21 @@
 Work in progress.
 
 ## Milestones
-:white_check_mark: Searchbar \
-:white_check_mark: Filters \
-:white_check_mark: Categories \
-:white_check_mark: User registration and authorization \
-:white_check_mark: Page size and page select \
-:hourglass: Product ordering and basket \
-:hourglass: Order summarization \
-:hourglass: Order review
+All expected features has been implemented, current work revolves around fixing bugs and upgrades. \
+✅ Searchbar \
+✅ Filters \
+✅ Categories \
+✅ User registration and authorization \
+✅ Page size and page select \
+✅ Product ordering and basket \
+✅ Order summarization \
+✅ Order review \
+⏳ Bug fixing \
+⏳ UI changes \
+⏳ Fluent validation \
+⏳ Proper JWT handling \
+⏳ Product page mockup \
+⏳ Server-side tests
 
 ## Technologies Used
 - ASP.NET Core 8
@@ -24,6 +31,9 @@ Work in progress.
   - Microsoft.EntityFrameworkCore
   - Microsoft.EntityFrameworkCore.Tools
   - Npgsql.EntityFrameworkCore.PostgreSQL
+- Fluent Validation
+  - FluentValidation
+  - FluentValidation.AspNetCore
 - JSON Web Token
   - Microsoft.AspNetCore.Authentication.JwtBearer
 - React Router

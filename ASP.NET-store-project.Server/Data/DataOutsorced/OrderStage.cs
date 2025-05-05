@@ -1,0 +1,26 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ASP.NET_store_project.Server.Data.DataOutsorced
+{
+    public class Stage(string type)
+    {
+        [Key]
+        public string Type { get; set; } = type;
+        // Created, Pending, Finalized, Canceled
+
+    }
+
+    public class OrderStage(Guid orderId, string stageId)
+    {
+        public Guid OrderId { get; set; } = orderId;
+
+        public string StageId { get; set; } = stageId;
+
+
+
+        [Column(TypeName = "Date")]
+        public DateTime DateOfModification { get; set; }
+    }
+
+}

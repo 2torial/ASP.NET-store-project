@@ -4,8 +4,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class User(string userName, string passWord, bool isAdmin = false)
     {
-        [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public string UserName { get; set; } = userName;
 
@@ -19,7 +18,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 
         public AdressDetails AdressDetails { get; set; } = null!;
 
-        public List<BasketProduct> OrderedProducts { get; set; } = [];
+        public List<BasketProduct> BasketProducts { get; set; } = [];
 
     }
 }

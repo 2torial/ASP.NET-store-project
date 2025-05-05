@@ -17,56 +17,37 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly string TokenSecret = "StoreItWithAzureKeyVaultOrSomethingSimilar";
 
         [HttpPost("/api/account/create")]
-        public IActionResult CreateUser()
+        public IActionResult CreateUser([FromForm] string userName, [FromForm] string passWord)
         {
-            var userInfo =
-                Request.Form.TryGetValue("UserName", out var username)
-                && Request.Form.TryGetValue("PassWord", out var password)
-                    ? new { UserName = username.ToString(), HashedPassWord = new SimplePasswordHasher().HashPassword(password.ToString()) }
-                    : null;
-            if (userInfo == null) return BadRequest("Username or password is missing.");
-
-            var alreadyExists = context.Users
-                .Where(customer => customer.UserName == userInfo.UserName).Any();
-            if (alreadyExists)
+            if (context.Users.Any(customer => customer.UserName == userName))
                 return BadRequest("User already exists.");
 
             // Include data validation here
 
-            context.Users.Add(new User(userInfo.UserName, userInfo.HashedPassWord));
+            var hashedPassword = new SimplePasswordHasher().HashPassword(passWord);
+
+            context.Users.Add(new User(userName, hashedPassword));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }
 
         [HttpPost("/api/account/login")]
-        public IActionResult LogIn()
+        public IActionResult LogIn([FromForm] string userName, [FromForm] string passWord)
         {
-            var userInfo =
-                Request.Form.TryGetValue("UserName", out var username)
-                && Request.Form.TryGetValue("PassWord", out var password)
-                    ? new { UserName = username.ToString(), HashedPassWord = password.ToString() }
-                    : null;
-            if (userInfo == null) return BadRequest("Username or password is missing.");
+            var user = context.Users
+                .SingleOrDefault(customer => customer.UserName == userName);
 
-            var customer = context.Users
-                .Where(customer => customer.UserName == userInfo.UserName);
-
-            try
-            {
-                if (!customer.Any())
-                    throw new UnauthorizedAccessException();
-                new SimplePasswordHasher().VerifyHash(customer.Single().PassWord, userInfo.HashedPassWord);
-            } 
-            catch (UnauthorizedAccessException)
-            {
+            if (user == null)
                 return BadRequest("Username or password is incorrect.");
-            }
+
+            try { new SimplePasswordHasher().VerifyHash(user.PassWord, passWord); }
+            catch (UnauthorizedAccessException) { return BadRequest("Username or password is incorrect."); }
 
             List<CustomClaim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
-            if (customer.Single().IsAdmin)
+            if (user.IsAdmin)
                 claims.Add(new(IdentityData.AdminUserClaimName, "true", ClaimValueTypes.Boolean));
 
-            var token = GenerateToken(userInfo.UserName, claims);
+            var token = GenerateToken(userName, claims);
             Response.Cookies.Append("Token", token, new CookieOptions
             {
                 HttpOnly = true,

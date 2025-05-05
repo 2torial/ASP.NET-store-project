@@ -87,6 +87,26 @@ nav {
     text-decoration: none;
 }
 
+.menu .option-section a:hover {
+    background: darkgray;
+}
+
 .menu .option-section a:active {
-    background: grey;
+    background: gray;
+}
+
+.cart-icon {
+    font-size: 34px !important;
+    color: grey;
+    cursor: pointer;
+}
+
+.profile-icon {
+    font-size: 30px !important;
+    color: grey;
+    cursor: pointer;
+}
+
+.cart-icon:hover, .profile-icon.activated {
+    color: black;
 }

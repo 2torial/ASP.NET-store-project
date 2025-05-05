@@ -44,3 +44,17 @@
 .search-bar input {
     border-radius: 0 14px 14px 0;
 }
+
+.search-button {
+    display: block !important;
+    color: gray;
+    height: 40px;
+    width: 40px;
+    border: 0;
+    cursor: pointer
+}
+
+.search-button:hover {
+    color: black;
+    background: lightgray;
+}

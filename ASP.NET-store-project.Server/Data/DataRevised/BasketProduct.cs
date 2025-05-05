@@ -1,36 +1,26 @@
-﻿using ASP.NET_store_project.Server.Utilities;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
-    
-    public class BasketProduct(Guid customerId, Guid supplierId, string supplierProductId, int quantity, decimal supplierCost)
+    public class BasketProduct(string productId, Guid customerId, Guid supplierId, int quantity)
     {
-        private BasketProduct() : this(Guid.NewGuid(), Guid.NewGuid(), "", 0, 0) { }
+        private BasketProduct() : this("", Guid.NewGuid(), Guid.NewGuid(), 0) { }
 
-        public Guid Id { get; set; }
+        [Key]
+        public Guid DatabaseId { get; set; } = Guid.NewGuid();
 
-        public Guid CustomerId { get; set; } = customerId;
+        public Guid UserId { get; set; } = customerId;
 
         public Guid SupplierId { get; set; } = supplierId;
 
-        public string SupplierProductId { get; set; } = supplierProductId;
+        public string ProductId { get; set; } = productId;
 
         public int Quantity { get; set; } = quantity;
-
-        [Column(TypeName = "money")]
-        public decimal Cost { get; set; } = supplierCost;
-
-        [NotMapped]
-        public decimal Profit { get => ProfitCalculator.Calculate(Cost, Supplier.ProfitMultiplier); }
-
-        [NotMapped]
-        public decimal Price { get => Cost + Profit; }
 
         public bool IsCheckedOut { get; set; } = false;
 
 
 
-        public Supplier Supplier = null!;
+        public Supplier Supplier { get; set; } = null!;
     }
 }

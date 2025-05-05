@@ -27,7 +27,7 @@ function SearchBar() {
             <search className="search-bar" ref={searchBarRef} onFocus={focusSearchBar} onBlur={unfocusSearchBar}>
                 <input className="input-area" type="text" name="SearchBar" placeholder="Search"
                     value={searchBarInput} onChange={e => setSearchBar(e.target.value)} />
-                <input className="search-button" type="image" src="https://placehold.co/40x40" alt="magnifier" />
+                <input className="search-button fa" type="submit" value="&#xf002;" />
             </search>
         </form>
     </div>;

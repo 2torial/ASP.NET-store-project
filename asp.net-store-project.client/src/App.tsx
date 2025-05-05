@@ -1,25 +1,26 @@
-import { Footer, Nav, AccountForm, Store, Basket, UserList, ItemList, OrderList } from './components';
+import { Footer, Nav, AccountForm, Store, Basket, UserList, OrderList } from './components';
 import './App.css';
 import { useRoutes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
-type Identity = "Anonymous" | "User" | "Admin";
+import { IdentityPolicy } from './shared/StoreEnum/IdentityPolicy';
 
 function App() {
-	const [userIdentity, setUserIdentity] = useState<Identity>("Anonymous");
+	const [userIdentity, setUserIdentity] = useState<IdentityPolicy>(IdentityPolicy.AnonymousUser);
 
 	const updateUserIdentity = async () => {
 		const request = await fetch("/api/account/identity");
-		if (!request.ok) setUserIdentity("Anonymous");
+		if (!request.ok) setUserIdentity(IdentityPolicy.AnonymousUser);
 		const text = await request.text();
 		switch (text) {
 			case "User":
-			case "Admin":
-			case "Anonymous":
-				setUserIdentity(text);
+				setUserIdentity(IdentityPolicy.RegularUser);
 				break;
+			case "Admin":
+				setUserIdentity(IdentityPolicy.AdminUser);
+				break;
+			case "Anonymous":
 			default:
-				setUserIdentity("Anonymous");
+				setUserIdentity(IdentityPolicy.AnonymousUser);
 		}
 	}
 
@@ -28,6 +29,7 @@ function App() {
 	}, []);
 
 	return <>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 		<Nav updateUserIdentity={updateUserIdentity} userIdentity={userIdentity} />
 		{useRoutes([
 			{ path: "/", element: <Store /> },
@@ -35,9 +37,8 @@ function App() {
 			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={true} /> },
-			{ path: "/admin/orders", element: <OrderList /> },
+			{ path: "/orders", element: <OrderList /> },
 			{ path: "/admin/users", element: <UserList /> },
-			{ path: "/admin/items", element: <ItemList /> },
 		])}
 		<Footer />
 	</>;

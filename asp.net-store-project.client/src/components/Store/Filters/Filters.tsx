@@ -33,7 +33,7 @@ function Filters({ priceRange, groupedTags, applyFilters, defaultFilters }: Filt
             <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
-        {Object.keys(groupedTags).map(label => <CheckBoxFilter label={label} options={groupedTags[label].map(tag => tag.parameter) ?? []} key={label} />)}
+        {Object.keys(groupedTags).map(label => <CheckBoxFilter label={label} options={groupedTags[label].sort((a, b) => a.order - b.order).map(tag => tag.parameter) ?? []} key={label} />)}
         <div className="apply-section">
             <input type="submit" onClick={handleSubmit(applyFilters)} className="apply-button" id="apply-filters" value="Apply filters" />
             <input type="submit" onClick={handleSubmit(defaultFilters)}  className="default-button" id="reset-filters" value="Return default" />

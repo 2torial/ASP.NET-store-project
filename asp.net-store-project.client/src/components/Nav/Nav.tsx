@@ -2,18 +2,25 @@ import { default as SearchBar } from './SearchBar';
 import './Nav.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
+import { IdentityPolicy } from '../../shared/StoreEnum/IdentityPolicy';
 
 interface NavProps {
 	updateUserIdentity(): void,
-	userIdentity: Identity
+	userIdentity: IdentityPolicy
 }
-type Identity = "Anonymous" | "User" | "Admin";
 
 export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 	const navigate = useNavigate();
 	const menuRef = useRef(null);
-	const openMenu = () => (menuRef.current! as HTMLElement).classList.add("opened");
-	const hideMenu = () => (menuRef.current! as HTMLElement).classList.remove("opened");
+	const profileIconRef = useRef(null);
+	const openMenu = () => {
+		(menuRef.current! as HTMLElement).classList.add("opened");
+		(profileIconRef.current! as HTMLElement).classList.add("activated");
+	}
+	const hideMenu = () => {
+		(menuRef.current! as HTMLElement).classList.remove("opened");
+		(profileIconRef.current! as HTMLElement).classList.remove("activated");
+	}
 
 	const signOut = async (event: React.MouseEvent) => {
 		event.preventDefault();
@@ -34,12 +41,12 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 			<SearchBar />
 			<div className="menu-section">
 				<Link to="/basket">
-					<img src="https://placehold.co/40x40" alt="basket" />
+					<span className="cart-icon fa fa-shopping-cart" />
 				</Link>
-				<img onMouseOver={openMenu} src="https://placehold.co/40x40" alt="profile" />
+				<span ref={profileIconRef} onMouseOver={openMenu} className="profile-icon fa fa-cogs" />
 			</div>
 		</div>
-		<div className="menu" ref={menuRef}> {userIdentity === "Anonymous"
+		<div className="menu" ref={menuRef}> {userIdentity === IdentityPolicy.AnonymousUser
 			? <>
 				{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
 				<div className="option-section">
@@ -49,24 +56,24 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 					<Link to="/sign-up">Sign up</Link>
 				</div>
 			</>
-			: <> {userIdentity === "Admin"
+			: <> {userIdentity === IdentityPolicy.AdminUser
 				? <>
-					{[...Array(4).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					{[...Array(5).keys()].map((i) => <div className="empty-space" key={i}></div>)}
 					<div className="option-section">
 						<Link to="/admin/users">Users</Link>
 					</div>
 					<div className="option-section">
-						<Link to="/admin/orders">Orders</Link>
-					</div>
-					<div className="option-section">
-						<Link to="/admin/items">Store items</Link>
+						<Link to="/orders">Orders</Link>
 					</div>
 					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>
 				</>
 				: <>
-					{[...Array(7).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					{[...Array(6).keys()].map((i) => <div className="empty-space" key={i}></div>)}
+					<div className="option-section">
+						<Link to="/orders">Orders</Link>
+					</div>
 					<div className="option-section">
 						<a onClick={signOut}>Sign out</a>
 					</div>

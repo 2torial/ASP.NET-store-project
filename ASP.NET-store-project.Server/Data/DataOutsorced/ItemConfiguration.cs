@@ -10,8 +10,6 @@
 
         public int Order { get; set; } = order;
 
-        public List<Item> Items { get; } = [];
-
     }
 
     public class ItemConfiguration(Guid itemId, Guid configurationId)

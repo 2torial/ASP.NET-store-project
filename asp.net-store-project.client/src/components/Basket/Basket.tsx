@@ -2,40 +2,33 @@ import { useEffect, useState } from 'react';
 import './Basket.css'
 import { FormID, collectData } from '../../shared/FormDataCollection';
 import { useNavigate } from 'react-router-dom';
+import { ProductInfo } from '../../shared/StoreObject/ProductInfo';
 
 interface BasketComponentData {
-    items: BasketedItem[];
-}
-type BasketedItem = {
-    id: number,
-    quantity: number,
-    name: string,
-    price: number,
-    gallery: string[],
-    pageLink?: string,
+    products: ProductInfo[];
 }
 
 function Basket() {
     const navigate = useNavigate();
-    const [items, setItems] = useState<BasketedItem[]>([]);
+    const [products, setProducts] = useState<ProductInfo[]>([]);
 
-    const reloadBasket = async () => {
+    const reload = async () => {
         const response = await fetch('/api/basket');
         const data: BasketComponentData = await response.json();
         console.log(data);
-        setItems(data.items);
+        setProducts(data.products);
     }
 
-    const addItem = (id: number) => async () => {
-        const response = await fetch(`/api/basket/add/${id}`);
+    const addItem = (prod: ProductInfo) => async () => {
+        const response = await fetch(`/api/basket/add/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
-        reloadBasket();
+        reload();
     }
 
-    const removeItem = (id: number) => async () => {
-        const response = await fetch(`/api/basket/remove/${id}`);
+    const removeItem = (prod: ProductInfo) => async () => {
+        const response = await fetch(`/api/basket/remove/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
-        reloadBasket();
+        reload();
     }
 
     const summarize = async (event: React.SyntheticEvent) => {
@@ -49,18 +42,18 @@ function Basket() {
     };
 
     useEffect(() => {
-        reloadBasket();
+        reload();
     }, []);
 
-    if (items.length == 0) return <main>Your basket is empty.</main>
+    if (products.length == 0) return <main>Your basket is empty.</main>
 
     return <main className="basket">
-        {items.map(item => <div className="basketed-item">
-            <p>{item.name}</p>
-            <p>{item.quantity}</p>
-            <input type="button" onClick={addItem(item.id)} value="Add" />
-            <input type="button" onClick={removeItem(item.id)} value="Remove" />
-            <img src={item.gallery[0]} />
+        {products.map(prod => <div className="basketed-item">
+            <p>{prod.name}</p>
+            <p>{prod.quantity}</p>
+            <input type="button" onClick={addItem(prod)} value="Add" />
+            <input type="button" onClick={removeItem(prod)} value="Remove" />
+            <img src={prod.gallery[0]} />
         </div>)}
         <form onSubmit={summarize} className="summary" id={FormID.Summary}>
             Region* <input type="text" name="Region" />
@@ -72,7 +65,7 @@ function Basket() {
             Name <input type="text" name="Name" />
             Surname* <input type="text" name="Surname" />
             Phone number <input type="text" name="PhoneNumber" />
-            E-mail* <input type="text" name="Mail" />
+            E-mail* <input type="text" name="Email" />
             <input type="submit" value="Submit" />
         </form>
     </main>;

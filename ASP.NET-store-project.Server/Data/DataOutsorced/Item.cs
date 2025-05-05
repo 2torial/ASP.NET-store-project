@@ -1,10 +1,10 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Item(string categoryId, string name, decimal price, int quantity, string webPage = "", bool isDeleted = false)
+    public class Item(string categoryId, string name, decimal price, int quantity, string pageContent = "", bool isAvaliable = false)
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string SupplierKey { get; set; } // Not part of the API, it's essential to create "virtual suppliers" locally
+        public required string SupplierKey { get; set; } // Not part of the API, it's essential to create "virtual suppliers" locally
 
         public string CategoryId { get; set; } = categoryId;
 
@@ -14,9 +14,9 @@
 
         public int Quantity { get; set; } = quantity;
 
-        public string WebPage { get; set; } = webPage;
+        public string PageContent { get; set; } = pageContent;
 
-        public bool IsDeleted { get; set; } = isDeleted;
+        public bool IsAvaliable { get; set; } = isAvaliable;
 
 
 

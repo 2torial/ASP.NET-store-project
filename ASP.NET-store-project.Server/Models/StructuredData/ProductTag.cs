@@ -2,14 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Models.StructuredData
 {
-    public class ProductTag
-    {
-        public string Label { get; set; }
-
-        public string Parameter { get; set; }
-
-        public int Order { get; set; }
-    }
+    public record ProductTag(string Label, string Parameter, int Order);
 
     public class ProductTagComparer : IEqualityComparer<ProductTag>
     {

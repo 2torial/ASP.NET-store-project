@@ -6,5 +6,7 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
     {
         [Key]
         public string Type { get; set; } = type;
+        // Headset, Microphone, Laptop, PersonalComputer
+
     }
 }
