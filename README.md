@@ -11,12 +11,12 @@ All expected features has been implemented, current work revolves around fixing 
 ✅ Product ordering and basket \
 ✅ Order summarization \
 ✅ Order review \
-⏳ Bug fixing \
+✅ Fluent validation \
 ⏳ UI changes \
-⏳ Fluent validation \
 ⏳ Proper JWT handling \
 ⏳ Product page mockup \
-⏳ Server-side tests
+⏳ Server-side tests \
+⏳ Hotfixes
 
 ## Technologies Used
 - ASP.NET Core 8
