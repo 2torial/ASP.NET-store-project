@@ -20,6 +20,9 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         [HttpPost("/api/basket/summary")]
         public async Task<IActionResult> Summary([FromForm] OrderSummaryData orderData)
         {
+            var validationResult = new OrderSummaryDataValidator().Validate(orderData);
+            if (!validationResult.IsValid) return BadRequest(new { Errors = validationResult.ToDictionary() });
+
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
