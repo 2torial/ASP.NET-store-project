@@ -54,9 +54,6 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
         [FromForm]
         public int PageIndex { get; init; } = 1;
-        public IEnumerable<ProductInfo> Slice(IEnumerable<ProductInfo> products) => products
-            .Skip(NumericPageSize() * (PageIndex - 1))
-            .Take(NumericPageSize());
 
     }
 }
