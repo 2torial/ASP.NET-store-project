@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { FormID, collectData } from '../../shared/FormDataCollection';
 import './AccountForm.css';
+import { useEffect, useState } from 'react';
 
 interface AccountFormProps {
 	updateUserIdentity(): void,
@@ -8,51 +9,47 @@ interface AccountFormProps {
 }
 
 function AccountForm({ updateUserIdentity, newAccount }: AccountFormProps) {
+	const [errors, setErrors] = useState({
+		UserName: [],
+		PassWord: [],
+		RetypedPassWord: [],
+	});
 	const navigate = useNavigate();
+
+	useEffect(() => setErrors({
+		UserName: [],
+		PassWord: [],
+		RetypedPassWord: [],
+	}), [newAccount]);
 
 	const signIn = async (event: React.SyntheticEvent) => {
 		event.preventDefault();
-		const data = collectData(FormID.SignIn);
+		const formData = collectData(FormID.SignIn);
+
 		const response = await fetch('/api/account/login', {
 			method: "post",
-			body: data
+			body: formData
 		});
 		if (response.ok) {
 			updateUserIdentity();
 			navigate("/");
-		}
-		alert(await response.text());
+			alert(await response.text());
+		} else response.json().then(data => setErrors(data.errors));
 	};
 
 	const signUp = async (event: React.SyntheticEvent) => {
 		event.preventDefault();
-		const data = collectData(FormID.SignUp);
-		for (const value of data.values()) {
-			if (value === "") {
-				alert("All sections are required!");
-				return;
-			}
-		}
-		const password = data.get("PassWord")!;
-		if (password instanceof File) {
-			console.log("how?");
-			return;
-		}
-		if (password !== data.get("PassWordRepeat")) {
-			alert("Passwords must match!");
-			return;
-		}
-		data.delete("PassWordRepeat");
+		const formData = collectData(FormID.SignUp);
 
 		const response = await fetch('/api/account/create', {
 			method: "post",
-			body: data
+			body: formData
 		});
 		if (response.ok) {
 			updateUserIdentity();
 			navigate("/");
-		}
-		alert(await response.text());
+			alert(await response.text());
+		} else response.json().then(data => setErrors(data.errors));
 	};
 
 	const formProps = {
@@ -67,19 +64,20 @@ function AccountForm({ updateUserIdentity, newAccount }: AccountFormProps) {
 			</div>
 			<div className="input-section">
 				<label htmlFor="username">{newAccount ? "Enter username" : "Username"}</label>
-				<input id="username" type="text" name="UserName" />
+				<input id="username" type="text" name="UserName" required />
+				{!!errors?.UserName && errors.UserName.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
 			</div>
 			<div className="input-section">
 				<label htmlFor="password">{newAccount ? "Enter password" : "Password"}</label>
-				<input id="password" type="password" name="PassWord" />
-			</div>
-			{newAccount
+				<input id="password" type="password" name="PassWord" required />
+				{!!errors?.PassWord && errors.PassWord.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
+			</div>{newAccount
 				? <div className="input-section">
 					<label htmlFor="password-repeat">Retype your password</label>
-					<input id="password-repeat" type="password" name="PassWordRepeat" />
+					<input id="password-repeat" type="password" name="RetypedPassWord" required />
+					{!!errors?.RetypedPassWord && errors.RetypedPassWord.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
 				</div>
-				: <></>
-			}
+				: <></>}
 			<div className="submit-section">
 				<input type="submit" value={newAccount ? "Register" : "Log in"} />
 			</div>

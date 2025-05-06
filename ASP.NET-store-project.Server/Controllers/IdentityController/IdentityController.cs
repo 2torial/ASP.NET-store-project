@@ -2,13 +2,14 @@ using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models;
 using ASP.NET_store_project.Server.Utilities;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ASP.NET_store_project.Server.Controllers
+namespace ASP.NET_store_project.Server.Controllers.IdentityController
 {
     [ApiController]
     [Route("[controller]")]
@@ -17,37 +18,41 @@ namespace ASP.NET_store_project.Server.Controllers
         private readonly string TokenSecret = "StoreItWithAzureKeyVaultOrSomethingSimilar";
 
         [HttpPost("/api/account/create")]
-        public IActionResult CreateUser([FromForm] string userName, [FromForm] string passWord)
+        public IActionResult CreateUser([FromForm] SignUpModel credentials)
         {
-            if (context.Users.Any(customer => customer.UserName == userName))
+            var validationResult = new SignUpValidator().Validate(credentials);
+            if (!validationResult.IsValid) return BadRequest(new { Errors = validationResult.ToDictionary() });
+
+            if (context.Users.Any(customer => customer.UserName == credentials.UserName))
                 return BadRequest("User already exists.");
 
-            // Include data validation here
+            var hashedPassword = new SimplePasswordHasher().HashPassword(credentials.PassWord);
 
-            var hashedPassword = new SimplePasswordHasher().HashPassword(passWord);
-
-            context.Users.Add(new User(userName, hashedPassword));
+            context.Users.Add(new User(credentials.UserName, hashedPassword));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }
 
         [HttpPost("/api/account/login")]
-        public IActionResult LogIn([FromForm] string userName, [FromForm] string passWord)
+        public IActionResult LogIn([FromForm] SignInModel credentials)
         {
+            var validationResult = new SignInValidator().Validate(credentials);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToDictionary());
+
             var user = context.Users
-                .SingleOrDefault(customer => customer.UserName == userName);
+                .SingleOrDefault(customer => customer.UserName == credentials.UserName);
 
             if (user == null)
                 return BadRequest("Username or password is incorrect.");
 
-            try { new SimplePasswordHasher().VerifyHash(user.PassWord, passWord); }
+            try { new SimplePasswordHasher().VerifyHash(user.PassWord, credentials.PassWord); }
             catch (UnauthorizedAccessException) { return BadRequest("Username or password is incorrect."); }
 
             List<CustomClaim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
             if (user.IsAdmin)
                 claims.Add(new(IdentityData.AdminUserClaimName, "true", ClaimValueTypes.Boolean));
 
-            var token = GenerateToken(userName, claims);
+            var token = GenerateToken(credentials.UserName, claims);
             Response.Cookies.Append("Token", token, new CookieOptions
             {
                 HttpOnly = true,
