@@ -72,7 +72,12 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
 
             filteredProducts = pageData.Sort(filteredProducts);
 
-            var selectedProducts = pageData.Slice(filteredProducts);
+            var pageCount = pageData.CountPages(filteredProducts.Count());
+            var correctedIndex = Math.Max(1, Math.Min(pageData.PageIndex, pageCount));  
+
+            var selectedProducts = filteredProducts
+                .Skip(pageData.NumericPageSize() * (correctedIndex - 1))
+                .Take(pageData.NumericPageSize());
 
             var groupedSelectedProducts = selectedProducts
                 .GroupBy(
@@ -93,9 +98,9 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             return Ok(new StoreComponentData(
                 new StoreSettings(
                     pageData.Category, 
-                    pageData.PageSize, 
-                    pageData.CountPages(filteredProducts.Count()), 
-                    pageData.PageIndex, 
+                    pageData.PageSize,
+                    pageCount,
+                    correctedIndex, 
                     pageData.SortBy, 
                     pageData.OrderBy), 
                 new StoreFilters(

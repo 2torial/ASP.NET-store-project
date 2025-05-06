@@ -31,6 +31,7 @@ main#account-form {
     flex-direction: column;
     flex-shrink: 1;
     align-items: flex-start;
+    max-width: 340px;
 }
 
 .input-section label {
@@ -54,4 +55,9 @@ main#account-form {
 .submit-section input {
     height: 32px;
     width: 80px;
+}
+
+.error-message {
+    font-size: 11px;
+    color: red;
 }
