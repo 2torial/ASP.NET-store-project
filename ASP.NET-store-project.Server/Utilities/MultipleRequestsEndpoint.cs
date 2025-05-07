@@ -1,4 +1,4 @@
-﻿namespace ASP.NET_store_project.Server.Utilities.MultipleRequests
+﻿namespace ASP.NET_store_project.Server.Utilities
 {
     public static class MultipleRequestsEndpoint<T>
     {

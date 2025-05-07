@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Basket.css'
 import { FormID, collectData } from '../../shared/FormDataCollection';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProductInfo } from '../../shared/StoreObject/ProductInfo';
 
 interface BasketComponentData {
@@ -49,7 +49,11 @@ function Basket() {
 
     return <main className="basket">
         {products.map(prod => <div className="basketed-item">
-            <p>{prod.name}</p>
+            <p>
+                <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
+                    {prod.name}
+                </Link>
+            </p>
             <p>{prod.quantity}</p>
             <input type="button" onClick={addItem(prod)} value="Add" />
             <input type="button" onClick={removeItem(prod)} value="Remove" />

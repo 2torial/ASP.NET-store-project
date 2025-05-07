@@ -74,7 +74,7 @@ export function Store() {
 	
 	const reloadStorePage = async (formData: FormData, configData: ((a: FormData) => void) = (_ => void _)) => {
 		configData(formData);
-		const response = await fetch('/api/reload', {
+		const response = await fetch('/api/store/reload', {
 			method: "post",
 			body: formData
 		});

@@ -3,7 +3,6 @@ using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models.ComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
-using ASP.NET_store_project.Server.Utilities.MultipleRequests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,26 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
     [Route("[controller]")]
     public class StoreController(AppDbContext context, IHttpClientFactory httpClientFactory) : ControllerBase
     {
-        [HttpPost("/api/reload")]
+        [HttpGet("/api/store/product/{supplierId}/{productId}")]
+        public async Task<IActionResult> ShowProduct([FromRoute] string supplierId, [FromRoute] string productId)
+        {
+            var supplier = context.Suppliers.SingleOrDefault(sup => supplierId == sup.Id.ToString());
+            if (supplier == null)
+                return BadRequest("Product not found");
+
+            var message = await httpClientFactory
+                .CreateClient(supplier.Name)
+                .GetAsync($"{supplier.DisplayedProductRequestAdress}/{productId}");
+
+            if (!message.IsSuccessStatusCode)
+                return BadRequest("Product not found");
+
+            var content = await message.Content.ReadAsStringAsync();
+
+            return Ok(content);
+        }
+
+        [HttpPost("/api/store/reload")]
         public async Task<IActionResult> Reload([FromForm] PageReloadData pageData)
         {
             var suppliers = context.Suppliers.AsEnumerable();
@@ -23,7 +41,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     sup => new(
                         httpClientFactory.CreateClient(sup.Name),
                         $"{sup.FilteredProductsRequestAdress}/{pageData.Category}"),
-                    (sup, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(sup)))
+                    (sup, prods) => prods?.Select(prod => prod.Modify(sup)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 
@@ -91,7 +109,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         httpClientFactory.CreateClient(kvp.Key.Name),
                         kvp.Key.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(kvp.Value)),
-                    (kvp, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(kvp.Key)))
+                    (kvp, prods) => prods?.Select(prod => prod.Modify(kvp.Key)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 

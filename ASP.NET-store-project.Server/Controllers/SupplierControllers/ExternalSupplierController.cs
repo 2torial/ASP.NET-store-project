@@ -60,7 +60,6 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                             : localProd.Quantity,
                         Gallery = [],
                         Tags = localProd.Configurations.Select(config => new ProductTag(config.Label, config.Parameter, config.Order)),
-                        PageContent = localProd.PageContent,
                     });
 
             return Ok(selectedProducts);
@@ -160,5 +159,14 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             return Ok("Order canceled successfuly");
         }
 
+        [HttpGet("/api/supplier/{supplierKey}/display/{productId}")]
+        public IActionResult DisplayProduct([FromRoute] string supplierKey, [FromRoute] string productId)
+        {
+            var product = context.Items
+                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .SingleOrDefault(item => productId == item.Id.ToString());
+
+            return product == null ? NotFound() : Ok(product.PageContent);
+        }
     }
 }

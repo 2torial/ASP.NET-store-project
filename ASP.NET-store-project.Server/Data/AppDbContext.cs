@@ -62,6 +62,7 @@ namespace ASP.NET_store_project.Server.Data
                     "https://localhost:5173/", 
                     "filter", 
                     "select", 
+                    "display",
                     "orders", 
                     "summary", 
                     "accept", 
@@ -130,6 +131,15 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Configuration>().HasData(labeledConfigurations
                 .SelectMany(kvp => kvp.Value));
 
+            var lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet lacus et felis " +
+                "ultricies ullamcorper. Nam et dui euismod, gravida purus ac, porttitor diam. Cras et tellus sit amet " +
+                "ligula accumsan finibus ut id mi. Mauris tempor sapien vitae mauris auctor pharetra. Integer lobortis mauris " +
+                "vel massa ultricies, non laoreet quam laoreet. Sed suscipit turpis sed mollis rutrum. Morbi vel erat consequat, " +
+                "dictum libero sed, vulputate dolor. Donec eleifend neque et magna mollis, accumsan convallis justo interdum. Maecenas " +
+                "efficitur eleifend mauris, ut porta elit consectetur a. Duis eleifend urna sit amet commodo dictum. Nullam non porta nunc. " +
+                "Aliquam sed vulputate ipsum. Maecenas quis sapien bibendum, sodales neque ut, finibus felis. In rhoncus euismod odio vitae " +
+                "pulvinar. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;";
+
             var rand = new Random();
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             Item[] items = [.. Enumerable.Range(1, 300)
@@ -146,7 +156,7 @@ namespace ASP.NET_store_project.Server.Data
                         : category == categories[1] || category == categories[2]
                             ? otherPrices[rand.Next(0, otherPrices.Length)]
                             : 0;
-                    return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey };
+                    return new Item(category.Type, name, price, 3, lorem) { SupplierKey = supplierKey };
                 })];
             modelBuilder.Entity<Item>().HasData(items);
 

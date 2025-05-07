@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { OrderInfo } from '../../../shared/StoreObject/OrderInfo';
 import AdressDetails from './AdressDetails';
 import CustomerDetails from './CustomerDetails';
@@ -12,6 +13,8 @@ function Order({ order }: OrderProps) {
         (event.target as HTMLElement).parentElement!.classList.toggle("expanded");
     }
 
+    order.products.map((prod, i) => console.log(prod, i));
+
     return <section className="order-section drop-down-section">
         <div className="order-label" onClick={toggleSection}>
             <p>DATE_PLACEHOLDER</p>
@@ -22,8 +25,12 @@ function Order({ order }: OrderProps) {
         <div className="order-content drop-down-content">
             <div className="order-products">
                 {order.products.map((prod, i) => <div className="order-product" key={`${order.id}:${i}`}>
-                    <img src={prod.gallery === null ? "https://placehold.co/50x50" : prod.gallery[0]} alt="product image" />
-                    <p>{prod.name}</p>
+                    <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
+                        <img src={prod.gallery === null ? "https://placehold.co/50x50" : prod.gallery[0]} alt="product image" />
+                    </Link>
+                    <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
+                        <p>{prod.name}</p>
+                    </Link>
                     <p>{prod.price}</p>
                 </div>)}
             </div>

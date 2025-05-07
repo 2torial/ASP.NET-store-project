@@ -6,6 +6,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         string name, string baseAdress, 
         string filteredProductsRequestAdress, 
         string selectedProductsRequestAdress, 
+        string displayedProductRequestAdress,
         string orderListRequestAdress,
         string orderSummaryRequestAdress,
         string orderAcceptRequestAdress,
@@ -21,6 +22,8 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         public string FilteredProductsRequestAdress { get; set; } = filteredProductsRequestAdress;
 
         public string SelectedProductsRequestAdress { get; set; } = selectedProductsRequestAdress;
+
+        public string DisplayedProductRequestAdress { get; set; } = displayedProductRequestAdress;
 
         public string OrderListRequestAdress { get; set; } = orderListRequestAdress;
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.EntityFrameworkCore;
-using ASP.NET_store_project.Server.Utilities.MultipleRequests;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
@@ -156,7 +155,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                         httpClientFactory.CreateClient(groupedProds.Supplier.Name),
                         groupedProds.Supplier.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(groupedProds.Products)),
-                    (group, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(group.Supplier)))
+                    (group, prods) => prods?.Select(prod => prod.Modify(group.Supplier)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 
