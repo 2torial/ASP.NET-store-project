@@ -12,9 +12,9 @@ All expected features has been implemented, current work revolves around fixing 
 ✅ Order summarization \
 ✅ Order review \
 ✅ Fluent validation \
+✅ Product view page \
 ⏳ UI changes \
 ⏳ Proper JWT handling \
-⏳ Product page mockup \
 ⏳ Server-side tests \
 ⏳ Hotfixes
 
