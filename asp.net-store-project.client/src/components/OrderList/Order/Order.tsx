@@ -26,7 +26,7 @@ function Order({ order }: OrderProps) {
             <div className="order-products">
                 {order.products.map((prod, i) => <div className="order-product" key={`${order.id}:${i}`}>
                     <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
-                        <img src={prod.gallery === null ? "https://placehold.co/50x50" : prod.gallery[0]} alt="product image" />
+                        {<img src={prod.thumbnail !== undefined ? prod.thumbnail : "https://placehold.co/150x150"} alt="product" />}
                     </Link>
                     <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
                         <p>{prod.name}</p>

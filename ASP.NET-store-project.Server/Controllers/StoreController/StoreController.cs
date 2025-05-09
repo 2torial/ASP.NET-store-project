@@ -41,7 +41,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                     sup => new(
                         httpClientFactory.CreateClient(sup.Name),
                         $"{sup.FilteredProductsRequestAdress}/{pageData.Category}"),
-                    (sup, prods) => prods?.Select(prod => prod.Modify(sup)))
+                    (sup, prods) => prods?.Select(prod => prod.NewModified(sup)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 
@@ -109,7 +109,7 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
                         httpClientFactory.CreateClient(kvp.Key.Name),
                         kvp.Key.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(kvp.Value)),
-                    (kvp, prods) => prods?.Select(prod => prod.Modify(kvp.Key)))
+                    (kvp, prods) => prods?.Select(prod => prod.NewModified(kvp.Key)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 

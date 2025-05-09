@@ -24,7 +24,7 @@
 
     }
 
-    public class ItemOrder(Guid itemId, Guid orderId, decimal storePrice, int quantity)
+    public class ItemOrder(Guid itemId, Guid orderId, decimal storePrice, int quantity, string thumbnailLink)
     {
         public Guid ItemId { get; set; } = itemId;
 
@@ -33,6 +33,8 @@
         public decimal StorePrice { get; set; } = storePrice;
 
         public int Quantity { get; set; } = quantity;
+
+        public string ThumbnailLink { get; set; } = thumbnailLink;
 
 
         public Item Item { get; set; } = null!;

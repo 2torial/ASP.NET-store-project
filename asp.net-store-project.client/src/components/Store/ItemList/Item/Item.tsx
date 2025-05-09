@@ -10,12 +10,13 @@ function Item({ product }: ItemProps) {
     const addItem = (prod: ProductInfo) => async () => {
         const response = await fetch(`/api/basket/add/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
+        console.log(product);
     }
 
     return <div className="item">
         <div className="image-section">
             <Link to="/product" state={{ supplierId: product.supplierId, productId: product.id }}>
-                <img src={product.gallery.length > 0 ? product.gallery[0] : "https://placehold.co/150x150"} alt="" />
+                {<img src={product.thumbnail !== undefined ? product.thumbnail : "https://placehold.co/150x150"} alt="product" />}
             </Link>
         </div>
         <div className="details-section">

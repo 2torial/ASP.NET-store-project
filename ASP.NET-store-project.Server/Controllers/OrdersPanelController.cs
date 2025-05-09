@@ -32,7 +32,7 @@ namespace ASP.NET_store_project.Server.Controllers
                         order.Id, 
                         sup.Id.ToString(), 
                         sup.Name,
-                        order.Products.Select(prod => prod.Modify(sup)),
+                        order.Products.Select(prod => prod.NewModified(sup)),
                         order.CustomerDetails, 
                         order.AdressDetails, 
                         order.Stage)))

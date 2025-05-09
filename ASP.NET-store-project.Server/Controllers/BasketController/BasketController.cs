@@ -155,7 +155,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                         httpClientFactory.CreateClient(groupedProds.Supplier.Name),
                         groupedProds.Supplier.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(groupedProds.Products)),
-                    (group, prods) => prods?.Select(prod => prod.Modify(group.Supplier)))
+                    (group, prods) => prods?.Select(prod => prod.NewModified(group.Supplier)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 

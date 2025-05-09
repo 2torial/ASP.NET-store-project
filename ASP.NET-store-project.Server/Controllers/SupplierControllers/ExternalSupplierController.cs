@@ -58,7 +58,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         Quantity = requestProd.Quantity <= localProd.Quantity
                             ? requestProd.Quantity 
                             : localProd.Quantity,
-                        Gallery = [],
+                        Thumbnail = localProd.ThumbnailLink,
                         Tags = localProd.Configurations.Select(config => new ProductTag(config.Label, config.Parameter, config.Order)),
                     });
 
@@ -88,11 +88,12 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         Name = itemorder.Item.Name,
                         Price = itemorder.StorePrice,
                         Quantity = itemorder.Quantity,
+                        Thumbnail = itemorder.ThumbnailLink
                     }),
                     new CustomerInfo(
-                        order.AdresseeDetails.Name, 
-                        order.AdresseeDetails.Surname, 
-                        order.AdresseeDetails.PhoneNumber, 
+                        order.AdresseeDetails.Name,
+                        order.AdresseeDetails.Surname,
+                        order.AdresseeDetails.PhoneNumber,
                         order.AdresseeDetails.Email),
                     new AdressInfo(
                         order.AdresseeDetails.Region,

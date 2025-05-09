@@ -59,7 +59,7 @@ namespace ASP.NET_store_project.Server.Data
             Supplier[] suppliers = [.. supplierKeys
                 .Select(key => new Supplier(
                     $"Supplier{key[1]}", 
-                    "https://localhost:5173/", 
+                    "https://localhost:5173", 
                     "filter", 
                     "select", 
                     "display",
@@ -131,15 +131,6 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Configuration>().HasData(labeledConfigurations
                 .SelectMany(kvp => kvp.Value));
 
-            var lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet lacus et felis " +
-                "ultricies ullamcorper. Nam et dui euismod, gravida purus ac, porttitor diam. Cras et tellus sit amet " +
-                "ligula accumsan finibus ut id mi. Mauris tempor sapien vitae mauris auctor pharetra. Integer lobortis mauris " +
-                "vel massa ultricies, non laoreet quam laoreet. Sed suscipit turpis sed mollis rutrum. Morbi vel erat consequat, " +
-                "dictum libero sed, vulputate dolor. Donec eleifend neque et magna mollis, accumsan convallis justo interdum. Maecenas " +
-                "efficitur eleifend mauris, ut porta elit consectetur a. Duis eleifend urna sit amet commodo dictum. Nullam non porta nunc. " +
-                "Aliquam sed vulputate ipsum. Maecenas quis sapien bibendum, sodales neque ut, finibus felis. In rhoncus euismod odio vitae " +
-                "pulvinar. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;";
-
             var rand = new Random();
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             Item[] items = [.. Enumerable.Range(1, 300)
@@ -147,6 +138,7 @@ namespace ASP.NET_store_project.Server.Data
                 {
                     var category = categories[rand.Next(0, categories.Length)];
                     var supplierKey = supplierKeys[rand.Next(0, 3)];
+                    var supplier = labeledSuppliers[supplierKey];
                     var random3 = "" + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)];
                     var name = $"{random3} {supplierKey} {category.Type}";
                     var computerPrices = new decimal[] { 300, 400, 450, 500, 600, 700, 800, 820, 850, 900, 1000 };
@@ -156,16 +148,11 @@ namespace ASP.NET_store_project.Server.Data
                         : category == categories[1] || category == categories[2]
                             ? otherPrices[rand.Next(0, otherPrices.Length)]
                             : 0;
-                    return new Item(category.Type, name, price, 3, lorem) { SupplierKey = supplierKey };
+                    var thumbnailLink = "https://placehold.co/150x150";
+                    var content = $"This is a mockup content for {name}. There is no uniform way of creating product content implemented in this project, so for now it is stored as text.";
+                    return new Item(category.Type, name, price, 3, thumbnailLink, content) { SupplierKey = supplierKey };
                 })];
             modelBuilder.Entity<Item>().HasData(items);
-
-            Image[] images = [.. items
-                //.Select(item => Enumerable.Range(1, rand.Next(1, 4))
-                //    .Select(_ => new Image("https://placehold.co/150x150", item.Id)))
-                .Select(item => Array.Empty<Image>())
-                .SelectMany(imgs => imgs)];
-            modelBuilder.Entity<Image>().HasData(images);
 
             ItemConfiguration[] itemConfigurations = [.. items
                 .Select(item => categorizedConfigurationLabels[item.CategoryId]
@@ -218,7 +205,7 @@ namespace ASP.NET_store_project.Server.Data
 
             ItemOrder[] itemOrders = [.. orders
                 .Select(order => Enumerable.Range(1, rand.Next(4, 8))
-                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3)))
+                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3), items[n].ThumbnailLink))
                     .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
                 .SelectMany(itemOrders => itemOrders)];
             modelBuilder.Entity<ItemOrder>().HasData(itemOrders);

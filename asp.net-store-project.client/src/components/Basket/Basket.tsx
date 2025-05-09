@@ -57,7 +57,7 @@ function Basket() {
             <p>{prod.quantity}</p>
             <input type="button" onClick={addItem(prod)} value="Add" />
             <input type="button" onClick={removeItem(prod)} value="Remove" />
-            <img src={prod.gallery[0]} />
+            {<img src={prod.thumbnail !== undefined ? prod.thumbnail : "https://placehold.co/150x150"} alt="product" />}
         </div>)}
         <form onSubmit={summarize} className="summary" id={FormID.Summary}>
             Region* <input type="text" name="Region" />
