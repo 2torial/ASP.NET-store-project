@@ -1,0 +1,49 @@
+.basket {
+    display: grid;
+    grid-template-columns: 10% 40% auto;
+    grid-row-gap: 10px;
+}
+
+.basket .basketed-item {
+    display: grid;
+    grid-template-columns: 100px auto;
+    grid-column-start: 2;
+    column-gap: 10px;
+}
+
+.basket .basketed-item h3 {
+    font-size: 16px;
+}
+
+.basket .basketed-item .image-section img {
+    height: 100px;
+    width: 100px;
+}
+
+.basket .basketed-item .details-section .quantity span {
+    margin-right: 5px;
+}
+
+.basket .summary {
+    grid-column-start: 3;
+    grid-row-start: 1;
+    grid-row-end: span 10;
+}
+
+.basket .summary .input-section {
+    display: grid;
+    grid-template-columns: 50% auto;
+    column-gap: 10px;
+}
+
+.basket .summary .input-section span {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: right;
+}
+
+.basket .summary .submit-button {
+    margin: 10px auto;
+    width: 60%;
+}

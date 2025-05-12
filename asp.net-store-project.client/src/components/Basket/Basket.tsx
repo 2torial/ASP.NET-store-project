@@ -49,28 +49,50 @@ function Basket() {
 
     return <main className="basket">
         {products.map(prod => <div className="basketed-item">
-            <p>
+            <div className="image-section">
                 <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
-                    {prod.name}
+                    <img src={prod.thumbnail !== undefined ? prod.thumbnail : "https://placehold.co/150x150"} alt="product" />
                 </Link>
-            </p>
-            <p>{prod.quantity}</p>
-            <input type="button" onClick={addItem(prod)} value="Add" />
-            <input type="button" onClick={removeItem(prod)} value="Remove" />
-            {<img src={prod.thumbnail !== undefined ? prod.thumbnail : "https://placehold.co/150x150"} alt="product" />}
+            </div>
+            <div className="details-section">
+                <h3 className="item-name">
+                    <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
+                        {prod.name}
+                    </Link>
+                </h3>
+                <h3 className="price">${prod.price}</h3>
+                <span className="quantity">
+                    <span onClick={addItem(prod)} className="plus-icon fa fa-plus-square" />
+                    <span>{prod.quantity}</span>
+                    <span onClick={removeItem(prod)} className="minus-icon fa fa-minus-square" />
+                </span>
+            </div>
         </div>)}
         <form onSubmit={summarize} className="summary" id={FormID.Summary}>
-            Region* <input type="text" name="Region" />
-            City <input type="text" name="City" />
-            Postal code* <input type="text" name="PostalCode" />
-            Street name <input type="text" name="StreetName" />
-            House number* <input type="text" name="HouseNumber" />
-            Apartment number* <input type="text" name="ApartmentNumber" />
-            Name <input type="text" name="Name" />
-            Surname* <input type="text" name="Surname" />
-            Phone number <input type="text" name="PhoneNumber" />
-            E-mail* <input type="text" name="Email" />
-            <input type="submit" value="Submit" />
+            <div className="input-section">
+                <span><label htmlFor="region">Region</label></span>
+                <input id="region" type="text" name="Region" />
+                <span><label htmlFor="city">City</label></span>
+                <input id="city" type="text" name="City" />
+                <span><label htmlFor="postal-code">Postal code</label></span>
+                <input id="postal-code" type="text" name="PostalCode" />
+                <span><label htmlFor="street-name">Street name</label></span>
+                <input id="street-name" type="text" name="StreetName" />
+                <span><label htmlFor="house-number">House number</label></span>
+                <input id="house-number" type="text" name="HouseNumber" />
+                <span><label htmlFor="apartment-number">Apartment number</label></span>
+                <input id="apartment-number" type="text" name="ApartmentNumber" />
+                <span><label htmlFor="name">Name</label></span>
+                <input id="name" type="text" name="Name" />
+                <span><label htmlFor="surname">Surname</label></span>
+                <input id="surname" type="text" name="Surname" />
+                <span><label htmlFor="phone-number">Phone number</label></span>
+                <input id="phone-number" type="text" name="PhoneNumber" />
+                <span><label htmlFor="email">E-mail</label></span>
+                <input id="email" type="text" name="Email" />
+                <span></span>
+                <input className="submit-button" type="submit" value="Submit" />
+            </div>
         </form>
     </main>;
 }
