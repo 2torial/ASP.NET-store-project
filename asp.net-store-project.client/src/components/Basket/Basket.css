@@ -1,49 +1,62 @@
 .basket {
     display: grid;
-    grid-template-columns: 10% 40% auto;
+    grid-template-columns: 50% 50%;
     grid-row-gap: 10px;
+    width: 80%;
 }
 
-.basket .basketed-item {
+.basket .supplier-cart {
+    grid-column-start: 2;
+    grid-row-end: -1;
+}
+
+.basket .supplier-cart .basketed-item {
     display: grid;
     grid-template-columns: 100px auto;
-    grid-column-start: 2;
+    
     column-gap: 10px;
 }
 
-.basket .basketed-item h3 {
+.basket .supplier-cart .basketed-item h3 {
     font-size: 16px;
 }
 
-.basket .basketed-item .image-section img {
+.basket .supplier-cart .basketed-item .image-section img {
     height: 100px;
     width: 100px;
 }
 
-.basket .basketed-item .details-section .quantity span {
+.basket .supplier-cart .basketed-item .details-section .quantity span {
     margin-right: 5px;
 }
 
-.basket .summary {
-    grid-column-start: 3;
-    grid-row-start: 1;
-    grid-row-end: span 10;
-}
-
-.basket .summary .input-section {
+.basket .input-section {
     display: grid;
-    grid-template-columns: 50% auto;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: repeat(8, 60px);
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: -1;
     column-gap: 10px;
+    min-width: 100%;
 }
 
-.basket .summary .input-section span {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: right;
+.basket .input-section table {
+    grid-row-end: span 2;
 }
 
-.basket .summary .submit-button {
-    margin: 10px auto;
-    width: 60%;
+.basket .input-section input {
+    max-width: 100%;
+}
+
+.basket .input-section .grid-wide {
+    grid-column-end: span 2;
+}
+
+.basket .input-section .submit-button {
+    margin: 0 auto;
+}
+
+.basket .input-section .submit-button input {
+    width: 150px;
 }
