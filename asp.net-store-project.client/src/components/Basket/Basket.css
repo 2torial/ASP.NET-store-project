@@ -13,7 +13,6 @@
 .basket .supplier-cart .basketed-item {
     display: grid;
     grid-template-columns: 100px auto;
-    
     column-gap: 10px;
 }
 
@@ -33,7 +32,7 @@
 .basket .input-section {
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: repeat(8, 60px);
+    grid-template-rows: repeat(8, 70px);
     grid-column-start: 2;
     grid-row-start: 1;
     grid-row-end: -1;
@@ -59,4 +58,9 @@
 
 .basket .input-section .submit-button input {
     width: 150px;
+}
+
+.error-message {
+    font-size: 11px;
+    color: red;
 }

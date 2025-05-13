@@ -9,6 +9,18 @@ interface BasketComponentData {
 }
 
 function Basket() {
+    const [errors, setErrors] = useState({
+        Name: [],
+        Surname: [],
+        PhoneNumber: [],
+        Email: [],
+        Region: [],
+        City: [],
+        PostalCode: [],
+        StreetName: [],
+        HouseNumber: [],
+        ApartmentNumber: []
+    });
     const navigate = useNavigate();
     const [products, setProducts] = useState<ProductInfo[]>([]);
 
@@ -16,7 +28,9 @@ function Basket() {
         const response = await fetch('/api/basket');
         const data: BasketComponentData = await response.json();
         console.log(data);
-        setProducts(data.products);
+        if (response.ok) {
+            setProducts(data.products);
+        } alert(await response.text());
     }
 
     const addItem = (prod: ProductInfo) => async () => {
@@ -37,8 +51,9 @@ function Basket() {
             method: "post",
             body: collectData(FormID.Summary),
         });
-        alert(await response.text());
-        if (response.ok) navigate("/store");
+        if (response.ok) {
+            navigate("/store");
+        } else response.json().then(data => setErrors(data.errors));
     };
 
     useEffect(() => {
@@ -87,6 +102,7 @@ function Basket() {
         </div>
         <form onSubmit={summarize} className="input-section" id={FormID.Summary}>
             <table className="grid-wide">
+                <tr><th colSpan={2}>Summary</th></tr>
                 <tr><td>Products cost</td><td>${productsPrice}</td></tr>
                 <tr><td>Transport cost</td><td>${transportPrice}</td></tr>
                 <tr><td>Payment method</td><td>{"???"}</td></tr>
@@ -94,43 +110,53 @@ function Basket() {
             </table>
             <div>
                 <label htmlFor="name">Name</label>
-                <input id="name" type="text" name="Name" />
+                <input id="name" type="text" name="Name" required />
+                {!!errors?.Name && errors.Name.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="surname">Surname</label>
-                <input id="surname" type="text" name="Surname" />
+                <input id="surname" type="text" name="Surname" required />
+                {!!errors?.Surname && errors.Surname.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="phone-number">Phone number</label>
-                <input id="phone-number" type="text" name="PhoneNumber" />
+                <input id="phone-number" type="text" name="PhoneNumber" required />
+                {!!errors?.PhoneNumber && errors.PhoneNumber.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="email">E-mail</label>
-                <input id="email" type="text" name="Email" />
+                <input id="email" type="text" name="Email" required />
+                {!!errors?.Email && errors.Email.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="region">Region</label>
-                <input id="region" type="text" name="Region" />
+                <input id="region" type="text" name="Region" required />
+                {!!errors?.Region && errors.Region.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="city">City</label>
-                <input id="city" type="text" name="City" />
+                <input id="city" type="text" name="City" required />
+                {!!errors?.City && errors.City.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="postal-code">Postal code</label>
-                <input id="postal-code" type="text" name="PostalCode" />
+                <input id="postal-code" type="text" name="PostalCode" required />
+                {!!errors?.PostalCode && errors.PostalCode.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="street-name">Street name</label>
-                <input id="street-name" type="text" name="StreetName" />
+                <input id="street-name" type="text" name="StreetName" required />
+                {!!errors?.StreetName && errors.StreetName.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="house-number">House number</label>
-                <input id="house-number" type="text" name="HouseNumber" />
+                <input id="house-number" type="text" name="HouseNumber" required />
+                {!!errors?.HouseNumber && errors.HouseNumber.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div>
                 <label htmlFor="apartment-number">Apartment number</label>
                 <input id="apartment-number" type="text" name="ApartmentNumber" />
+                {!!errors?.ApartmentNumber && errors.ApartmentNumber.map((msg, i) => <span className="error-message" key={i}>{msg}</span>)}
             </div>
             <div className="submit-button grid-wide">
                 <input type="submit" value="Submit" />
