@@ -12,24 +12,6 @@
     border-radius: 17px;
 }
 
-/*
-.filters::before {
-    content: "Filters";
-    font-size: 20px;
-    font-weight: bold;
-    position: absolute;
-    left: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    width: 80px;
-    border: 1px solid black;
-    border-radius: 25% / 50%;
-    background-color: lightblue;
-}
-*/
-
 .filters .title-section {
     display: flex;
     justify-content: space-between;
@@ -37,14 +19,6 @@
     height: 30px;
     box-sizing: border-box;
     margin: 0 0 5px;
-}
-
-.filters .title-section input {
-    height: 30px;
-    width: 30px;
-    border: 1px solid grey;
-    border-radius: 50%;
-    background-color: white;
 }
 
 .filter-section {

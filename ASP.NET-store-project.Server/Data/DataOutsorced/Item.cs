@@ -1,6 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Item(string categoryId, string name, decimal price, int quantity, string pageContent = "", bool isAvaliable = false)
+    public class Item(string categoryId, string name, decimal price, int quantity, string thumbnailLink, string pageContent = "", bool isAvaliable = false)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -14,6 +14,8 @@
 
         public int Quantity { get; set; } = quantity;
 
+        public string ThumbnailLink { get; set; } = thumbnailLink;
+
         public string PageContent { get; set; } = pageContent;
 
         public bool IsAvaliable { get; set; } = isAvaliable;
@@ -24,6 +26,5 @@
 
         public List<Configuration> Configurations { get; } = [];
 
-        public List<Image> Gallery { get; } = [];
     }
 }

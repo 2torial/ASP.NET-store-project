@@ -1,38 +1,28 @@
-import { OrderInfo } from '../../../shared/StoreObject/OrderInfo';
-import AdressDetails from './AdressDetails';
-import CustomerDetails from './CustomerDetails';
+import { Link } from 'react-router-dom';
 import './Order.css';
+import { ProductInfo } from '../../../shared/StoreObject/ProductInfo';
 
 interface OrderProps {
-    order: OrderInfo;
+    product: ProductInfo;
 }
 
-function Order({ order }: OrderProps) {
-    const toggleSection = (event: React.MouseEvent<HTMLElement>) => {
-        (event.target as HTMLElement).parentElement!.classList.toggle("expanded");
-    }
-
-    return <section className="order-section drop-down-section">
-        <div className="order-label" onClick={toggleSection}>
-            <p>DATE_PLACEHOLDER</p>
-            <p>{order.supplierName}</p>
-            <p>{order.stage}</p>
-            <p>{order.id}</p>
+function Order({ product }: OrderProps) {
+    return <div className="ordered-product">
+        <div className="image-section">
+            <Link to="/product" state={{ supplierId: product.supplierId, productId: product.id }}>
+                <img src={product.thumbnail !== undefined ? product.thumbnail : "https://placehold.co/150x150"} alt="product" />
+            </Link>
         </div>
-        <div className="order-content drop-down-content">
-            <div className="order-products">
-                {order.products.map((prod, i) => <div className="order-product" key={`${order.id}:${i}`}>
-                    <img src={prod.gallery === null ? "https://placehold.co/50x50" : prod.gallery[0]} alt="product image" />
-                    <p>{prod.name}</p>
-                    <p>{prod.price}</p>
-                </div>)}
-            </div>
-            <div className="order-details">
-                <CustomerDetails details={order.customerDetails} />
-                <AdressDetails details={order.adressDetails} />
-            </div>
+        <div className="details-section">
+            <h3 className="item-name">
+                <Link to="/product" state={{ supplierId: product.supplierId, productId: product.id }}>
+                    {product.name}
+                </Link>
+            </h3>
+            <h3 className="price">${product.price}</h3>
+            <h3 className="quantity">{product.quantity}</h3>
         </div>
-    </section>;
+    </div>;
 }
 
 export default Order;

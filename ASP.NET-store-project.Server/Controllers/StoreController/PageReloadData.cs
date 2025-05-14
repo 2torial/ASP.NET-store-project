@@ -1,27 +1,21 @@
+using ASP.NET_store_project.Server.Controllers.IdentityController;
 using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Models.StructuredData;
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 using System.ComponentModel;
 
 namespace ASP.NET_store_project.Server.Controllers.StoreController
 {
-    public class PageReloadData
+    public record PageReloadData(
+        ProductCategory Category, 
+        decimal PriceFrom, 
+        decimal PriceTo, 
+        string[]? SearchBar, 
+        SortingMethod SortBy, 
+        SortingOrder OrderBy, 
+        PageSize PageSize,
+        int PageIndex)
     {
-        [FromForm]
-        public ProductCategory Category { get; init; }
-
-        [FromForm]
-        public decimal PriceFrom { get; init; }
-        [FromForm]
-        public decimal PriceTo { get; init; }
-
-        [FromForm]
-        public string[]? SearchBar { get; init; }
-
-        [FromForm]
-        public SortingMethod SortBy { get; init; }
-        [FromForm]
-        public SortingOrder OrderBy { get; init; }
         public IEnumerable<ProductInfo> Sort(IEnumerable<ProductInfo> products)
         {
             products = SortBy switch
@@ -39,8 +33,6 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             return products;
         }
 
-        [FromForm]
-        public PageSize PageSize { get; init; }
         public int NumericPageSize() => PageSize switch
         {
             PageSize.Take20 => 20,
@@ -48,12 +40,10 @@ namespace ASP.NET_store_project.Server.Controllers.StoreController
             PageSize.Take100 => 100,
             _ => throw new InvalidEnumArgumentException()
         };
+
         public int CountPages(int productCount) => productCount > 0
             ? 1 + (productCount - 1) / NumericPageSize()
             : 1;
-
-        [FromForm]
-        public int PageIndex { get; init; } = 1;
 
     }
 }

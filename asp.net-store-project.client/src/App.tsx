@@ -3,6 +3,7 @@ import './App.css';
 import { useRoutes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IdentityPolicy } from './shared/StoreEnum/IdentityPolicy';
+import Product from './components/Product';
 
 function App() {
 	const [userIdentity, setUserIdentity] = useState<IdentityPolicy>(IdentityPolicy.AnonymousUser);
@@ -34,6 +35,7 @@ function App() {
 		{useRoutes([
 			{ path: "/", element: <Store /> },
 			{ path: "/store", element: <Store /> },
+			{ path: "/product", element: <Product /> },
 			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },
 			{ path: "/sign-up", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={true} /> },

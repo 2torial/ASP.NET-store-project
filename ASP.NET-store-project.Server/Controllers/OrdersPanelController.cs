@@ -2,7 +2,7 @@ using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using ASP.NET_store_project.Server.Models.ComponentData;
 using ASP.NET_store_project.Server.Models.StructuredData;
-using ASP.NET_store_project.Server.Utilities.MultipleRequests;
+using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -32,10 +32,12 @@ namespace ASP.NET_store_project.Server.Controllers
                         order.Id, 
                         sup.Id.ToString(), 
                         sup.Name,
-                        order.Products,
+                        order.Products.Aggregate(0m, (acc, prod) => acc + prod.Price * prod.Quantity),
+                        order.TransportCost,
+                        order.Products.Select(prod => prod.NewModified(sup)),
                         order.CustomerDetails, 
                         order.AdressDetails, 
-                        order.Stage)))
+                        order.StageHistory)))
                 .ContinueWith(ordersBatch => ordersBatch.Result
                     .SelectMany(orders => orders ?? []));
 

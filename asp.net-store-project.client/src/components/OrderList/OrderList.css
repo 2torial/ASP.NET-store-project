@@ -1,13 +1,29 @@
-.orders {
-    font-size: 12px;
-    text-align: center;
-    border-collapse: collapse;
-}
-
 table, td, tr, th {
     border: 1px solid black !important;
+    width: 100%;
 }
 
 td, th {
     padding: 2px 5px !important;
+    width: fit-content;
+}
+
+.order {
+    width: 60%;
+}
+
+.order .order-description table {
+    width: 100%;
+}
+
+.order .order-content {
+    display: grid;
+    grid-template-columns: 60% auto;
+    column-gap: 10px;
+}
+
+.order .order-content .ordered-products {
+    display: grid;
+    grid-template-columns: auto;
+    column-gap: 10px;
 }

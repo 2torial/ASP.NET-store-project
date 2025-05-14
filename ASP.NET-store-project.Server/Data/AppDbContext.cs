@@ -45,10 +45,14 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany()
                 .UsingEntity<ItemOrder>();
             modelBuilder.Entity<Order>()
-                .HasMany(p => p.Stages)
+                .HasMany<Stage>()
                 .WithMany()
-                .UsingEntity<OrderStage>(j => j
-                    .Property(e => e.DateOfModification).HasDefaultValueSql("CURRENT_TIMESTAMP"));
+                .UsingEntity<OrderStage>();
+
+            modelBuilder.Entity<OrderStage>()
+                .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
+            modelBuilder.Entity<OrderStage>()
+                .Property(e => e.TimeOfCreation).HasDefaultValueSql("NOW()");
 
             User[] users = [
                 new("user", new SimplePasswordHasher().HashPassword("user")),
@@ -59,9 +63,10 @@ namespace ASP.NET_store_project.Server.Data
             Supplier[] suppliers = [.. supplierKeys
                 .Select(key => new Supplier(
                     $"Supplier{key[1]}", 
-                    "https://localhost:5173/", 
+                    "https://localhost:5173", 
                     "filter", 
                     "select", 
+                    "display",
                     "orders", 
                     "summary", 
                     "accept", 
@@ -137,6 +142,7 @@ namespace ASP.NET_store_project.Server.Data
                 {
                     var category = categories[rand.Next(0, categories.Length)];
                     var supplierKey = supplierKeys[rand.Next(0, 3)];
+                    var supplier = labeledSuppliers[supplierKey];
                     var random3 = "" + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)];
                     var name = $"{random3} {supplierKey} {category.Type}";
                     var computerPrices = new decimal[] { 300, 400, 450, 500, 600, 700, 800, 820, 850, 900, 1000 };
@@ -146,16 +152,11 @@ namespace ASP.NET_store_project.Server.Data
                         : category == categories[1] || category == categories[2]
                             ? otherPrices[rand.Next(0, otherPrices.Length)]
                             : 0;
-                    return new Item(category.Type, name, price, 3) { SupplierKey = supplierKey };
+                    var thumbnailLink = "https://placehold.co/150x150";
+                    var content = $"This is a mockup content for {name}. There is no uniform way of creating product content implemented in this project, so for now it is stored as text.";
+                    return new Item(category.Type, name, price, 3, thumbnailLink, content) { SupplierKey = supplierKey };
                 })];
             modelBuilder.Entity<Item>().HasData(items);
-
-            Image[] images = [.. items
-                //.Select(item => Enumerable.Range(1, rand.Next(1, 4))
-                //    .Select(_ => new Image("https://placehold.co/150x150", item.Id)))
-                .Select(item => Array.Empty<Image>())
-                .SelectMany(imgs => imgs)];
-            modelBuilder.Entity<Image>().HasData(images);
 
             ItemConfiguration[] itemConfigurations = [.. items
                 .Select(item => categorizedConfigurationLabels[item.CategoryId]
@@ -202,13 +203,13 @@ namespace ASP.NET_store_project.Server.Data
 
             Order[] orders = [.. Enumerable.Range(1, 12)
                 .Select(n => n < 8
-                    ? new Order(adresseeDetails[0].Id, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
-                    : new Order(adresseeDetails[1].Id, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
+                    ? new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
+                    : new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
             modelBuilder.Entity<Order>().HasData(orders);
 
             ItemOrder[] itemOrders = [.. orders
                 .Select(order => Enumerable.Range(1, rand.Next(4, 8))
-                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3)))
+                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3), items[n].ThumbnailLink))
                     .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
                 .SelectMany(itemOrders => itemOrders)];
             modelBuilder.Entity<ItemOrder>().HasData(itemOrders);

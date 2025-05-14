@@ -30,7 +30,6 @@ function Filters({ priceRange, groupedTags, applyFilters, defaultFilters }: Filt
     return <form className="filters" id="filters">
         <div className="title-section">
             <h2>Filters</h2>
-            <input type="button" value="&#x2716;" />
         </div>
         <RangeFilter from={priceRange.from} to={priceRange.to} />
         {Object.keys(groupedTags).map(label => <CheckBoxFilter label={label} options={groupedTags[label].sort((a, b) => a.order - b.order).map(tag => tag.parameter) ?? []} key={label} />)}

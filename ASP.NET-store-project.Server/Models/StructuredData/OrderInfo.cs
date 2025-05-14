@@ -7,13 +7,16 @@ namespace ASP.NET_store_project.Server.Models.StructuredData
         string? Id, 
         string? SupplierId,
         string? SupplierName,
+        decimal ProductsCost,
+        decimal TransportCost,
         IEnumerable<ProductInfo> Products, 
         CustomerInfo CustomerDetails, 
         AdressInfo AdressDetails, 
-        string? Stage)
+        OrderStageInfo[] StageHistory)
     {
         public OrderInfo(IEnumerable<ProductInfo> Products, CustomerInfo CustomerDetails, AdressInfo AdressDetails)
-            : this(null, null, null, Products, CustomerDetails, AdressDetails, null) { }
+            : this(null, null, null, 0, 0, Products, CustomerDetails, AdressDetails, []) { }
 
     }
+
 }

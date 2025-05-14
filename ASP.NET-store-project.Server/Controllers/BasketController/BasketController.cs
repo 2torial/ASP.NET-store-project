@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.EntityFrameworkCore;
-using ASP.NET_store_project.Server.Utilities.MultipleRequests;
 using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
@@ -20,6 +19,9 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         [HttpPost("/api/basket/summary")]
         public async Task<IActionResult> Summary([FromForm] OrderSummaryData orderData)
         {
+            var validationResult = new OrderSummaryDataValidator().Validate(orderData);
+            if (!validationResult.IsValid) return BadRequest(new { Errors = validationResult.ToDictionary() });
+
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
@@ -153,7 +155,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                         httpClientFactory.CreateClient(groupedProds.Supplier.Name),
                         groupedProds.Supplier.SelectedProductsRequestAdress,
                         JsonContentConverter.Convert(groupedProds.Products)),
-                    (group, prods) => prods?.Select(prod => new ProductInfo(prod).Modify(group.Supplier)))
+                    (group, prods) => prods?.Select(prod => prod.NewModified(group.Supplier)))
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 

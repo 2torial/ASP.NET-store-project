@@ -58,9 +58,8 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         Quantity = requestProd.Quantity <= localProd.Quantity
                             ? requestProd.Quantity 
                             : localProd.Quantity,
-                        Gallery = [],
+                        Thumbnail = localProd.ThumbnailLink,
                         Tags = localProd.Configurations.Select(config => new ProductTag(config.Label, config.Parameter, config.Order)),
-                        PageContent = localProd.PageContent,
                     });
 
             return Ok(selectedProducts);
@@ -75,25 +74,29 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .Include(order => order.ItemOrders)
                     .ThenInclude(itemorder => itemorder.Item)
                 .Include(order => order.AdresseeDetails)
-                .Include(order => order.Stages)
+                .Include(order => order.OrderStages)
+                    .ThenInclude(orderStages => orderStages.Stage)
                 .AsSplitQuery()
-                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.Stages })
+                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.OrderStages, order.TransportCost })
                 .AsEnumerable()
                 .Select(order => new OrderInfo(
                     order.Id.ToString(),
                     null,
                     null,
+                    -1,
+                    order.TransportCost,
                     order.ItemOrders.Select(itemorder => new ProductInfo
                     {
                         Id = itemorder.Item.Id.ToString(),
                         Name = itemorder.Item.Name,
                         Price = itemorder.StorePrice,
                         Quantity = itemorder.Quantity,
+                        Thumbnail = itemorder.ThumbnailLink
                     }),
                     new CustomerInfo(
-                        order.AdresseeDetails.Name, 
-                        order.AdresseeDetails.Surname, 
-                        order.AdresseeDetails.PhoneNumber, 
+                        order.AdresseeDetails.Name,
+                        order.AdresseeDetails.Surname,
+                        order.AdresseeDetails.PhoneNumber,
                         order.AdresseeDetails.Email),
                     new AdressInfo(
                         order.AdresseeDetails.Region,
@@ -102,7 +105,10 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         order.AdresseeDetails.StreetName,
                         order.AdresseeDetails.HouseNumber,
                         order.AdresseeDetails.ApartmentNumber),
-                    order.Stages.LastOrDefault()?.ToString()));
+                    [.. order.OrderStages.Select(orderStage => new OrderStageInfo(
+                        orderStage.Stage.Type, 
+                        orderStage.DateOfCreation.ToShortDateString(), 
+                        orderStage.TimeOfCreation.ToShortTimeString()))]));
 
             return Ok(orderedProducts);
         }
@@ -137,7 +143,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 orderInfo.AdressDetails.ApartmentNumber);
             context.AdresseeDetails.Add(adresseeDetails);
 
-            Order order = new(adresseeDetails.Id, storeId, customerId) { SupplierKey = supplierKey };
+            Order order = new(adresseeDetails.Id, orderInfo.TransportCost, storeId, customerId) { SupplierKey = supplierKey };
             context.Orders.Add(order);
 
             OrderStage orderStage = new(order.Id, StageOfOrder.Created.GetDisplayName());
@@ -160,5 +166,14 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             return Ok("Order canceled successfuly");
         }
 
+        [HttpGet("/api/supplier/{supplierKey}/display/{productId}")]
+        public IActionResult DisplayProduct([FromRoute] string supplierKey, [FromRoute] string productId)
+        {
+            var product = context.Items
+                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .SingleOrDefault(item => productId == item.Id.ToString());
+
+            return product == null ? NotFound() : Ok(product.PageContent);
+        }
     }
 }

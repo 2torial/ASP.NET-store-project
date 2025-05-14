@@ -1,0 +1,19 @@
+.ordered-product .image-section img {
+    height: 100px;
+    width: 100px;
+}
+
+.ordered-product {
+    display: grid;
+    grid-template-columns: 100px auto;
+    column-gap: 10px;
+}
+
+.ordered-product h3 {
+    font-size: 16px;
+}
+
+.ordered-product .image-section img {
+    height: 100px;
+    width: 100px;
+}

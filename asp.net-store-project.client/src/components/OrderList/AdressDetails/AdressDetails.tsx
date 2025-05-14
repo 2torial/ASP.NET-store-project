@@ -1,4 +1,4 @@
-import { AdressInfo } from '../../../../shared/StoreObject/OrderInfo';
+import { AdressInfo } from '../../../shared/StoreObject/OrderInfo';
 import './AdressDetails.css';
 
 interface AdressDetailsProps {

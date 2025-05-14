@@ -1,4 +1,4 @@
-import { CustomerInfo } from '../../../../shared/StoreObject/OrderInfo';
+import { CustomerInfo } from '../../../shared/StoreObject/OrderInfo';
 import './CustomerDetails.css';
 
 interface CustomerDetailsProps {

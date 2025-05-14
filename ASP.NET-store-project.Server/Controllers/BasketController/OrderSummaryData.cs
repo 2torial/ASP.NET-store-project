@@ -1,39 +1,31 @@
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace ASP.NET_store_project.Server.Controllers.BasketController
 {
-    public class OrderSummaryData
+    public record OrderSummaryData(
+        string Name, 
+        string Surname, 
+        string PhoneNumber, 
+        string Email, 
+        string Region, 
+        string City, 
+        string PostalCode, 
+        string StreetName, 
+        string HouseNumber, 
+        string? ApartmentNumber);
+
+    public class OrderSummaryDataValidator : AbstractValidator<OrderSummaryData>
     {
-        [FromForm]
-        public required string Name { get; set; }
-
-        [FromForm]
-        public required string Surname { get; set; }
-
-        [FromForm]
-        public required string PhoneNumber { get; set; }
-
-        [FromForm]
-        public required string Email { get; set; }
-
-        [FromForm]
-        public required string Region { get; set; }
-
-        [FromForm]
-        public required string City { get; set; }
-
-        [FromForm]
-        public required string PostalCode { get; set; }
-
-        [FromForm]
-        public required string StreetName { get; set; }
-
-        [FromForm]
-        public required string HouseNumber { get; set; }
-
-        [FromForm]
-        public string? ApartmentNumber { get; set; }
-
+        public OrderSummaryDataValidator()
+        {
+            RuleFor(m => m.Name).NotEmpty().WithMessage("Your name cannot be empty");
+            RuleFor(m => m.Surname).NotEmpty().WithMessage("Your surname cannot be empty");
+            RuleFor(m => m.PhoneNumber).NotEmpty().WithMessage("Your phone number cannot be empty")
+                .Matches("[0-9]+").WithMessage("Only numbers are allowed");
+            RuleFor(m => m.Email).EmailAddress().WithMessage("Inappropriate e-mail adress");
+            RuleFor(m => m.Region).NotEmpty().WithMessage("Region cannot be empty");
+            RuleFor(m => m.StreetName).NotEmpty().WithMessage("Street name cannot be empty");
+            RuleFor(m => m.HouseNumber).NotEmpty().WithMessage("House number cannot be empty");
+        }
     }
-
 }

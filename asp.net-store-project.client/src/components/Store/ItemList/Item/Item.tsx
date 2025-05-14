@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ProductInfo } from '../../../../shared/StoreObject/ProductInfo';
 import './Item.css';
 
@@ -9,14 +10,21 @@ function Item({ product }: ItemProps) {
     const addItem = (prod: ProductInfo) => async () => {
         const response = await fetch(`/api/basket/add/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
+        console.log(product);
     }
 
     return <div className="item">
         <div className="image-section">
-            <img src={product.gallery.length > 0 ? product.gallery[0] : "https://placehold.co/150x150"} alt="" />
+            <Link to="/product" state={{ supplierId: product.supplierId, productId: product.id }}>
+                {<img src={product.thumbnail !== undefined ? product.thumbnail : "https://placehold.co/150x150"} alt="product" />}
+            </Link>
         </div>
         <div className="details-section">
-            <h3 className="item-name">{product.name}</h3>
+            <h3 className="item-name">
+                <Link to="/product" state={{ supplierId: product.supplierId, productId: product.id }}>
+                    {product.name}
+                </Link>
+            </h3>
             <ul className="additional-details">
                 {product.tags.sort((a, b) => a.label.localeCompare(b.label)).map((config, i) => <li key={i}>{`${config.label}: ${config.parameter}`}</li>)}
             </ul>

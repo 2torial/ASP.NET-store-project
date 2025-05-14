@@ -4,10 +4,12 @@ export type OrderInfo = {
     id: string;
     supplierId: string;
     supplierName: string;
+    productsCost: number;
+    transportCost: number;
     products: ProductInfo[];
     customerDetails: CustomerInfo;
     adressDetails: AdressInfo;
-    stage: string;
+    stageHistory: OrderStageInfo[];
 };
 
 export type CustomerInfo = {
@@ -24,4 +26,10 @@ export type AdressInfo = {
     streetName: string;
     houseNumber: string;
     apartmentNumber: string;
+}
+
+export type OrderStageInfo = {
+    type: string;
+    dateOfCreation: string;
+    timeOfCreation: string;
 }
