@@ -74,14 +74,17 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .Include(order => order.ItemOrders)
                     .ThenInclude(itemorder => itemorder.Item)
                 .Include(order => order.AdresseeDetails)
-                .Include(order => order.Stages)
+                .Include(order => order.OrderStages)
+                    .ThenInclude(orderStages => orderStages.Stage)
                 .AsSplitQuery()
-                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.Stages })
+                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.OrderStages, order.TransportCost })
                 .AsEnumerable()
                 .Select(order => new OrderInfo(
                     order.Id.ToString(),
                     null,
                     null,
+                    -1,
+                    order.TransportCost,
                     order.ItemOrders.Select(itemorder => new ProductInfo
                     {
                         Id = itemorder.Item.Id.ToString(),
@@ -102,7 +105,10 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         order.AdresseeDetails.StreetName,
                         order.AdresseeDetails.HouseNumber,
                         order.AdresseeDetails.ApartmentNumber),
-                    order.Stages.LastOrDefault()?.ToString()));
+                    [.. order.OrderStages.Select(orderStage => new OrderStageInfo(
+                        orderStage.Stage.Type, 
+                        orderStage.DateOfCreation.ToShortDateString(), 
+                        orderStage.TimeOfCreation.ToShortTimeString()))]));
 
             return Ok(orderedProducts);
         }
@@ -137,7 +143,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 orderInfo.AdressDetails.ApartmentNumber);
             context.AdresseeDetails.Add(adresseeDetails);
 
-            Order order = new(adresseeDetails.Id, storeId, customerId) { SupplierKey = supplierKey };
+            Order order = new(adresseeDetails.Id, orderInfo.TransportCost, storeId, customerId) { SupplierKey = supplierKey };
             context.Orders.Add(order);
 
             OrderStage orderStage = new(order.Id, StageOfOrder.Created.GetDisplayName());

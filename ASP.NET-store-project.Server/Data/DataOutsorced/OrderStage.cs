@@ -18,9 +18,11 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
         public string StageId { get; set; } = stageId;
 
 
+        public Stage Stage { get; set; } = null!;
 
-        [Column(TypeName = "Date")]
-        public DateTime DateOfModification { get; set; }
+        public DateOnly DateOfCreation { get; set; }
+
+        public TimeOnly TimeOfCreation { get; set; }
     }
 
 }

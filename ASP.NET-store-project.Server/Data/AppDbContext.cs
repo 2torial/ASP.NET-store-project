@@ -45,10 +45,14 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany()
                 .UsingEntity<ItemOrder>();
             modelBuilder.Entity<Order>()
-                .HasMany(p => p.Stages)
+                .HasMany<Stage>()
                 .WithMany()
-                .UsingEntity<OrderStage>(j => j
-                    .Property(e => e.DateOfModification).HasDefaultValueSql("CURRENT_TIMESTAMP"));
+                .UsingEntity<OrderStage>();
+
+            modelBuilder.Entity<OrderStage>()
+                .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
+            modelBuilder.Entity<OrderStage>()
+                .Property(e => e.TimeOfCreation).HasDefaultValueSql("NOW()");
 
             User[] users = [
                 new("user", new SimplePasswordHasher().HashPassword("user")),
@@ -199,8 +203,8 @@ namespace ASP.NET_store_project.Server.Data
 
             Order[] orders = [.. Enumerable.Range(1, 12)
                 .Select(n => n < 8
-                    ? new Order(adresseeDetails[0].Id, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
-                    : new Order(adresseeDetails[1].Id, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
+                    ? new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
+                    : new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
             modelBuilder.Entity<Order>().HasData(orders);
 
             ItemOrder[] itemOrders = [.. orders

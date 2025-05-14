@@ -26,15 +26,19 @@ function UserList() {
 		}
 		const data: UserListComponentData = await response.json();
 		setUsers(data.users);
-		console.log(data.users);
-		console.log(users, "a");
 	};
 
 	return <main>
-		{users.map((user, idx) => <div key={idx}>{user.isAdmin
-			? <>Admin {user.name}</>
-			: <>Regular user {user.name}</>}
-		</div>)}
+		<table>
+			<tr>
+				<th>Username</th>
+				<th>Privileges</th>
+			</tr>
+			{users.map((user, idx) => <tr key={idx}>{user.isAdmin
+				? <><td>{user.name}</td><td>Admin</td></>
+				: <><td>{user.name}</td><td>Regular</td></>}
+			</tr>)}
+		</table>
 	</main>;
 }
 

@@ -32,10 +32,12 @@ namespace ASP.NET_store_project.Server.Controllers
                         order.Id, 
                         sup.Id.ToString(), 
                         sup.Name,
+                        order.Products.Aggregate(0m, (acc, prod) => acc + prod.Price * prod.Quantity),
+                        order.TransportCost,
                         order.Products.Select(prod => prod.NewModified(sup)),
                         order.CustomerDetails, 
                         order.AdressDetails, 
-                        order.Stage)))
+                        order.StageHistory)))
                 .ContinueWith(ordersBatch => ordersBatch.Result
                     .SelectMany(orders => orders ?? []));
 

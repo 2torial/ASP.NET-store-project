@@ -5,6 +5,12 @@
     width: 80%;
 }
 
+.basket h1 {
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
 .basket .supplier-cart {
     grid-column-start: 2;
     grid-row-end: -1;

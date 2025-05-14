@@ -77,7 +77,7 @@ function Basket() {
     return <main className="basket">
         <div className="products">
             {groupedProducts.map(prods => <div className="supplier-cart">
-                <h3>Products from {prods[0].supplierName}</h3>
+                <h1>Products from {prods[0].supplierName}</h1>
                 {prods.map(group => group).map(prod => <div className="basketed-item">
                     <div className="image-section">
                         <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
