@@ -244,12 +244,13 @@ namespace ASP.NET_store_project.Server.Data
             Stage[] stages = [.. stageTypes.Select(type =>  new Stage(type))];
             modelBuilder.Entity<Stage>().HasData(stages);
 
-            OrderStage[] orderStages = [.. orders
-                .Select(order => rand.Next(0, 4) switch {
-                    var r when r < 3 => Enumerable.Range(0, r).Select(n => new OrderStage(order.Id, stages[n].Type)),
-                    _ => [new OrderStage(order.Id, stages[0].Type), new OrderStage(order.Id, stages[1].Type), new OrderStage(order.Id, stages[3].Type)]
-                })
-                .SelectMany(orderStages => orderStages)];
+            OrderStage[] orderStages = [
+                new OrderStage(orders[0].Id, stages[0].Type),
+                new OrderStage(orders[1].Id, stages[0].Type), new OrderStage(orders[1].Id, stages[1].Type),
+                new OrderStage(orders[2].Id, stages[0].Type), new OrderStage(orders[2].Id, stages[1].Type), new OrderStage(orders[2].Id, stages[3].Type),
+                new OrderStage(orders[3].Id, stages[0].Type), new OrderStage(orders[3].Id, stages[1].Type), new OrderStage(orders[3].Id, stages[2].Type),
+                new OrderStage(orders[4].Id, stages[0].Type), new OrderStage(orders[4].Id, stages[1].Type), new OrderStage(orders[4].Id, stages[2].Type),
+                new OrderStage(orders[5].Id, stages[0].Type), new OrderStage(orders[5].Id, stages[3].Type)];
             modelBuilder.Entity<OrderStage>().HasData(orderStages);
 
         }
