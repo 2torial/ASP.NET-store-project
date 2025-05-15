@@ -154,7 +154,7 @@ namespace ASP.NET_store_project.Server.Data
                             : 0;
                     var thumbnailLink = "https://placehold.co/150x150";
                     var content = $"This is a mockup content for {name}. There is no uniform way of creating product content implemented in this project, so for now it is stored as text.";
-                    return new Item(category.Type, name, price, 3, thumbnailLink, content) { SupplierKey = supplierKey };
+                    return new Item(category.Type, name, price, 10, thumbnailLink, content) { SupplierKey = supplierKey };
                 })];
             modelBuilder.Entity<Item>().HasData(items);
 
@@ -201,20 +201,43 @@ namespace ASP.NET_store_project.Server.Data
                 issuerDetails.ElementAt(1).AdresseeDetails];
             modelBuilder.Entity<AdresseeDetails>().HasData(adresseeDetails);
 
-            Order[] orders = [.. Enumerable.Range(1, 12)
-                .Select(n => n < 8
-                    ? new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
-                    : new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
+            Order[] orders = [
+                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] },
+                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[1] },
+                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
+                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
+                new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[0] },
+                new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] }];
             modelBuilder.Entity<Order>().HasData(orders);
 
+            var itemsA = items.Where(item => item.SupplierKey == supplierKeys[0]);
+            var itemsB = items.Where(item => item.SupplierKey == supplierKeys[1]);
+            var itemsC = items.Where(item => item.SupplierKey == supplierKeys[2]);
+
             ItemOrder[] itemOrders = [.. orders
-                .Select(order => Enumerable.Range(1, rand.Next(4, 8))
-                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3), items[n].ThumbnailLink))
-                    .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
-                .SelectMany(itemOrders => itemOrders)];
+                .Select(order => {
+                    var supplierItems = order.SupplierKey switch
+                    {
+                        "[A]" => itemsA,
+                        "[B]" => itemsB,
+                        "[C]" => itemsC,
+                        _ => throw new InvalidOperationException("Unknown supplier key"),
+                    };
+                    var usedItemIds = new List<Guid>();
+                    return Enumerable.Range(1, rand.Next(2, 5)) // 2-4 items
+                        .Select(_ => { // all items must be from the same supplier
+                            var item = supplierItems.ElementAt(rand.Next(0, supplierItems.Count()));
+                            while (usedItemIds.Contains(item.Id))
+                                item = supplierItems.ElementAt(rand.Next(0, supplierItems.Count()));
+                            usedItemIds.Add(item.Id);
+                            return new ItemOrder(item.Id, order.Id, 200, rand.Next(1, 4), item.ThumbnailLink);
+                        });
+                })
+                .SelectMany(e => e)];
             modelBuilder.Entity<ItemOrder>().HasData(itemOrders);
 
-            string[] stageTypes = [StageOfOrder.Created.GetDisplayName(), 
+            string[] stageTypes = [
+                StageOfOrder.Created.GetDisplayName(), 
                 StageOfOrder.Pending.GetDisplayName(), 
                 StageOfOrder.Finished.GetDisplayName(), 
                 StageOfOrder.Canceled.GetDisplayName()];
@@ -222,12 +245,9 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<Stage>().HasData(stages);
 
             OrderStage[] orderStages = [.. orders
-                .Select(order =>
-                {
-                    var r = rand.Next(0, 3);
-                    return r < 3
-                        ? Enumerable.Range(0, r).Select(n => new OrderStage(order.Id, stages[n].Type))
-                        : [new OrderStage(order.Id, stages[0].Type), new OrderStage(order.Id, stages[1].Type), new OrderStage(order.Id, stages[3].Type)];
+                .Select(order => rand.Next(0, 4) switch {
+                    var r when r < 3 => Enumerable.Range(0, r).Select(n => new OrderStage(order.Id, stages[n].Type)),
+                    _ => [new OrderStage(order.Id, stages[0].Type), new OrderStage(order.Id, stages[1].Type), new OrderStage(order.Id, stages[3].Type)]
                 })
                 .SelectMany(orderStages => orderStages)];
             modelBuilder.Entity<OrderStage>().HasData(orderStages);
