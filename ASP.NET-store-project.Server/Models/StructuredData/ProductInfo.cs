@@ -15,7 +15,7 @@ namespace ASP.NET_store_project.Server.Models.StructuredData
     {
         public ProductInfo() : this(null, null, 0, 0, null, null, null, null, null) { }
 
-        public ProductInfo NewModified(Supplier supplier) => 
-            new(Id, Name, supplier.CalculateStorePrice(Price), Quantity, supplier.Id, supplier.Name, Thumbnail, Tags, PageContent);
+        public ProductInfo NewModified(Supplier supplier, bool adjustPrice = true) => 
+            new(Id, Name, adjustPrice ? supplier.CalculateStorePrice(Price) : Price, Quantity, supplier.Id, supplier.Name, Thumbnail, Tags, PageContent);
     }
 }

@@ -34,7 +34,7 @@ namespace ASP.NET_store_project.Server.Controllers
                         sup.Name,
                         order.Products.Aggregate(0m, (acc, prod) => acc + prod.Price * prod.Quantity),
                         order.TransportCost,
-                        order.Products.Select(prod => prod.NewModified(sup)),
+                        order.Products.Select(prod => prod.NewModified(sup, adjustPrice: false)),
                         order.CustomerDetails, 
                         order.AdressDetails, 
                         order.StageHistory)))
