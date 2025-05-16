@@ -143,7 +143,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             var basket = customer.BasketProducts
                 .GroupBy(
                     prod => prod.Supplier,
-                    prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
+                    prod => new ProductInfo() { Id = prod.ProductId, BasketId = prod.DatabaseId.ToString(), Quantity = prod.Quantity },
                     (sup, prods) => new { Supplier = sup, Products = prods });
 
             if (!basket.Any())

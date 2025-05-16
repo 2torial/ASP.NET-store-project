@@ -1,0 +1,7 @@
+.adress-details {
+    width: 100%;
+}
+
+.adress-details th, .adress-details td {
+    width: fit-content;
+}

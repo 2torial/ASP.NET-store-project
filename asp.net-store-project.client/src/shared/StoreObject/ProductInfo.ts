@@ -1,5 +1,6 @@
 export type ProductInfo = {
     id: string;
+    basketId: string;
     name: string;
     price: number;
     quantity: number;

@@ -50,9 +50,8 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .Join(selectedProductInfos,
                     localProd => localProd.Id.ToString(),
                     requestProd => requestProd.Id,
-                    (localProd, requestProd) => new ProductInfo()
+                    (localProd, requestProd) => requestProd with
                     {
-                        Id = requestProd.Id,
                         Name = localProd.Name,
                         Price = localProd.Price,
                         Quantity = requestProd.Quantity <= localProd.Quantity

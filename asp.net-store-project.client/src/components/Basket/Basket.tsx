@@ -49,7 +49,7 @@ function Basket() {
         event.preventDefault();
         const response = await fetch('/api/basket/summary', {
             method: "post",
-            body: collectData(FormID.Summary),
+            body: collectData(FormID.Summary, FormID.Basket),
         });
         if (response.ok) {
             navigate("/store");
@@ -75,10 +75,11 @@ function Basket() {
     const transportPrice = groupedProducts.length * 5;
 
     return <main className="basket">
-        <div className="products">
+        <form className="products" id={FormID.Basket}>
             {groupedProducts.map(prods => <div className="supplier-cart">
                 <h1>Products from {prods[0].supplierName}</h1>
                 {prods.map(group => group).map(prod => <div className="basketed-item">
+                    <input type="checkbox" name="SelectedBasketIds" value={prod.basketId} checked />
                     <div className="image-section">
                         <Link to="/product" state={{ supplierId: prod.supplierId, productId: prod.id }}>
                             <img src={prod.thumbnail !== undefined ? prod.thumbnail : "https://placehold.co/150x150"} alt="product" />
@@ -99,14 +100,14 @@ function Basket() {
                     </div>
                 </div>)}
             </div>)}
-        </div>
+        </form>
         <form onSubmit={summarize} className="input-section" id={FormID.Summary}>
             <table className="grid-wide">
                 <tr><th colSpan={2}>Summary</th></tr>
                 <tr><td>Products cost</td><td>${productsPrice}</td></tr>
                 <tr><td>Transport cost</td><td>${transportPrice}</td></tr>
                 <tr><td>Payment method</td><td>{"???"}</td></tr>
-                <tr><td>Total</td><td>{productsPrice + transportPrice}</td></tr>
+                <tr><td>Total</td><td>${productsPrice + transportPrice}</td></tr>
             </table>
             <div>
                 <label htmlFor="name">Name</label>

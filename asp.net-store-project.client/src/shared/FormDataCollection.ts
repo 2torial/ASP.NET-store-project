@@ -14,6 +14,7 @@ export const collectData = (...ids: string[]): FormData => {
 };
 
 export enum FormID {
+	Basket = "basket",
 	Filters = "filters",
 	Settings = "settings",
 	SignIn = "sign-in",
