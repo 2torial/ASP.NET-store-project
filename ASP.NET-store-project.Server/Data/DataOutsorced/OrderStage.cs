@@ -19,9 +19,8 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
 
         public Stage Stage { get; set; } = null!;
 
-        public DateOnly DateOfCreation { get; set; }
+        public DateTime DateOfCreation { get; set; }
 
-        public TimeOnly TimeOfCreation { get; set; }
     }
 
 }

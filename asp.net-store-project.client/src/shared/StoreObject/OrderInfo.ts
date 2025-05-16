@@ -31,5 +31,5 @@ export type AdressInfo = {
 export type OrderStageInfo = {
     type: string;
     dateOfCreation: string;
-    timeOfCreation: string;
+    timeStamp: string;
 }

@@ -28,7 +28,8 @@ function OrderList() {
         setOrders(data.orders);
     };
 
-    orders?.forEach((order) => console.log(order.stageHistory[0]));
+    orders?.forEach((order) => order.stageHistory.sort((a, b) => a.timeStamp.localeCompare(b.timeStamp)));
+    orders?.forEach((order) => console.log(order));
 
     return <main className="orders">{orders === undefined
         ? <p>Page is loading...</p>
@@ -45,11 +46,11 @@ function OrderList() {
                     </tr>
                     <tr>
                         <td>{order.supplierName}</td>
-                        <td>{`${order.stageHistory[0]?.dateOfCreation} (${order.stageHistory[0]?.timeOfCreation})`}</td>
+                        <td>{`${order.stageHistory[0]?.dateOfCreation}`}</td>
                         <td>${order.productsCost}</td>
                         <td>${order.transportCost}</td>
                         <td>{order.stageHistory[order.stageHistory.length - 1]?.type}</td>
-                        <td>{`${order.stageHistory[order.stageHistory.length - 1]?.dateOfCreation} (${order.stageHistory[order.stageHistory.length - 1]?.timeOfCreation})`}</td>
+                        <td>{`${order.stageHistory[order.stageHistory.length - 1]?.dateOfCreation}`}</td>
                     </tr>
                 </table>
             </div>

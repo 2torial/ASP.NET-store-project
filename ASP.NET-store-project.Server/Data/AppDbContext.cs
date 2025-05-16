@@ -51,8 +51,6 @@ namespace ASP.NET_store_project.Server.Data
 
             modelBuilder.Entity<OrderStage>()
                 .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
-            modelBuilder.Entity<OrderStage>()
-                .Property(e => e.TimeOfCreation).HasDefaultValueSql("NOW()");
 
             User[] users = [
                 new("user", new SimplePasswordHasher().HashPassword("user")),
@@ -244,6 +242,7 @@ namespace ASP.NET_store_project.Server.Data
             Stage[] stages = [.. stageTypes.Select(type =>  new Stage(type))];
             modelBuilder.Entity<Stage>().HasData(stages);
 
+            var now = DateTime.UtcNow;
             OrderStage[] orderStages = [
                 new OrderStage(orders[0].Id, stages[0].Type),
                 new OrderStage(orders[1].Id, stages[0].Type), new OrderStage(orders[1].Id, stages[1].Type),

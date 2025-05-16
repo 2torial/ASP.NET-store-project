@@ -107,8 +107,8 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                         order.AdresseeDetails.ApartmentNumber),
                     [.. order.OrderStages.Select(orderStage => new OrderStageInfo(
                         orderStage.Stage.Type, 
-                        orderStage.DateOfCreation.ToShortDateString(), 
-                        orderStage.TimeOfCreation.ToShortTimeString()))]));
+                        orderStage.DateOfCreation.ToString("g"),
+                        orderStage.DateOfCreation.ToString("yyyy-MM-ddTHH:mm:ss:fff")))]));
 
             return Ok(orderedProducts);
         }
