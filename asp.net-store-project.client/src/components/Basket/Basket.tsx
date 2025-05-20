@@ -69,10 +69,12 @@ function Basket() {
         if (selectedProducts === undefined) {
             [productsCost, deliveryCost] = supplierIds.reduce((acc, supId) => {
                 const [selectedIds, deliveryMethod] = readOrderData(supId);
-                return [products.reduce((cost, prod) => selectedIds.includes(prod.basketId)
-                    ? cost + prod.price * prod.quantity
-                    : 0, acc[0]),
-                acc[1] + deliveryCostOf(deliveryMethod)];
+                return selectedIds.length === 0
+                    ? acc
+                    : [
+                        products.filter(prod => selectedIds.includes(prod.basketId)).reduce((cost, prod) => cost + prod.price * prod.quantity, acc[0]),
+                        acc[1] + deliveryCostOf(deliveryMethod)
+                    ];
             }, [0, 0]);
         } else {
             [productsCost, deliveryCost] = [
