@@ -8,7 +8,7 @@ export type ProductInfo = {
     supplierName: string;
     thumbnail: string;
     tags: ProductTag[];
-    pageContent?: string;
+    pageContent: string;
 };
 
 export type ProductTag = {

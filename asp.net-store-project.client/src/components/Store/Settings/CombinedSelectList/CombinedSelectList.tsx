@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import './SelectList.css';
+import './CombinedSelectList.css';
 
 interface CombinedSelectListProps {
     id: string;

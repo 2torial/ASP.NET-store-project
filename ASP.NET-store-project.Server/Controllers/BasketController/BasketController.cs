@@ -8,6 +8,7 @@ using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using ASP.NET_store_project.Server.Models.ComponentData;
+using ASP.NET_store_project.Server.Extentions;
 
 namespace ASP.NET_store_project.Server.Controllers.BasketController
 {
@@ -17,39 +18,64 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
     public class BasketController(AppDbContext context, IHttpClientFactory httpClientFactory) : ControllerBase
     {
         [HttpPost("/api/basket/summary")]
-        public async Task<IActionResult> Summary([FromForm] OrderSummaryData orderData)
+        public async Task<IActionResult> Summary(OrderSummaryData orderData)
         {
             var validationResult = new OrderSummaryDataValidator().Validate(orderData);
-            if (!validationResult.IsValid) return BadRequest(new { Errors = validationResult.ToDictionary() });
+            if (!validationResult.IsValid) return this.MultipleErrorsBadRequest(validationResult.ToDictionary());
 
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
-                .ThenInclude(basket => basket.Supplier)
+                .   ThenInclude(basket => basket.Supplier)
                 .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
             if (customer == null)
-                return BadRequest("This customer does not exist!");
+                return this.SingleErrorBadRequest("This customer does not exist!");
 
-            var basket = customer.BasketProducts
+            var selectedBasketIds = orderData.Orders
+                .SelectMany(order => order.ProductBasketIds);
+            var selectedProducts = customer.BasketProducts
+                .Join(selectedBasketIds,
+                    basketProd => basketProd.DatabaseId,
+                    basketId => basketId,
+                    (prod, _) => prod);
+
+            if (selectedBasketIds.Count() != selectedProducts.Count())
+                return this.SingleErrorBadRequest("Unidentified products were found in order.");
+
+            var basket = selectedProducts
                 .GroupBy(
                     prod => prod.Supplier,
                     prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
                     (sup, prods) => new { Supplier = sup, Products = prods });
 
             if (!basket.Any())
-                return BadRequest("Basket is empty.");
+                return this.SingleErrorBadRequest("Basket is empty.");
 
-            var orderAcceptResults = await MultipleRequestsEndpoint<string>
+            var confirmedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
                 .PostAsync(basket,
                     groupedProds => new(
                         httpClientFactory.CreateClient(groupedProds.Supplier.Name),
+                        groupedProds.Supplier.SelectedProductsRequestAdress,
+                        JsonContentConverter.Convert(groupedProds.Products)),
+                    (groupedProds, resultProds) => new { groupedProds.Supplier, Products = resultProds?.Select(prod => prod.NewModified(groupedProds.Supplier)) });
+
+            var confirmedProducts = confirmedProductsBatch
+                .SelectMany(group => group?.Products ?? []);
+
+            if (!selectedProducts.All(sProd => confirmedProducts.Any(cProd => sProd.ProductId == cProd.Id && sProd.Quantity == cProd.Quantity)))
+                return this.SingleErrorBadRequest("Not all products are avaliable for sell.");
+
+            var orderAcceptResults = await MultipleRequestsEndpoint<string>
+                .PostAsync(confirmedProductsBatch,
+                    groupedProds => new(
+                        httpClientFactory.CreateClient(groupedProds!.Supplier.Name),
                         $"{groupedProds.Supplier.OrderAcceptRequestAdress}/[0]/{customer.Id}",
                         JsonContentConverter.Convert(new OrderInfo(
-                            groupedProds.Products, 
-                            new(orderData.Name, orderData.Surname, orderData.PhoneNumber, orderData.Email),
-                            new(orderData.Region, orderData.City, orderData.PostalCode, orderData.StreetName, orderData.HouseNumber, orderData.ApartmentNumber)))),
+                            groupedProds.Products!, 0,
+                            orderData.CustomerDetails,
+                            orderData.AdressDetails))),
                     async msg => msg.IsSuccessStatusCode ? await msg.Content.ReadAsStringAsync() : null,
-                    (groupedProds, orderId) => new { groupedProds.Supplier, OrderId = orderId });
+                    (summary, orderId) => new { summary!.Supplier, OrderId = orderId });
 
             var succeededOrders = orderAcceptResults
                 .Where(result => result?.OrderId != null);
@@ -69,14 +95,13 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 {
                     // This is a space for an edge case situation where only some part of an order was accepted
                     // while the other was canceled (all items should be accepted or canceled before the order resolves)
-                    return BadRequest("Critical error occured: Some of the products ordered were issued while the others were not. Contact an administrator.");
+                    return this.SingleErrorBadRequest("Critical error occured: Some of the products ordered were issued while the others were not. Contact an administrator.");
                 }
-                return BadRequest("Failed to issue an order.");
+                return this.SingleErrorBadRequest("Failed to issue an order.");
             }
 
             context.BasketProducts
-                .RemoveRange(customer.BasketProducts);
-
+                .RemoveRange(selectedProducts);
             context.SaveChanges();
 
             return Ok("Order summarized successfuly.");

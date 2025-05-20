@@ -5,6 +5,7 @@ using ASP.NET_store_project.Server.Models.StructuredData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Extensions;
+using System.Linq;
 
 namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
 {
@@ -76,14 +77,15 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 .Include(order => order.OrderStages)
                     .ThenInclude(orderStages => orderStages.Stage)
                 .AsSplitQuery()
-                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.OrderStages, order.TransportCost })
+                .Select(order => new { order.Id, order.ItemOrders, order.AdresseeDetails, order.OrderStages, order.DeliveryCost, order.DeliveryMethod })
                 .AsEnumerable()
                 .Select(order => new OrderInfo(
                     order.Id.ToString(),
                     null,
                     null,
                     -1,
-                    order.TransportCost,
+                    order.DeliveryCost,
+                    order.DeliveryMethod,
                     order.ItemOrders.Select(itemorder => new ProductInfo
                     {
                         Id = itemorder.Item.Id.ToString(),
@@ -115,19 +117,13 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         [HttpPost("/api/supplier/{supplierKey}/accept/{storeId}/{customerId}")]
         public IActionResult AcceptOrder([FromBody] OrderInfo orderInfo, [FromRoute] string supplierKey, [FromRoute] string storeId, [FromRoute] string customerId)
         {
-            var summaries = orderInfo.Products.Select(prod => new { prod.Id, prod.Quantity });
+            var summaries = orderInfo.Products.Select(prod => new { Id = Guid.Parse(prod.Id ?? Guid.Empty.ToString()), prod.Quantity, prod.Price });
             var orderedIds = summaries.Select(summary => summary.Id);
 
-            var viableItems = context.Items
-                .Where(item => orderedIds.Contains(item.Id.ToString()))
-                .AsEnumerable()
-                .Where(item => summaries
-                    .First(summary => summary.Id == item.Id.ToString())
-                    .Quantity <= item.Quantity)
-                .Count();
-
-            if (viableItems < summaries.Count())
-                return BadRequest("Not all products are aviable for sell");
+            var items = context.Items
+                .Where(item => item.SupplierKey == supplierKey)
+                .Where(item => orderedIds.Contains(item.Id))
+                .AsEnumerable();
 
             AdresseeDetails adresseeDetails = new(
                 orderInfo.CustomerDetails.Name,
@@ -140,14 +136,28 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 orderInfo.AdressDetails.StreetName,
                 orderInfo.AdressDetails.HouseNumber,
                 orderInfo.AdressDetails.ApartmentNumber);
-            context.AdresseeDetails.Add(adresseeDetails);
 
-            Order order = new(adresseeDetails.Id, orderInfo.TransportCost, storeId, customerId) { SupplierKey = supplierKey };
-            context.Orders.Add(order);
+            Order order = new(adresseeDetails.Id, orderInfo.DeliveryCost, orderInfo.DeliveryMethod, storeId, customerId) { SupplierKey = supplierKey };
+            
+            ItemOrder[] itemOrders = [.. items.Join(summaries,
+                item => item.Id,
+                summary => summary.Id,
+                (item, summary) => new ItemOrder(
+                    item.Id, 
+                    order.Id, 
+                    summary.Price, 
+                    summary.Quantity <= item.Quantity ? summary.Quantity : -1, 
+                    "https://placehold.co/150x150"))];
 
             OrderStage orderStage = new(order.Id, StageOfOrder.Created.GetDisplayName());
-            context.OrderStages.Add(orderStage);
 
+            if (itemOrders.Length < summaries.Count() || itemOrders.Any(itemOrder => itemOrder.Quantity < 0))
+                return BadRequest("Not all products are aviable for sell");
+            
+            context.AdresseeDetails.Add(adresseeDetails);
+            context.Orders.Add(order);
+            context.ItemOrders.AddRange(itemOrders);
+            context.OrderStages.Add(orderStage);
             context.SaveChanges();
 
             return Ok(order.Id);

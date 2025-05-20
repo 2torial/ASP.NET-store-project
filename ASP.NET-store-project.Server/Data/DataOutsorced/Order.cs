@@ -1,6 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Order(Guid adresseeDetailsId, decimal transportCost, string storeId, string customerId)
+    public class Order(Guid adresseeDetailsId, decimal deliveryCost, int deliveryMethod, string storeId, string customerId)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -8,7 +8,9 @@
 
         public Guid AdresseeDetailsId { get; set; } = adresseeDetailsId;
 
-        public decimal TransportCost { get; set; } = transportCost;
+        public decimal DeliveryCost { get; set; } = deliveryCost;
+
+        public int DeliveryMethod { get; set; } = deliveryMethod;
 
         public string StoreId { get; set; } = storeId;
 

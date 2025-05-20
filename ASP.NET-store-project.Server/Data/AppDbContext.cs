@@ -49,6 +49,9 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany()
                 .UsingEntity<OrderStage>();
 
+            modelBuilder.Entity<ItemOrder>()
+                .ToTable("ItemOrder");
+
             modelBuilder.Entity<OrderStage>()
                 .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
 
@@ -200,12 +203,12 @@ namespace ASP.NET_store_project.Server.Data
             modelBuilder.Entity<AdresseeDetails>().HasData(adresseeDetails);
 
             Order[] orders = [
-                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] },
-                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[1] },
-                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
-                new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
-                new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[0] },
-                new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] }];
+                new Order(adresseeDetails[0].Id, 5, 0, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] },
+                new Order(adresseeDetails[0].Id, 5, 0, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[1] },
+                new Order(adresseeDetails[0].Id, 5, 1, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
+                new Order(adresseeDetails[0].Id, 5, 0, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[2] },
+                new Order(adresseeDetails[1].Id, 5, 0, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[0] },
+                new Order(adresseeDetails[1].Id, 5, 1, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] }];
             modelBuilder.Entity<Order>().HasData(orders);
 
             var itemsA = items.Where(item => item.SupplierKey == supplierKeys[0]);
@@ -263,6 +266,8 @@ namespace ASP.NET_store_project.Server.Data
         public DbSet<BasketProduct> BasketProducts { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<ItemOrder> ItemOrders { get; set; }
 
         public DbSet<AdresseeDetails> AdresseeDetails { get; set; }
 

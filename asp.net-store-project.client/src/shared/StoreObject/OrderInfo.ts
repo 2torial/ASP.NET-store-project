@@ -1,3 +1,4 @@
+import { DeliveryMethod } from "../StoreEnum/DeliveryMethod";
 import { ProductInfo } from "./ProductInfo";
 
 export type OrderInfo = {
@@ -6,6 +7,7 @@ export type OrderInfo = {
     supplierName: string;
     productsCost: number;
     transportCost: number;
+    deliveryMethod: DeliveryMethod,
     products: ProductInfo[];
     customerDetails: CustomerInfo;
     adressDetails: AdressInfo;
@@ -25,7 +27,7 @@ export type AdressInfo = {
     postalCode: string;
     streetName: string;
     houseNumber: string;
-    apartmentNumber: string;
+    apartmentNumber?: string;
 }
 
 export type OrderStageInfo = {
