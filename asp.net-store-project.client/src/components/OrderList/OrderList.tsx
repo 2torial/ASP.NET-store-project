@@ -29,6 +29,7 @@ function OrderList() {
     };
 
     orders?.forEach((order) => order.stageHistory.sort((a, b) => a.timeStamp.localeCompare(b.timeStamp)));
+    orders?.sort((a, b) => b.stageHistory[0].timeStamp.localeCompare(a.stageHistory[0].timeStamp));
     orders?.forEach((order) => console.log(order));
 
     return <main className="orders">{orders === undefined
