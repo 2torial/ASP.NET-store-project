@@ -3,12 +3,13 @@
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class Supplier(
-        string name, string baseAdress, 
+        string name, 
+        string baseAdress, 
+        string storeExternalId,
         string filteredProductsRequestAdress, 
         string selectedProductsRequestAdress, 
         string displayedProductRequestAdress,
         string orderListRequestAdress,
-        string orderSummaryRequestAdress,
         string orderAcceptRequestAdress,
         string orderCancelRequestAdress,
         decimal profitMultiplier = 0.15m) // 0.10m equals 10% profit
@@ -16,6 +17,8 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public string Name { get; set; } = name;
+
+        public string StoreExternalId { get; set; } = storeExternalId;
 
         public string BaseAdress { get; set; } = baseAdress;
 
@@ -26,8 +29,6 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
         public string DisplayedProductRequestAdress { get; set; } = displayedProductRequestAdress;
 
         public string OrderListRequestAdress { get; set; } = orderListRequestAdress;
-
-        public string OrderSummaryRequestAdress { get; set; } = orderSummaryRequestAdress;
 
         public string OrderAcceptRequestAdress { get; set; } = orderAcceptRequestAdress;
 

@@ -28,7 +28,7 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
 
             var hashedPassword = new SimplePasswordHasher().HashPassword(credentials.PassWord);
 
-            context.Users.Add(new User(credentials.UserName, hashedPassword));
+            context.Add(new User(credentials.UserName, hashedPassword));
             context.SaveChanges();
             return Ok("Account created succesfully");
         }

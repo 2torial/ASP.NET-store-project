@@ -27,7 +27,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
             var orderList = await MultipleRequestsEndpoint<IEnumerable<OrderInfo>>
                 .GetAsync(suppliers,
-                    sup => new(httpClientFactory.CreateClient(sup.Name), $"{sup.OrderListRequestAdress}/[0]/{customer.Id}"),
+                    sup => new(httpClientFactory.CreateClient(sup.Name), $"{sup.OrderListRequestAdress}/{sup.StoreExternalId}/{customer.Id}"),
                     (sup, orders) => orders?.Select(order => new OrderInfo(
                         order.Id, 
                         sup.Id.ToString(), 

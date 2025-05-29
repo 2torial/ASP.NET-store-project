@@ -69,7 +69,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 .PostAsync(confirmedProductsBatch,
                     groupedProds => new(
                         httpClientFactory.CreateClient(groupedProds!.Supplier.Name),
-                        $"{groupedProds.Supplier.OrderAcceptRequestAdress}/[0]/{customer.Id}",
+                        $"{groupedProds.Supplier.OrderAcceptRequestAdress}/{groupedProds.Supplier.StoreExternalId}/{customer.Id}",
                         JsonContentConverter.Convert(new OrderInfo(
                             groupedProds.Products!, 0,
                             orderData.CustomerDetails,
@@ -100,8 +100,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 return this.SingleErrorBadRequest("Failed to issue an order.");
             }
 
-            context.BasketProducts
-                .RemoveRange(selectedProducts);
+            context.RemoveRange(selectedProducts);
             context.SaveChanges();
 
             return Ok("Order summarized successfuly.");
@@ -123,8 +122,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             if (selectedProduct != null)
                 selectedProduct.Quantity += 1;
             else
-                context.BasketProducts.Add(
-                    new BasketProduct(productId, customer.Id, supplierId, 1));
+                context.Add(new BasketProduct(productId, customer.Id, supplierId, 1));
             context.SaveChanges();
 
             return Ok($"Added product {supplierId}:{productId} (user: {customer.UserName}).");
@@ -147,7 +145,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             {
                 selectedProduct.Quantity -= 1;
                 if (selectedProduct.Quantity == 0)
-                    context.BasketProducts.Remove(selectedProduct);
+                    context.Remove(selectedProduct);
                 context.SaveChanges();
             }
             

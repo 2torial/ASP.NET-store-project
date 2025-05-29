@@ -1,12 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ASP.NET_store_project.Server.Data.DataRevised
+﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class CustomerDetails(Guid userId, string name, string surname, string phoneNumber, string email)
+    public class ContactDetails(string name, string surname, string phoneNumber, string email)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-
-        public Guid UserId { get; set; } = userId;
 
         public string Name { get; set; } = name;
 

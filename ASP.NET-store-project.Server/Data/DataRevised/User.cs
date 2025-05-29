@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ASP.NET_store_project.Server.Data.DataRevised
+﻿namespace ASP.NET_store_project.Server.Data.DataRevised
 {
     public class User(string userName, string passWord, bool isAdmin = false)
     {
@@ -12,11 +10,6 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 
         public bool IsAdmin { get; set; } = isAdmin;
 
-
-
-        public CustomerDetails CustomerDetails { get; set; } = null!;
-
-        public AdressDetails AdressDetails { get; set; } = null!;
 
         public List<BasketProduct> BasketProducts { get; set; } = [];
 
