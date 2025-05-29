@@ -9,13 +9,13 @@ namespace Unit_Tests
         {
         }
 
-        // profit = cost * multiplier
-        // if profit > 5: profit = 5
-        // storeCost = cost + profit + cleanReminder (.00 or .50 or .99)
+        // baseProfit = cost * multiplier
+        // baseProfit = 5 if baseProfit <= 5
+        // storeCost = cost + baseProfit + [something to achieve a clean reminder: .00 or .50 or .99]
         [Test]
         public void TestCalculate()
         {
-            // cost or multiplier <= 0 cases (unprofitable)
+            // cost or multiplier <= 0 (unprofitable)
             int[] trivialParams = [-1, 0, 1];
             var trivialCases = trivialParams
                 .SelectMany(_ => trivialParams, (x, y) => (x, y))
@@ -25,14 +25,14 @@ namespace Unit_Tests
 
             decimal[] cleanReminders = [0, 0.5m, 0.99m];
 
-            // baseProfit <= 5 (cases picked to result in clean reminders)
+            // baseProfit <= 5 (results with clean reminders)
             (decimal, decimal)[] profit5Cases = [(1, 5), (2.5m, 2), (4, 0.25m), (3, 0.01m), (100, 0.04m), (100, 0.05m)];
             foreach (var (cost, multiplier) in profit5Cases)
                 Assert.That(StorePriceCalculator.Calculate(cost, multiplier), 
                     Is.EqualTo(cost + 5),
                     $"cost:{cost}|multiplier:{multiplier}");
 
-            // baseProfit <= 5 (cases picked to result in non-clean reminders)
+            // baseProfit <= 5 (results without clean reminders)
             profit5Cases = [(0.98m, 5), (2.4m, 2), (3.8m, 0.25m), (100.1m, 0.04m), (99.1m, 0.05m)];
             foreach (var (cost, multiplier) in profit5Cases)
                 Assert.That(StorePriceCalculator.Calculate(cost, multiplier), 
