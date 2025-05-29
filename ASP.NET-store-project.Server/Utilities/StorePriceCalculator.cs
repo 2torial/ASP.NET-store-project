@@ -5,18 +5,17 @@
         public static decimal Calculate(decimal cost, decimal multiplier)
         {
             var profitBase = cost * multiplier;
-            if (profitBase <= 0)
+            if (cost <= 0 || multiplier <= 0 || profitBase <= 0)
                 throw new Exception("No profit exception");
             if (profitBase <= 5)
                 profitBase = 5;
 
-            var profit = profitBase + AmountUntilGoodLookingReminder(cost + profitBase);
-            return cost + profit;
+            return cost + profitBase + AmountUntilGoodLookingReminder(cost + profitBase);
         }
 
         private static decimal AmountUntilGoodLookingReminder(decimal price)
         {
-            var reminder = Math.Ceiling(price) - price;
+            var reminder = price - Math.Floor(price);
             return reminder switch
             {
                 0 or 0.5m or 0.99m => 0,
