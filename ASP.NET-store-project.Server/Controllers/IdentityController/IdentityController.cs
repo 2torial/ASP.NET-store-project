@@ -3,6 +3,7 @@ using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models;
 using ASP.NET_store_project.Server.Utilities;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -26,10 +27,14 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
             if (context.Users.Any(customer => customer.UserName == credentials.UserName))
                 return BadRequest("User already exists.");
 
-            var hashedPassword = new SimplePasswordHasher().HashPassword(credentials.PassWord);
+            var user = new User(credentials.UserName, "");
+            PasswordHasher<User> passwordHasher = new();
+            var hashedPassword = passwordHasher.HashPassword(user, credentials.PassWord);
+            user.PassWord = hashedPassword;
 
-            context.Add(new User(credentials.UserName, hashedPassword));
+            context.Add(user);
             context.SaveChanges();
+
             return Ok("Account created succesfully");
         }
 
@@ -45,8 +50,10 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
             if (user == null)
                 return BadRequest("Username or password is incorrect.");
 
-            try { new SimplePasswordHasher().VerifyHash(user.PassWord, credentials.PassWord); }
-            catch (UnauthorizedAccessException) { return BadRequest("Username or password is incorrect."); }
+            PasswordHasher<User> passwordHasher = new();
+            var result = passwordHasher.VerifyHashedPassword(user, user.PassWord, credentials.PassWord);
+            if (result == PasswordVerificationResult.Failed)
+                return BadRequest("Username or password is incorrect.");
 
             List<CustomClaim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
             if (user.IsAdmin)
