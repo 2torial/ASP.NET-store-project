@@ -8,7 +8,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Configures clients meant for communicating with Suppliers' external APIs
+// All requests are handled through json
 var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
 {
     httpClient.BaseAddress = new Uri(uriAdress);
@@ -16,11 +17,12 @@ var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
     httpClient.DefaultRequestHeaders.Add(
         HeaderNames.Accept, "application/json");
 };
-
+// Supliers' request adresses
 builder.Services.AddHttpClient("SupplierA", configSupplier("https://localhost:5173/api/supplier/[A]/"));
 builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:5173/api/supplier/[B]/"));
 builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/[C]/"));
 
+// Configures authentication/authorization method (JWT)
 builder.Services.AddAuthentication(auth =>
 {
     auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,10 +60,11 @@ builder.Services.AddAuthorizationBuilder()
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Database configuration (this program uses postgres), it retrieves data from appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("StoreDatabase"))
 );
