@@ -1,5 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class Item(string categoryId, string name, decimal price, int quantity, string thumbnailLink, string pageContent = "", bool isAvaliable = false)
     {
         public Guid Id { get; set; } = Guid.NewGuid();

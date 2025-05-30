@@ -1,5 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataRevised
 {
+    // Internal database table model
     public class User(string userName, string passWord, bool isAdmin = false)
     {
         public Guid Id { get; set; } = Guid.NewGuid();

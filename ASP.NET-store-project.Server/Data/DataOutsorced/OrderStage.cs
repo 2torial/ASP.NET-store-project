@@ -2,6 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class Stage(string type)
     {
         [Key]
@@ -10,6 +11,7 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
 
     }
 
+    // Supplier's database table model
     public class OrderStage(Guid orderId, string stageId)
     {
         public Guid OrderId { get; set; } = orderId;

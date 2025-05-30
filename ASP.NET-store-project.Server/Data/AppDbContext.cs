@@ -4,12 +4,13 @@ using ASP.NET_store_project.Server.Data.Enums;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Extensions;
-using System.Linq;
 
 namespace ASP.NET_store_project.Server.Data
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
+        // Configures database data not discovered by EF convention
+        // Populates the database with basic semi-randomized data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -64,7 +65,7 @@ namespace ASP.NET_store_project.Server.Data
                 new("root", new SimplePasswordHasher().HashPassword("root"), true)];
             modelBuilder.Entity<User>().HasData(users);
 
-            Store[] stores = [new("[0]")];
+            Store[] stores = [new("Store")];
             modelBuilder.Entity<Store>().HasData(stores);
 
             ClientDetails[] clientDetails = [
