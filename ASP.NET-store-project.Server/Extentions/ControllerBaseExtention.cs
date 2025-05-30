@@ -2,6 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Extentions
 {
+    // Extension for simplified and uniform way of returning errors in case of not having a construct to do it for you (example: FluentValidation)
     public static class ControllerBaseExtention
     {
         public static BadRequestObjectResult SingleErrorBadRequest(this ControllerBase controller, string name, string message) =>
