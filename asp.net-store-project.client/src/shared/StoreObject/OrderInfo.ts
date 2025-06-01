@@ -7,7 +7,7 @@ export type OrderInfo = {
     supplierId: string;
     supplierName: string;
     productsCost: number;
-    transportCost: number;
+    deliveryCost: number;
     deliveryMethod: DeliveryMethod,
     products: ProductInfo[];
     customerDetails: CustomerInfo;
