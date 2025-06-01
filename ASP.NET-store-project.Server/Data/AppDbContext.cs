@@ -55,6 +55,8 @@ namespace ASP.NET_store_project.Server.Data
                 .ToTable("ItemOrder");
 
             modelBuilder.Entity<OrderStage>()
+                .ToTable("OrderStage");
+            modelBuilder.Entity<OrderStage>()
                 .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
 
             modelBuilder.Entity<Store>()
