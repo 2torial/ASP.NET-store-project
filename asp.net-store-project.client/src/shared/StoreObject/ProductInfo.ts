@@ -1,3 +1,4 @@
+// Client-side ProductInfo equivalent
 export type ProductInfo = {
     id: string;
     basketId: string;
@@ -11,6 +12,7 @@ export type ProductInfo = {
     pageContent: string;
 };
 
+// Client-side ProductTag equivalent
 export type ProductTag = {
     label: string;
     parameter: string;

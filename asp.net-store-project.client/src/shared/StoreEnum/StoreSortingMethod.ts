@@ -1,3 +1,4 @@
+// Client-side SortingMethod equivalent
 export enum SortingMethod {
 	ByName,
 	ByPrice,

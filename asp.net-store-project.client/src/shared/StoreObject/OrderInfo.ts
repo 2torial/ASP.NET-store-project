@@ -1,6 +1,7 @@
 import { DeliveryMethod } from "../StoreEnum/DeliveryMethod";
 import { ProductInfo } from "./ProductInfo";
 
+// Client-side OrderInfo equivalent
 export type OrderInfo = {
     id: string;
     supplierId: string;
@@ -14,6 +15,7 @@ export type OrderInfo = {
     stageHistory: OrderStageInfo[];
 };
 
+// Client-side CustomerInfo equivalent
 export type CustomerInfo = {
     name: string;
     surname: string;
@@ -21,6 +23,7 @@ export type CustomerInfo = {
     email: string;
 }
 
+// Client-side AdressInfo equivalent
 export type AdressInfo = {
     region: string;
     city: string;
@@ -30,6 +33,7 @@ export type AdressInfo = {
     apartmentNumber?: string;
 }
 
+// Client-side OrderStageInfo equivalent
 export type OrderStageInfo = {
     type: string;
     dateOfCreation: string;
