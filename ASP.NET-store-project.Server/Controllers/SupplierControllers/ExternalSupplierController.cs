@@ -8,16 +8,19 @@ using Microsoft.OpenApi.Extensions;
 
 namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
 {
+    // supplierKey used in code below is a way to differentiate suppliers and their individual "databases" from eachother while keeping everything localy under the same database
+    // Request adresses would differ from API to API but here those are uniform, despite that all adresses are stored separately in Supplier table to imitate reality
     [ApiController]
     [Route("[controller]")]
     public class ExternalSupplierController(AppDbContext context) : ControllerBase
     {
-        [HttpGet("/api/supplier/{supplierKey}/filter/{category}")] // supplierKey is not part of an API, it is used solely for this project to differentiate "virtual" suppliers
+        // Returns all products of given category with just enough information to filter them further
+        [HttpGet("/api/supplier/{supplierKey}/filter/{category}")]
         public IActionResult CategorizedProducts([FromRoute] ProductCategory category, [FromRoute] string supplierKey)
         {
-            // Category filtering
+            // Retrieves avaliable products of selected category with at least one tag included with some other data and returns it
             var categorizedProducts = context.Items
-                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .Where(item => item.SupplierKey == supplierKey)
                 .Where(item => item.Category.Type == category.GetDisplayName())
                 .Where(item => !item.IsAvaliable)
                 .Where(item => item.Configurations.Count != 0)
@@ -34,14 +37,19 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             return Ok(categorizedProducts);
         }
 
+        // Returns products selected by their ID with extended information compared to CategorizedProducts()
         [HttpPost("/api/supplier/{supplierKey}/select")]
         public IActionResult SelectedProducts([FromBody] IEnumerable<ProductInfo> selectedProductInfos, [FromRoute] string supplierKey)
         {
+            // Retrieves IDs from recieved ProductInfos
             var selectedIds = selectedProductInfos
                 .Select(prod => prod.Id);
                 
+            // Filters products by selected IDs then joins what's left with recieved ProductInfos
+            // Some information is taken from recieved data, some from database
+            // If demanded quantity is not avaliable, it is set to maximum avaliable amount
             var selectedProducts = context.Items
-                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .Where(item => item.SupplierKey == supplierKey)
                 .Where(item => selectedProductInfos
                     .Select(prod => prod.Id)
                     .Contains(item.Id.ToString()))
@@ -64,9 +72,11 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             return Ok(selectedProducts);
         }
 
+        // Returns past orders from specific client
         [HttpGet("/api/supplier/{supplierKey}/orders/{storeId}/{customerId}")]
         public IActionResult OrderedProducts([FromRoute] string supplierKey, [FromRoute] string storeId, [FromRoute] string customerId)
         {
+            // Identify client
             var client = context.ClientDetails
                 .Include(details => details.Orders)
                     .ThenInclude(order => order.ItemOrders)
@@ -85,6 +95,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             if (client == null)
                 return BadRequest("Unknown client or store ID.");
 
+            // Find past orders and return it as list-type of OrderInfo
             var orderedProducts = client.Orders
                 .Where(order => order.SupplierKey == supplierKey) // Technically it's not a part of this API, it is a trick to keep "external APIs" localy
                 .Select(order => new { order.Id, order.ItemOrders, order.ContactDetails, order.AdressDetails, order.OrderStages, order.DeliveryCost, order.DeliveryMethod })
@@ -124,22 +135,25 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             return Ok(orderedProducts);
         }
 
+        // Creates order in the database
         [HttpPost("/api/supplier/{supplierKey}/accept/{storeId}/{customerId}")]
         public IActionResult AcceptOrder([FromBody] OrderInfo orderInfo, [FromRoute] string supplierKey, [FromRoute] string storeId, [FromRoute] string customerId)
         {
-            var summaries = orderInfo.Products.Select(prod => new { Id = Guid.Parse(prod.Id ?? Guid.Empty.ToString()), prod.Quantity, prod.Price });
-            var orderedIds = summaries.Select(summary => summary.Id);
-
-            var items = context.Items
-                .Where(item => item.SupplierKey == supplierKey)
-                .Where(item => orderedIds.Contains(item.Id))
-                .AsEnumerable();
-
+            // Identify store which requests an order
             var store = context.Stores
                 .SingleOrDefault(store => store.Id.ToString() == storeId);
             if (store == null)
                 return BadRequest("Given store ID is absent from the database");
 
+            // Identify ordered products' data
+            var summaries = orderInfo.Products.Select(prod => new { Id = Guid.Parse(prod.Id ?? Guid.Empty.ToString()), prod.Quantity, prod.Price });
+            var orderedIds = summaries.Select(summary => summary.Id);
+            var items = context.Items
+                .Where(item => item.SupplierKey == supplierKey)
+                .Where(item => orderedIds.Contains(item.Id))
+                .AsEnumerable();
+
+            // Add contact details based on recieved data (not saved)
             ContactDetails contactDetails = new(
                 orderInfo.CustomerDetails.Name,
                 orderInfo.CustomerDetails.Surname,
@@ -147,6 +161,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 orderInfo.CustomerDetails.Email);
             context.Add(contactDetails);
 
+            // Add adress details based on recieved data (not saved)
             AdressDetails adressDetails = new(
                 orderInfo.AdressDetails.Region,
                 orderInfo.AdressDetails.City,
@@ -156,6 +171,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 orderInfo.AdressDetails.ApartmentNumber);
             context.Add(adressDetails);
 
+            // Identify client or create new client record (not saved)
             ClientDetails? client = context.ClientDetails
                 .FirstOrDefault(client => client.ClientExternalId == customerId && client.StoreId == store.Id);
             if (client == null)
@@ -164,9 +180,11 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                 context.Add(client);
             }
 
+            // Create order (not saved)
             Order order = new(contactDetails.Id, adressDetails.Id, client.Id, orderInfo.DeliveryCost, orderInfo.DeliveryMethod) { SupplierKey = supplierKey };
             context.Add(order);
-            
+
+            // Add items to the order (not saved), if quantity is not met, set it to -1
             ItemOrder[] itemOrders = [.. items.Join(summaries,
                 item => item.Id,
                 summary => summary.Id,
@@ -178,36 +196,43 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                     "https://placehold.co/150x150"))];
             context.AddRange(itemOrders);
 
+            // Set order stage to Created (not saved)
             OrderStage orderStage = new(order.Id, StageOfOrder.Created.GetDisplayName());
             context.Add(orderStage);
 
+            // If some of requested products are missing or have insufficient quantity – abort
             if (itemOrders.Length < summaries.Count() || itemOrders.Any(itemOrder => itemOrder.Quantity < 0))
                 return BadRequest("Not all products are aviable for sell");
-            
+
+            // Save and return new order ID
             context.SaveChanges();
 
             return Ok(order.Id);
         }
 
+        // Cancels already accepted order
         [HttpPost("/api/supplier/{supplierKey}/cancel/{storeId}/{orderId}")]
         public IActionResult CancelOrder([FromRoute] string supplierKey, [FromRoute] string storeId, [FromRoute] Guid orderId)
         {
+            // Abort if order can't be identified
             if (!context.Orders
                 .Include(order => order.ClientDetails)
                 .Any(order => order.SupplierKey == supplierKey && order.ClientDetails.StoreId.ToString() == storeId))
                     return BadRequest("Invalid credentials");
 
+            // Change stage of the order to Canceled
             OrderStage orderStage = new(orderId, StageOfOrder.Canceled.GetDisplayName());
             context.Add(orderStage);
             context.SaveChanges();
             return Ok("Order canceled successfuly");
         }
 
+        // Returns product's page data
         [HttpGet("/api/supplier/{supplierKey}/display/{productId}")]
         public IActionResult DisplayProduct([FromRoute] string supplierKey, [FromRoute] string productId)
         {
             var product = context.Items
-                .Where(item => item.SupplierKey == supplierKey) // Technically it's not a part of this API, that is a trick to keep "external APIs" localy
+                .Where(item => item.SupplierKey == supplierKey)
                 .SingleOrDefault(item => productId == item.Id.ToString());
 
             return product == null ? NotFound() : Ok(product.PageContent);

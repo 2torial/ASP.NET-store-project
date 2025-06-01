@@ -4,6 +4,7 @@ using FluentValidation;
 
 namespace ASP.NET_store_project.Server.Controllers.BasketController
 {
+    // FromFrom request data class
     public record OrderSummaryData(IEnumerable<Order> Orders, CustomerInfo CustomerDetails, AdressInfo AdressDetails);
     public record Order(IEnumerable<Guid> ProductBasketIds, DeliveryMethod DeliveryMethod);
 

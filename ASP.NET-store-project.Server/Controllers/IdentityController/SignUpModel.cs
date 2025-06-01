@@ -2,6 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Controllers.IdentityController
 {
+    // FromFrom request data class
     public record SignUpModel(string UserName, string PassWord, string RetypedPassWord);
 
     public class SignUpValidator : AbstractValidator<SignUpModel>

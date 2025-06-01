@@ -14,9 +14,11 @@ namespace ASP.NET_store_project.Server.Controllers
     [Authorize(Policy = IdentityData.RegularUserPolicyName)]
     public class OrdersPanelController(AppDbContext context, IHttpClientFactory httpClientFactory) : ControllerBase
     {
+        // Collects past orders from suppliers and returns it to the client
         [HttpGet("/api/orders")]
         public async Task<IActionResult> GetOrders()
         {
+            // Identifies the user
             var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
@@ -25,6 +27,7 @@ namespace ASP.NET_store_project.Server.Controllers
 
             var suppliers = context.Suppliers.AsEnumerable();
 
+            // Requests past orders from suppliers and populates missing data from recieved OrderInfos
             var orderList = await MultipleRequestsEndpoint<IEnumerable<OrderInfo>>
                 .GetAsync(suppliers,
                     sup => new(httpClientFactory.CreateClient(sup.Name), $"{sup.OrderListRequestAdress}/{sup.StoreExternalId}/{customer.Id}"),
@@ -32,16 +35,17 @@ namespace ASP.NET_store_project.Server.Controllers
                         order.Id, 
                         sup.Id.ToString(), 
                         sup.Name,
-                        order.Products.Aggregate(0m, (acc, prod) => acc + prod.Price * prod.Quantity),
+                        order.Products.Aggregate(0m, (acc, prod) => acc + prod.Price * prod.Quantity), // Sums ordered products' prices
                         order.DeliveryCost,
                         order.DeliveryMethod,
-                        order.Products.Select(prod => prod.NewModified(sup, adjustPrice: false)),
+                        order.Products.Select(prod => prod.NewModified(sup, adjustPrice: false)), // Doesn't adjust because suppliers store past store prices
                         order.CustomerDetails, 
                         order.AdressDetails, 
                         order.StageHistory)))
                 .ContinueWith(ordersBatch => ordersBatch.Result
                     .SelectMany(orders => orders ?? []));
 
+            // Returns component data
             return Ok(new OrderListComponentData(orderList));
         }
     }

@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
+    // Requires admin privileges
     [ApiController]
     [Route("[controller]")]
     [Authorize(Policy = IdentityData.AdminUserPolicyName)]
     public class AdminPanelController(AppDbContext context) : ControllerBase
     {
+        // Retrieves all users' information
         [HttpGet("/api/admin/users")]
         public IActionResult GetUsers()
         {
