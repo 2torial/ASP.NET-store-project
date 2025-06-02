@@ -1,8 +1,7 @@
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Data.DataRevised;
+using ASP.NET_store_project.Server.Extentions;
 using ASP.NET_store_project.Server.Models;
-using ASP.NET_store_project.Server.Utilities;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -24,7 +23,7 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
 
             // Check if user of given username already exists
             if (context.Users.Any(customer => customer.UserName == credentials.UserName))
-                return BadRequest("User already exists.");
+                return this.SingleErrorBadRequest("UserName", "This username is already taken.");
             
             var user = new User(credentials.UserName, "");
             PasswordHasher<User> passwordHasher = new();
@@ -37,7 +36,7 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
             return Ok("Account created succesfully");
         }
 
-        // Authorizes user
+        // Authenticates the user
         [HttpPost("/api/account/login")]
         public IActionResult LogIn([FromForm] SignInModel credentials)
         {
@@ -45,12 +44,12 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
             var user = context.Users
                 .SingleOrDefault(customer => customer.UserName == credentials.UserName);
             if (user == null)
-                return BadRequest("Username or password is incorrect.");
+                return this.SingleErrorBadRequest("UserName", "Username or password is incorrect.");
 
             PasswordHasher<User> passwordHasher = new();
             var result = passwordHasher.VerifyHashedPassword(user, user.PassWord, credentials.PassWord);
             if (result == PasswordVerificationResult.Failed)
-                return BadRequest("Username or password is incorrect.");
+                return this.SingleErrorBadRequest("UserName", "Username or password is incorrect.");
 
             // Add claims based on user's privileges
             List<Claim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
@@ -93,9 +92,6 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
 
             // If there is no username included in the token - anonymous
             var userId = new JsonWebToken(token).Subject;
-
-            Console.WriteLine("AAAAAA");
-            Console.WriteLine(new JsonWebToken(token).GetClaim("user").ToString());
 
             if (userId == null || userId == "") 
                 return Ok(IdentityData.AnonymousUserPolicyName);
