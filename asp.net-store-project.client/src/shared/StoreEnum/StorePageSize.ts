@@ -1,3 +1,4 @@
+// Client-side PageSize equivalent
 export enum PageSize {
 	Take20,
 	Take50,

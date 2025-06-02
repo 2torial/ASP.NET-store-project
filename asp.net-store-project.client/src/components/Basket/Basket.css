@@ -5,6 +5,14 @@
     width: 80%;
 }
 
+.basket table {
+    width: 100%;
+}
+
+.basket table th, .basket table td {
+    width: fit-content;
+}
+
 .basket h1 {
     font-size: 19px;
     font-weight: 500;
@@ -18,7 +26,7 @@
 
 .basket .supplier-cart .basketed-item {
     display: grid;
-    grid-template-columns: 100px auto;
+    grid-template-columns: 20px 100px auto;
     column-gap: 10px;
 }
 

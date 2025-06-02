@@ -1,3 +1,4 @@
+// Client-side ProductCategory equivalent
 export enum ProductCategory {
 	Headset,
 	Microphone,

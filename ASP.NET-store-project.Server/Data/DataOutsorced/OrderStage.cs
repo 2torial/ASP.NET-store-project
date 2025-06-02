@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class Stage(string type)
     {
         [Key]
@@ -11,6 +11,7 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
 
     }
 
+    // Supplier's database table model
     public class OrderStage(Guid orderId, string stageId)
     {
         public Guid OrderId { get; set; } = orderId;
@@ -20,9 +21,8 @@ namespace ASP.NET_store_project.Server.Data.DataOutsorced
 
         public Stage Stage { get; set; } = null!;
 
-        public DateOnly DateOfCreation { get; set; }
+        public DateTime DateOfCreation { get; set; }
 
-        public TimeOnly TimeOfCreation { get; set; }
     }
 
 }

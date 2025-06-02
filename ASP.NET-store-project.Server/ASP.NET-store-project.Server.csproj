@@ -9,6 +9,7 @@
     <SpaRoot>..\asp.net-store-project.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <UserSecretsId>eb73db3d-6178-497e-92e5-5cc07d2d168c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

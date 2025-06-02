@@ -1,22 +1,31 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
-    public class Order(Guid adresseeDetailsId, decimal transportCost, string storeId, string customerId)
+    // Supplier's database table model
+    public class Order(Guid contactDetailsId, Guid adressDetailsId, Guid clientDetailsId, decimal deliveryCost, string deliveryMethodId)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public required string SupplierKey { get; set; } // Not part of the API, it's essential to create "virtual suppliers" localy
 
-        public Guid AdresseeDetailsId { get; set; } = adresseeDetailsId;
+        public Guid ContactDetailsId { get; set; } = contactDetailsId;
 
-        public decimal TransportCost { get; set; } = transportCost;
+        public Guid AdressDetailsId { get; set; } = adressDetailsId;
 
-        public string StoreId { get; set; } = storeId;
+        public Guid ClientDetailsId { get; set; } = clientDetailsId;
 
-        public string CustomerId { get; set; } = customerId;
+        public decimal DeliveryCost { get; set; } = deliveryCost;
+
+        public string DeliveryMethodId { get; set; } = deliveryMethodId;
 
 
 
-        public AdresseeDetails AdresseeDetails { get; set; } = null!;
+        public ContactDetails ContactDetails { get; set; } = null!;
+
+        public AdressDetails AdressDetails { get; set; } = null!;
+
+        public ClientDetails ClientDetails { get; set; } = null!;
+
+        public OrderDeliveryMethod DeliveryMethod { get; set; } = null!;
 
         public List<ItemOrder> ItemOrders { get; } = [];
 
@@ -24,6 +33,7 @@
 
     }
 
+    // Supplier's database table model
     public class ItemOrder(Guid itemId, Guid orderId, decimal storePrice, int quantity, string thumbnailLink)
     {
         public Guid ItemId { get; set; } = itemId;

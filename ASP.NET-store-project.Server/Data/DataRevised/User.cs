@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ASP.NET_store_project.Server.Data.DataRevised
+﻿namespace ASP.NET_store_project.Server.Data.DataRevised
 {
+    // Internal database table model
     public class User(string userName, string passWord, bool isAdmin = false)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -12,11 +11,6 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 
         public bool IsAdmin { get; set; } = isAdmin;
 
-
-
-        public CustomerDetails CustomerDetails { get; set; } = null!;
-
-        public AdressDetails AdressDetails { get; set; } = null!;
 
         public List<BasketProduct> BasketProducts { get; set; } = [];
 

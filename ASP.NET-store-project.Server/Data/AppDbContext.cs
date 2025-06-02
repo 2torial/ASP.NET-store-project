@@ -9,6 +9,8 @@ namespace ASP.NET_store_project.Server.Data
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
+        // Configures database data not discovered by EF convention
+        // Populates the database with basic semi-randomized data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -49,26 +51,41 @@ namespace ASP.NET_store_project.Server.Data
                 .WithMany()
                 .UsingEntity<OrderStage>();
 
+            modelBuilder.Entity<ItemOrder>()
+                .ToTable("ItemOrder");
+
+            modelBuilder.Entity<OrderStage>()
+                .ToTable("OrderStage");
             modelBuilder.Entity<OrderStage>()
                 .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
-            modelBuilder.Entity<OrderStage>()
-                .Property(e => e.TimeOfCreation).HasDefaultValueSql("NOW()");
+
+            modelBuilder.Entity<Store>()
+                .ToTable("Store");
 
             User[] users = [
                 new("user", new SimplePasswordHasher().HashPassword("user")),
                 new("root", new SimplePasswordHasher().HashPassword("root"), true)];
             modelBuilder.Entity<User>().HasData(users);
 
+            Store[] stores = [new("Store")];
+            modelBuilder.Entity<Store>().HasData(stores);
+
+            ClientDetails[] clientDetails = [
+                new(stores[0].Id, users[0].Id.ToString()),
+                new(stores[0].Id, users[1].Id.ToString())
+            ];
+            modelBuilder.Entity<ClientDetails>().HasData(clientDetails);
+
             string[] supplierKeys = ["[A]", "[B]", "[C]"];
             Supplier[] suppliers = [.. supplierKeys
                 .Select(key => new Supplier(
                     $"Supplier{key[1]}", 
-                    "https://localhost:5173", 
+                    "https://localhost:5173",
+                    stores[0].Id.ToString(),
                     "filter", 
                     "select", 
                     "display",
                     "orders", 
-                    "summary", 
                     "accept", 
                     "cancel"))];
             modelBuilder.Entity<Supplier>().HasData(suppliers);
@@ -81,10 +98,10 @@ namespace ASP.NET_store_project.Server.Data
             };
 
             Category[] categories = [
-                new("Laptop"),
-                new("Headset"),
-                new("Microphone"),
-                new("PersonalComputer")];
+                new(ProductCategory.Laptop.GetDisplayName()),
+                new(ProductCategory.Headset.GetDisplayName()),
+                new(ProductCategory.Microphone.GetDisplayName()),
+                new(ProductCategory.PersonalComputer.GetDisplayName())];
             modelBuilder.Entity<Category>().HasData(categories);
 
             Dictionary<string, Configuration[]> labeledConfigurations = new()
@@ -154,7 +171,7 @@ namespace ASP.NET_store_project.Server.Data
                             : 0;
                     var thumbnailLink = "https://placehold.co/150x150";
                     var content = $"This is a mockup content for {name}. There is no uniform way of creating product content implemented in this project, so for now it is stored as text.";
-                    return new Item(category.Type, name, price, 3, thumbnailLink, content) { SupplierKey = supplierKey };
+                    return new Item(category.Type, name, price, 10, thumbnailLink, content) { SupplierKey = supplierKey };
                 })];
             modelBuilder.Entity<Item>().HasData(items);
 
@@ -163,16 +180,6 @@ namespace ASP.NET_store_project.Server.Data
                     .Select(label => new ItemConfiguration(item.Id, labeledConfigurations[label][rand.Next(0, labeledConfigurations[label].Length)].Id)))
                 .SelectMany(itemConfigs => itemConfigs)];
             modelBuilder.Entity<ItemConfiguration>().HasData(itemConfigurations);
-
-            AdressDetails[] adressDetails = [
-                new(users[0].Id, "Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
-                new(users[1].Id, "Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15")];
-            modelBuilder.Entity<AdressDetails>().HasData(adressDetails);
-
-            CustomerDetails[] customerDetails = [
-                new(users[0].Id, "Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
-                new(users[1].Id, "Stanisław", "August", "03 05 1791 0", "stan3@rp.on")];
-            modelBuilder.Entity<CustomerDetails>().HasData(customerDetails);
 
             BasketProduct[] basketProducts = [.. Enumerable.Range(1, 14)
                 .Select(n => {
@@ -184,52 +191,72 @@ namespace ASP.NET_store_project.Server.Data
                 .GroupBy(item => item.ProductId, (_, sameItems) => sameItems.First())];
             modelBuilder.Entity<BasketProduct>().HasData(basketProducts);
 
-            var issuerDetails = customerDetails
-                .Join(adressDetails,
-                    custDetails => custDetails.UserId,
-                    adrDetails => adrDetails.UserId,
-                    (cd, ad) => new 
-                    { 
-                        CustomerId = cd.UserId.ToString(), 
-                        AdresseeDetails = new AdresseeDetails(
-                            cd.Name, cd.Surname, cd.PhoneNumber,  cd.Email,
-                            ad.Region, ad.City, ad.PostalCode, ad.StreetName, ad.HouseNumber, ad.ApartmentNumber) 
-                    });
+            AdressDetails[] adressDetails = [
+                new("Śląsk", "Bielsko-Biała", "43-300", "3 Maja", "17", "91"),
+                new("Dolny Śląsk", "Wrocław", "50-383", "Fryderyka Joliot-Curie", "15")];
+            modelBuilder.Entity<AdressDetails>().HasData(adressDetails);
 
-            AdresseeDetails[] adresseeDetails = [
-                issuerDetails.ElementAt(0).AdresseeDetails,
-                issuerDetails.ElementAt(1).AdresseeDetails];
-            modelBuilder.Entity<AdresseeDetails>().HasData(adresseeDetails);
+            ContactDetails[] customerDetails = [
+                new("Bartłomiej", "Żurowski", "29 02 2024 0", "bartżur@tlen.o2"),
+                new("Stanisław", "August", "03 05 1791 0", "stan3@rp.on")];
+            modelBuilder.Entity<ContactDetails>().HasData(customerDetails);
 
-            Order[] orders = [.. Enumerable.Range(1, 12)
-                .Select(n => n < 8
-                    ? new Order(adresseeDetails[0].Id, 5, "[0]", issuerDetails.ElementAt(0).CustomerId) { SupplierKey = supplierKeys[0] }
-                    : new Order(adresseeDetails[1].Id, 5, "[0]", issuerDetails.ElementAt(1).CustomerId) { SupplierKey = supplierKeys[1] })];
+            OrderDeliveryMethod[] deliveryMethods = [
+                new(DeliveryMethod.Standard.GetDisplayName()),
+                new(DeliveryMethod.Express.GetDisplayName())];
+            modelBuilder.Entity<OrderDeliveryMethod>().HasData(deliveryMethods);
+
+            Order[] orders = [
+                new Order(customerDetails[0].Id, adressDetails[0].Id, clientDetails[0].Id, 5, deliveryMethods[0].Type) { SupplierKey = supplierKeys[0] },
+                new Order(customerDetails[0].Id, adressDetails[0].Id, clientDetails[0].Id, 5, deliveryMethods[0].Type) { SupplierKey = supplierKeys[1] },
+                new Order(customerDetails[0].Id, adressDetails[0].Id, clientDetails[0].Id, 5, deliveryMethods[1].Type) { SupplierKey = supplierKeys[2] },
+                new Order(customerDetails[0].Id, adressDetails[0].Id, clientDetails[0].Id, 5, deliveryMethods[0].Type) { SupplierKey = supplierKeys[2] },
+                new Order(customerDetails[1].Id, adressDetails[1].Id, clientDetails[1].Id, 5, deliveryMethods[1].Type) { SupplierKey = supplierKeys[0] },
+                new Order(customerDetails[1].Id, adressDetails[1].Id, clientDetails[1].Id, 5, deliveryMethods[1].Type) { SupplierKey = supplierKeys[1] }];
             modelBuilder.Entity<Order>().HasData(orders);
 
+            var itemsA = items.Where(item => item.SupplierKey == supplierKeys[0]);
+            var itemsB = items.Where(item => item.SupplierKey == supplierKeys[1]);
+            var itemsC = items.Where(item => item.SupplierKey == supplierKeys[2]);
+
             ItemOrder[] itemOrders = [.. orders
-                .Select(order => Enumerable.Range(1, rand.Next(4, 8))
-                    .Select(n => new ItemOrder(items[n].Id, order.Id, 200, rand.Next(1, 3), items[n].ThumbnailLink))
-                    .GroupBy(itemOrder => itemOrder.ItemId, (_, sameItems) => sameItems.First())) // in case of distinct representation of the same items
-                .SelectMany(itemOrders => itemOrders)];
+                .Select(order => {
+                    var supplierItems = order.SupplierKey switch
+                    {
+                        "[A]" => itemsA,
+                        "[B]" => itemsB,
+                        "[C]" => itemsC,
+                        _ => throw new InvalidOperationException("Unknown supplier key"),
+                    };
+                    var usedItemIds = new List<Guid>();
+                    return Enumerable.Range(1, rand.Next(2, 5)) // 2-4 items
+                        .Select(_ => { // all items must be from the same supplier
+                            var item = supplierItems.ElementAt(rand.Next(0, supplierItems.Count()));
+                            while (usedItemIds.Contains(item.Id))
+                                item = supplierItems.ElementAt(rand.Next(0, supplierItems.Count()));
+                            usedItemIds.Add(item.Id);
+                            return new ItemOrder(item.Id, order.Id, 200, rand.Next(1, 4), item.ThumbnailLink);
+                        });
+                })
+                .SelectMany(e => e)];
             modelBuilder.Entity<ItemOrder>().HasData(itemOrders);
 
-            string[] stageTypes = [StageOfOrder.Created.GetDisplayName(), 
+            string[] stageTypes = [
+                StageOfOrder.Created.GetDisplayName(), 
                 StageOfOrder.Pending.GetDisplayName(), 
                 StageOfOrder.Finished.GetDisplayName(), 
                 StageOfOrder.Canceled.GetDisplayName()];
             Stage[] stages = [.. stageTypes.Select(type =>  new Stage(type))];
             modelBuilder.Entity<Stage>().HasData(stages);
 
-            OrderStage[] orderStages = [.. orders
-                .Select(order =>
-                {
-                    var r = rand.Next(0, 3);
-                    return r < 3
-                        ? Enumerable.Range(0, r).Select(n => new OrderStage(order.Id, stages[n].Type))
-                        : [new OrderStage(order.Id, stages[0].Type), new OrderStage(order.Id, stages[1].Type), new OrderStage(order.Id, stages[3].Type)];
-                })
-                .SelectMany(orderStages => orderStages)];
+            var now = DateTime.UtcNow;
+            OrderStage[] orderStages = [
+                new OrderStage(orders[0].Id, stages[0].Type),
+                new OrderStage(orders[1].Id, stages[0].Type), new OrderStage(orders[1].Id, stages[1].Type),
+                new OrderStage(orders[2].Id, stages[0].Type), new OrderStage(orders[2].Id, stages[1].Type), new OrderStage(orders[2].Id, stages[3].Type),
+                new OrderStage(orders[3].Id, stages[0].Type), new OrderStage(orders[3].Id, stages[1].Type), new OrderStage(orders[3].Id, stages[2].Type),
+                new OrderStage(orders[4].Id, stages[0].Type), new OrderStage(orders[4].Id, stages[1].Type), new OrderStage(orders[4].Id, stages[2].Type),
+                new OrderStage(orders[5].Id, stages[0].Type), new OrderStage(orders[5].Id, stages[3].Type)];
             modelBuilder.Entity<OrderStage>().HasData(orderStages);
 
         }
@@ -240,13 +267,11 @@ namespace ASP.NET_store_project.Server.Data
 
         public DbSet<Supplier> Suppliers { get; set; }
 
-        public DbSet<BasketProduct> BasketProducts { get; set; }
-
         public DbSet<Order> Orders { get; set; }
 
-        public DbSet<AdresseeDetails> AdresseeDetails { get; set; }
+        public DbSet<ClientDetails> ClientDetails { get; set; }
 
-        public DbSet<OrderStage> OrderStages { get; set; }
+        public DbSet<Store> Stores { get; set; }
 
     }
 }

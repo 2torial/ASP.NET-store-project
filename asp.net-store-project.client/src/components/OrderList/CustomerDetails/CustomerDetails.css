@@ -1,0 +1,7 @@
+.customer-details {
+    width: 100%;
+}
+
+.customer-details th, .customer-details td {
+    width: fit-content;
+}
