@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASP.NET-store-project.Serve
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "asp.net-store-project.client", "asp.net-store-project.client\asp.net-store-project.client.esproj", "{79707A94-4D8B-44F0-B3D9-97822B48BE81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit-Tests", "Unit-Tests\Unit-Tests.csproj", "{95C56D9A-D1EF-4015-849B-AFCF4837F58C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{79707A94-4D8B-44F0-B3D9-97822B48BE81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79707A94-4D8B-44F0-B3D9-97822B48BE81}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79707A94-4D8B-44F0-B3D9-97822B48BE81}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{95C56D9A-D1EF-4015-849B-AFCF4837F58C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C56D9A-D1EF-4015-849B-AFCF4837F58C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C56D9A-D1EF-4015-849B-AFCF4837F58C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C56D9A-D1EF-4015-849B-AFCF4837F58C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
