@@ -2,6 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
+    // Internal database table model
     public class BasketProduct(string productId, Guid customerId, Guid supplierId, int quantity)
     {
         private BasketProduct() : this("", Guid.NewGuid(), Guid.NewGuid(), 0) { }

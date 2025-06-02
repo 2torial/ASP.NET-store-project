@@ -2,6 +2,7 @@
 
 namespace ASP.NET_store_project.Server.Data.DataRevised
 {
+    // Internal database table model
     public class Supplier(
         string name, 
         string baseAdress, 
@@ -36,6 +37,7 @@ namespace ASP.NET_store_project.Server.Data.DataRevised
 
         public decimal ProfitMultiplier { get; set; } = profitMultiplier;
 
+        // Calculates store price based on present multiplier
         public decimal CalculateStorePrice(decimal cost) =>
             StorePriceCalculator.Calculate(cost, ProfitMultiplier);
     }

@@ -13,12 +13,4 @@
         public const string RegularUserPolicyName = "User";
     }
 
-    public class CustomClaim(string type, string value, string valueType)
-    {
-        public string Type { get; set; } = type;
-
-        public string Value { get; set; } = value;
-
-        public string ValueType { get; set; } = valueType;
-    }
 }

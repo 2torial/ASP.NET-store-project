@@ -1,3 +1,4 @@
+// Retrieves data from <form> of selected IDs
 export const collectData = (...ids: string[]): FormData => {
 	let data = undefined;
 	for (const id of ids) {
@@ -13,6 +14,7 @@ export const collectData = (...ids: string[]): FormData => {
 	return data !== undefined ? data : new FormData();
 };
 
+// Saved <form> IDs
 export enum FormID {
 	Basket = "basket",
 	Filters = "filters",

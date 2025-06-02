@@ -1,5 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class ClientDetails(Guid storeId, string clientExternalId)
     {
         public Guid Id { get; set; } = Guid.NewGuid();

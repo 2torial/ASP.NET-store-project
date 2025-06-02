@@ -27,6 +27,7 @@ function Basket() {
     const navigate = useNavigate();
     const [products, setProducts] = useState<ProductInfo[]>([]);
 
+    // Groupes products by their supplier
     const groupedProducts = Object.values(products.reduce(
         (acc: { [key: string]: ProductInfo[] }, prod) => {
             if (!acc[prod.supplierId])
@@ -41,19 +42,21 @@ function Basket() {
 
     const reload = async () => {
         const response = await fetch('/api/basket');
-        const data: BasketComponentData = await response.json();
-        console.log(data);
         if (response.ok) {
+            const data: BasketComponentData = await response.json();
+            console.log(data);
             setProducts(data.products);
             updatePrices(data.products);
         } else alert(await response.text());
     }
 
+    // Calculates delivery cost based on picked option
     const deliveryCostOf = (deliveryMethod: DeliveryMethod | null) =>
         deliveryMethod === DeliveryMethod.Standard
             ? 5 : deliveryMethod === DeliveryMethod.Express
                 ? 25 : 0;
-        
+
+    // Returns selected product ids of given supplier and their selected delivery cost if there is at least one product
     const readOrderData = (supplierId: string): [string[], DeliveryMethod | null] => {
         const data = collectData(`sup-${supplierId}`);
         const selectedIds = data.getAll("SelectedBasketIds").map(entry => entry.toString());
@@ -62,29 +65,23 @@ function Basket() {
         return [selectedIds, selectedIds.length > 0 ? deliveryMethod : null];
     }  
 
+    // If there are no selectedProducts, data is retrieved from <form>
+    // Otherwise it adds price * quantity from every product and standard delivery cost for every distinct product's supplier
     const updatePrices = (selectedProducts: ProductInfo[] | undefined = undefined) => {
-        let productsCost: number = 0;
-        let deliveryCost: number = 0;
-
-        if (selectedProducts === undefined) {
-            [productsCost, deliveryCost] = supplierIds.reduce((acc, supId) => {
+        const [productsCost, deliveryCost] = selectedProducts === undefined
+            ? supplierIds.reduce((acc, supId) => {
                 const [selectedIds, deliveryMethod] = readOrderData(supId);
-                return selectedIds.length === 0
-                    ? acc
-                    : [
-                        products.filter(prod => selectedIds.includes(prod.basketId)).reduce((cost, prod) => cost + prod.price * prod.quantity, acc[0]),
-                        acc[1] + deliveryCostOf(deliveryMethod)
-                    ];
-            }, [0, 0]);
-        } else {
-            [productsCost, deliveryCost] = [
+                return selectedIds.length === 0 ? acc : [
+                    products.filter(prod => selectedIds.includes(prod.basketId)).reduce((cost, prod) => cost + prod.price * prod.quantity, acc[0]),
+                    acc[1] + deliveryCostOf(deliveryMethod)
+                ];
+            }, [0, 0]) : [
                 selectedProducts.reduce((acc, prod) => acc + prod.price * prod.quantity, 0),
                 [...selectedProducts.reduce((acc, prod) => {
                     acc.add(prod.supplierId);
                     return acc;
                 }, new Set<string>())].length * deliveryCostOf(DeliveryMethod.Standard)
             ];
-        }
 
         setProductsPrice(productsCost);
         setDeliveryCost(deliveryCost);

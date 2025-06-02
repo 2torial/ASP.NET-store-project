@@ -1,5 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class Order(Guid contactDetailsId, Guid adressDetailsId, Guid clientDetailsId, decimal deliveryCost, string deliveryMethodId)
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -32,6 +33,7 @@
 
     }
 
+    // Supplier's database table model
     public class ItemOrder(Guid itemId, Guid orderId, decimal storePrice, int quantity, string thumbnailLink)
     {
         public Guid ItemId { get; set; } = itemId;

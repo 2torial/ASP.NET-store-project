@@ -1,3 +1,4 @@
+// Client-side DeliveryMethod equivalent
 export enum DeliveryMethod {
 	Standard,
 	Express

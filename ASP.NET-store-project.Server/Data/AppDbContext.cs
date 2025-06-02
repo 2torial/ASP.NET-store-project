@@ -9,6 +9,8 @@ namespace ASP.NET_store_project.Server.Data
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
+        // Configures database data not discovered by EF convention
+        // Populates the database with basic semi-randomized data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -53,6 +55,8 @@ namespace ASP.NET_store_project.Server.Data
                 .ToTable("ItemOrder");
 
             modelBuilder.Entity<OrderStage>()
+                .ToTable("OrderStage");
+            modelBuilder.Entity<OrderStage>()
                 .Property(e => e.DateOfCreation).HasDefaultValueSql("NOW()");
 
             modelBuilder.Entity<Store>()
@@ -66,7 +70,7 @@ namespace ASP.NET_store_project.Server.Data
                 user.PassWord = hasher.HashPassword(user, user.PassWord);
             modelBuilder.Entity<User>().HasData(users);
 
-            Store[] stores = [new("[0]")];
+            Store[] stores = [new("Store")];
             modelBuilder.Entity<Store>().HasData(stores);
 
             ClientDetails[] clientDetails = [

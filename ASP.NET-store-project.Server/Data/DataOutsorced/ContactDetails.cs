@@ -1,5 +1,6 @@
 ﻿namespace ASP.NET_store_project.Server.Data.DataOutsorced
 {
+    // Supplier's database table model
     public class ContactDetails(string name, string surname, string phoneNumber, string email)
     {
         public Guid Id { get; set; } = Guid.NewGuid();

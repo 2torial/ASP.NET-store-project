@@ -1,3 +1,4 @@
+// Client-side SortingOrder equivalent
 export enum SortingOrder {
 	Ascending,
 	Descending,
