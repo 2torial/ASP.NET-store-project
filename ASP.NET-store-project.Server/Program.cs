@@ -1,6 +1,6 @@
-using ASP.NET_store_project.Server.Controllers.IdentityController;
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
+using ASP.NET_store_project.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
