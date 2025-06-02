@@ -37,9 +37,7 @@ All expected features has been implemented, current work revolves around fixing 
 - Vite
 
 ### Testing
-Carried out using NUnit*. \
-\
-*Yet to be implemented
+Carried out using NUnit.
 
 ### Set Up
 Project requires to Add-Migration, Update-Database through Entity Framework to work if it's run for the first time (database is going to be named *Store*).
