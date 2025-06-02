@@ -13,5 +13,4 @@
         public const string RegularUserPolicyName = "User";
     }
 
-    public record CustomClaim(string Type, string Value, string ValueType);
 }

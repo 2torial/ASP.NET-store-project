@@ -5,7 +5,7 @@ using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace ASP.NET_store_project.Server.Controllers
 {
@@ -19,9 +19,9 @@ namespace ASP.NET_store_project.Server.Controllers
         public async Task<IActionResult> GetOrders()
         {
             // Identifies the user
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
-                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
                 return BadRequest("Customer is missing from the database!");
 

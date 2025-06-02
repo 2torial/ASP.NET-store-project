@@ -3,19 +3,15 @@ using ASP.NET_store_project.Server.Data.DataRevised;
 using ASP.NET_store_project.Server.Models;
 using ASP.NET_store_project.Server.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
-using System.Text;
 
 namespace ASP.NET_store_project.Server.Controllers.IdentityController
 {
     [ApiController]
     [Route("[controller]")]
-    public class IdentityController(AppDbContext context) : ControllerBase
+    public class IdentityController(AppDbContext context, TokenProvider tokenProvider) : ControllerBase
     {
-        private readonly string TokenSecret = "StoreItWithAzureKeyVaultOrSomethingSimilar";
-
         // Creates new user
         [HttpPost("/api/account/create")]
         public IActionResult CreateUser([FromForm] SignUpModel credentials)
@@ -51,12 +47,12 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
             catch (UnauthorizedAccessException) { return BadRequest("Username or password is incorrect."); }
 
             // Add claims based on user's privileges
-            List<CustomClaim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
+            List<Claim> claims = [new(IdentityData.RegularUserClaimName, "true", ClaimValueTypes.Boolean)];
             if (user.IsAdmin)
                 claims.Add(new(IdentityData.AdminUserClaimName, "true", ClaimValueTypes.Boolean));
 
             // Create JWT token that will be attached to every request (user is logged in)
-            var token = GenerateToken(credentials.UserName, claims);
+            var token = tokenProvider.Create(user.Id, claims);
             Response.Cookies.Append("Token", token, new CookieOptions
             {
                 HttpOnly = true,
@@ -71,7 +67,7 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
         public IActionResult LogOut()
         {
             // Changes authorized JWT token with a blank
-            var token = GenerateToken("Anonymous", []);
+            var token = tokenProvider.Create(null);
             Response.Cookies.Append("Token", token, new CookieOptions
             {
                 HttpOnly = true,
@@ -90,13 +86,17 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
                 return Ok(IdentityData.AnonymousUserPolicyName);
 
             // If there is no username included in the token - anonymous
-            var username = new JwtSecurityToken(token).Subject;
-            if (username == null) 
+            var userId = new JsonWebToken(token).Subject;
+
+            Console.WriteLine("AAAAAA");
+            Console.WriteLine(new JsonWebToken(token).GetClaim("user").ToString());
+
+            if (userId == null || userId == "") 
                 return Ok(IdentityData.AnonymousUserPolicyName);
 
             // If user of given username doesn't exists - anonymous
             var user = context.Users
-                .SingleOrDefault(customer => customer.UserName == username);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(userId));
             if (user == null)
                 return Ok(IdentityData.AnonymousUserPolicyName);
 
@@ -106,35 +106,5 @@ namespace ASP.NET_store_project.Server.Controllers.IdentityController
                 : IdentityData.RegularUserPolicyName);
         }
 
-        // JWT token generator
-        private string GenerateToken(string userName, List<CustomClaim> customClaims)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(TokenSecret);
-
-            List<Claim> claims = [
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub, userName),
-                new(JwtRegisteredClaimNames.Name, userName),
-            ];
-
-            foreach (var customClaim in customClaims)
-                claims.Add(new Claim(
-                    customClaim.Type,
-                    customClaim.Value,
-                    customClaim.ValueType));
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
-                Issuer = "me",
-                Audience = "me",
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
     }
 }

@@ -42,9 +42,9 @@ function Basket() {
 
     const reload = async () => {
         const response = await fetch('/api/basket');
-        const data: BasketComponentData = await response.json();
-        console.log(data);
         if (response.ok) {
+            const data: BasketComponentData = await response.json();
+            console.log(data);
             setProducts(data.products);
             updatePrices(data.products);
         } else alert(await response.text());

@@ -1,3 +1,4 @@
+using ASP.NET_store_project.Server.Controllers.IdentityController;
 using ASP.NET_store_project.Server.Data;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,41 +24,36 @@ builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:51
 builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/[C]/"));
 
 // Configures authentication/authorization method (JWT)
-builder.Services.AddAuthentication(auth =>
-{
-    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    var config = builder.Configuration;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddSingleton<TokenProvider>();
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidIssuer = config["JWT:Issuer"],
-        ValidAudience = config["JWT:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(config["JWT:Key"]!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            if (context.Request.Cookies.ContainsKey("Token"))
-                context.Token = context.Request.Cookies["Token"];
-            return Task.CompletedTask;
-        }
-    };
-});
-builder.Services.AddAuthorizationBuilder()
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!)),
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ClockSkew = TimeSpan.Zero,
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.ContainsKey("Token"))
+                    context.Token = context.Request.Cookies["Token"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+    builder.Services.AddAuthorizationBuilder()
     .AddPolicy(IdentityData.RegularUserPolicyName, policy =>
         policy.RequireClaim(IdentityData.RegularUserClaimName, "true"))
     .AddPolicy(IdentityData.AdminUserPolicyName, policy =>
         policy.RequireClaim(IdentityData.AdminUserClaimName, "true"));
-
 
 builder.Services.AddControllers();
 
@@ -66,8 +62,7 @@ builder.Services.AddSwaggerGen();
 
 // Database configuration (this program uses postgres), it retrieves data from appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("StoreDatabase"))
-);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("StoreDatabase")));
 
 var app = builder.Build();
 

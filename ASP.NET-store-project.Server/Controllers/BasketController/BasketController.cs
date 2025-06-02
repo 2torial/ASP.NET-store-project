@@ -1,7 +1,6 @@
 using ASP.NET_store_project.Server.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using ASP.NET_store_project.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using ASP.NET_store_project.Server.Data.DataRevised;
@@ -9,6 +8,7 @@ using ASP.NET_store_project.Server.Models.StructuredData;
 using ASP.NET_store_project.Server.Utilities;
 using ASP.NET_store_project.Server.Models.ComponentData;
 using ASP.NET_store_project.Server.Extentions;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace ASP.NET_store_project.Server.Controllers.BasketController
 {
@@ -26,11 +26,11 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             if (!validationResult.IsValid) return this.MultipleErrorsBadRequest(validationResult.ToDictionary());
 
             // Identifies the customer
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
                     .ThenInclude(basket => basket.Supplier)
-                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
                 return this.SingleErrorBadRequest("This customer does not exist!");
 
@@ -122,10 +122,10 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         public IActionResult AddItem([FromRoute] Guid supplierId, [FromRoute] string productId)
         {
             // Identifies the customer
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(user => user.BasketProducts)
-                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
                 return BadRequest("This customer does not exist!");
 
@@ -144,10 +144,10 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         public IActionResult RemoveItem([FromRoute] Guid supplierId, [FromRoute] string productId)
         {
             // Identifies the customer
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(user => user.BasketProducts)
-                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
                 return BadRequest("This customer does not exist!");
 
@@ -172,11 +172,11 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
         public async Task<IActionResult> Basket()
         {
             // Identifies the user
-            var jwtToken = new JwtSecurityToken(Request.Cookies["Token"]);
+            var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(cust => cust.BasketProducts)
                 .ThenInclude(basket => basket.Supplier)
-                .SingleOrDefault(customer => customer.UserName == jwtToken.Subject);
+                .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
                 return Unauthorized("This customer does not exist!");
 

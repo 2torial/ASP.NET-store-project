@@ -91,7 +91,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
                     .ThenInclude(order => order.OrderStages)
                         .ThenInclude(orderStage => orderStage.Stage)
                 .AsSplitQuery()
-                .SingleOrDefault(details => details.ClientExternalId == customerId && details.StoreId.ToString() == storeId);
+                .SingleOrDefault(details => details.ClientExternalId == customerId && details.StoreId == Guid.Parse(storeId));
             if (client == null)
                 return BadRequest("Unknown client or store ID.");
 
@@ -141,7 +141,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
         {
             // Identify store which requests an order
             var store = context.Stores
-                .SingleOrDefault(store => store.Id.ToString() == storeId);
+                .SingleOrDefault(store => store.Id == Guid.Parse(storeId));
             if (store == null)
                 return BadRequest("Given store ID is absent from the database");
 
@@ -217,7 +217,7 @@ namespace ASP.NET_store_project.Server.Controllers.SupplierControllers
             // Abort if order can't be identified
             if (!context.Orders
                 .Include(order => order.ClientDetails)
-                .Any(order => order.SupplierKey == supplierKey && order.ClientDetails.StoreId.ToString() == storeId))
+                .Any(order => order.SupplierKey == supplierKey && order.ClientDetails.StoreId == Guid.Parse(storeId)))
                     return BadRequest("Invalid credentials");
 
             // Change stage of the order to Canceled
