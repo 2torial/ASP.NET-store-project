@@ -14,10 +14,8 @@ All expected features has been implemented, current work revolves around fixing 
 ✅ Fluent validation \
 ✅ Product view page \
 ✅ UI changes \
-⏳ Proper JWT handling \
-⏳ Missing minor features \
-⏳ Server-side tests \
-⏳ Bug fixes
+✅ Proper JWT handling \
+⏳ Server-side tests
 
 ## Technologies Used
 - ASP.NET Core 8
