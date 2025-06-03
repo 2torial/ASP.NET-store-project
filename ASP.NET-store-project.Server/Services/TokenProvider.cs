@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 
-namespace ASP.NET_store_project.Server.Controllers.IdentityController
+namespace ASP.NET_store_project.Server.Services
 {
     public sealed class TokenProvider(IConfiguration configuration)
     {

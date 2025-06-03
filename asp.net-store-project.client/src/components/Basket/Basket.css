@@ -78,3 +78,12 @@
     font-size: 11px;
     color: red;
 }
+
+.basket .quantity .plus-icon, .basket .quantity .minus-icon {
+    color: gray;
+    cursor: pointer;
+}
+
+.basket .quantity .plus-icon:hover, .basket .quantity .minus-icon:hover {
+    color: black;
+}

@@ -88,7 +88,7 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
             var succeededOrders = orderAcceptResults
                 .Where(result => result?.OrderId != null);
 
-            // If number of succeeded orders is lower than placed orders, attempt orders' cancelation
+            // If number of succeeded orders is lower than number of placed orders, attempts order cancelation
             if (succeededOrders.Count() < basket.Count())
             {
                 var orderCancelResults = await MultipleRequestsEndpoint<bool>
@@ -119,19 +119,37 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
 
         // Adds product to the basket
         [HttpGet("/api/basket/add/{supplierId}/{productId}")]
-        public IActionResult AddItem([FromRoute] Guid supplierId, [FromRoute] string productId)
+        public async Task<IActionResult> AddItem([FromRoute] Guid supplierId, [FromRoute] string productId)
         {
-            // Identifies the customer
+            // Identifies customer
             var jwtToken = new JsonWebToken(Request.Cookies["Token"]);
             var customer = context.Users
                 .Include(user => user.BasketProducts)
                 .SingleOrDefault(customer => customer.Id == Guid.Parse(jwtToken.Subject));
             if (customer == null)
-                return BadRequest("This customer does not exist!");
+                return BadRequest("This customer doesn't exist!");
+            // Identifies supplier
+            var supplier = context.Suppliers
+                .SingleOrDefault(sup => sup.Id == supplierId);
+            if (supplier == null)
+                return BadRequest("Selected supplier doesn't exist!");
 
-            // Adds product to the basket (either creates new record or modifies it)
+            // Calculates basket quantity
             var selectedProduct = customer.BasketProducts
                 .SingleOrDefault(item => item.SupplierId == supplierId && item.ProductId == productId);
+            var requestedQuantity = selectedProduct != null ? selectedProduct.Quantity + 1 : 1;
+
+            // Confirms product avaliablity
+            var message = await httpClientFactory.CreateClient(supplier.Name)
+                .PostAsync(supplier.SelectedProductsRequestAdress,
+                    JsonContentConverter.Convert(new List<ProductInfo>() { { new ProductInfo() { Id = productId, Quantity = requestedQuantity } } }));
+            var isAvaliable = message.IsSuccessStatusCode
+                && message.Content.ReadFromJsonAsync<IEnumerable<ProductInfo>>().Result?
+                    .SingleOrDefault()?.Quantity == requestedQuantity;
+            if (!isAvaliable)
+                return BadRequest($"Cannot add more products of this type to the basket (unavaliable).");
+
+            // Adds product to the basket (either creates new record or modifies it after confirmation product is avaliable)
             if (selectedProduct != null) selectedProduct.Quantity += 1;
             else context.Add(new BasketProduct(productId, customer.Id, supplierId, 1));
             context.SaveChanges();
@@ -202,14 +220,37 @@ namespace ASP.NET_store_project.Server.Controllers.BasketController
                 .ContinueWith(group => group.Result
                     .SelectMany(prods => prods ?? []));
 
-            // Checks if all requested products are recieved in appropriate quantities
+            // Compares basket products with suppliers' product information
             var innerResults = customer.BasketProducts 
                 .Join(basketProducts,
                     serverSideProd => serverSideProd.ProductId,
-                    requestSideProd => requestSideProd.Id,
-                    (ssp, rsp) => new { ssp.ProductId, ssp.SupplierId, QuantityDifference = ssp.Quantity - rsp.Quantity });
-            if (innerResults.Count() < customer.BasketProducts.Count || innerResults.Any(res => res.QuantityDifference != 0))
-                return BadRequest(innerResults);
+                    responseSideProd => responseSideProd.Id,
+                    (ssp, rsp) => new { ssp.DatabaseId, IsFullyAvaliable = ssp.Quantity == rsp.Quantity, AvaliableQuantity = rsp.Quantity });
+
+            // Aborts if not all products from the basket were confirmed with the supplier
+            // Should be handled differently - highlight unavaliable products instead of disallowing user from using basket
+            if (innerResults.Count() < customer.BasketProducts.Count)
+                return BadRequest("Products in your basket are temporarily unavaliable.");
+
+            // Updates basket products that are not avaliable for sell in specified amounts
+            // Updates records if some of the products can be selled and removes records if products is unavaliable
+            var toUpdate = innerResults.Where(res => !res.IsFullyAvaliable);
+            if (toUpdate.Any())
+            {
+                var productsToModify = customer.BasketProducts
+                .Join(toUpdate,
+                    basketProd => basketProd.DatabaseId,
+                    prodInfo => prodInfo.DatabaseId,
+                    (basketProd, prodInfo) => (basketProd, prodInfo.AvaliableQuantity));
+                foreach (var (prod, quantity) in productsToModify)
+                {
+                    if (quantity > 0)
+                        prod.Quantity = quantity;
+                    else
+                        context.Remove(prod);
+                }
+                context.SaveChanges();
+            }
 
             return Ok(new BasketComponentData(basketProducts));
         }
