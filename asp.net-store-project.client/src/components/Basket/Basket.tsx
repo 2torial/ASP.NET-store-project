@@ -39,6 +39,7 @@ function Basket() {
 
     const [productsPrice, setProductsPrice] = useState(0);
     const [deliveryCost, setDeliveryCost] = useState(0);
+    const [isDeliveryCostDefault, setIsDeliveryCostDefault] = useState(true);
 
     const reload = async () => {
         const response = await fetch('/api/basket');
@@ -83,8 +84,10 @@ function Basket() {
                 }, new Set<string>())].length * deliveryCostOf(DeliveryMethod.Standard)
             ];
 
+        setIsDeliveryCostDefault(false);
         setProductsPrice(productsCost);
-        setDeliveryCost(deliveryCost);
+        if (selectedProducts === undefined || isDeliveryCostDefault)
+            setDeliveryCost(deliveryCost);
     }
 
     const addItem = (prod: ProductInfo) => async () => {
