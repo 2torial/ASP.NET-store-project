@@ -1,12 +1,11 @@
-﻿using System.Text;
+﻿namespace ASP.NET_store_project.Server.Utilities;
+
+using System.Text;
 using System.Text.Json;
 
-namespace ASP.NET_store_project.Server.Utilities
+// Sugar class used to create JSON-type StringContent
+public static class JsonContentConverter
 {
-    // Sugar class for creating StringContent with JSON as value
-    public static class JsonContentConverter
-    {
-        public static StringContent Convert<T>(T obj) =>
-            new(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
-    }
+    public static StringContent Convert<T>(T obj) =>
+        new(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
 }

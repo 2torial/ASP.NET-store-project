@@ -1,24 +1,21 @@
-using ASP.NET_store_project.Server.Data;
-using ASP.NET_store_project.Server.Models;
-using ASP.NET_store_project.Server.Models.ComponentData;
-using ASP.NET_store_project.Server.Models.StructuredData;
+namespace ASP.NET_store_project.Server.Controllers;
+
+using Data;
+using Models;
+using Models.ComponentData;
+using Models.StructuredData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ASP.NET_store_project.Server.Controllers
+// Requires admin privileges
+[ApiController]
+[Route("[controller]")]
+[Authorize(Policy = IdentityData.AdminUserPolicyName)]
+public class AdminPanelController(AppDbContext context) : ControllerBase
 {
-    // Requires admin privileges
-    [ApiController]
-    [Route("[controller]")]
-    [Authorize(Policy = IdentityData.AdminUserPolicyName)]
-    public class AdminPanelController(AppDbContext context) : ControllerBase
-    {
-        // Retrieves all users' information
-        [HttpGet("/api/admin/users")]
-        public IActionResult GetUsers()
-        {
-            return Ok(new UserListComponentData([.. context.Users.Select(user => new UserInfo(user.UserName, user.IsAdmin))]));
-        }
+    // Collects user data
+    [HttpGet("/api/admin/users")]
+    public IActionResult GetUsers() => 
+        Ok(new UserListComponentData([.. context.Users.Select(user => new UserInfo(user.UserName, user.IsAdmin))]));
 
-    }
 }

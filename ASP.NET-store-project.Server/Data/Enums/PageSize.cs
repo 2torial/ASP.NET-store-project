@@ -1,11 +1,8 @@
-﻿using System.ComponentModel;
+﻿namespace ASP.NET_store_project.Server.Data.Enums;
 
-namespace ASP.NET_store_project.Server.Data.Enums
+public enum PageSize
 {
-    public enum PageSize
-    {
-        Take20,
-        Take50,
-        Take100
-    }
+    Take20,
+    Take50,
+    Take100
 }

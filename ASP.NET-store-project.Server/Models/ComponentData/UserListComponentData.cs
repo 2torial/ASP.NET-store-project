@@ -1,7 +1,6 @@
-using ASP.NET_store_project.Server.Models.StructuredData;
+namespace ASP.NET_store_project.Server.Models.ComponentData;
 
-namespace ASP.NET_store_project.Server.Models.ComponentData
-{
-    // Class representing React component
-    public record UserListComponentData(IEnumerable<UserInfo> Users);
-}
+using StructuredData;
+
+// Class representing React component
+public record UserListComponentData(IEnumerable<UserInfo> Users);

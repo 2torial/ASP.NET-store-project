@@ -1,8 +1,7 @@
-﻿namespace ASP.NET_store_project.Server.Data.Enums
+﻿namespace ASP.NET_store_project.Server.Data.Enums;
+
+public enum SortingMethod
 {
-    public enum SortingMethod
-    {
-        ByName,
-        ByPrice,
-    }
+    ByName,
+    ByPrice,
 }
