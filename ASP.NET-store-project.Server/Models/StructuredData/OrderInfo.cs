@@ -18,8 +18,8 @@ public record OrderInfo(
     AdressInfo AdressDetails, 
     OrderStageInfo[] StageHistory)
 {
-    // Constructor for the external APIs to fill adequate attributes
-    public OrderInfo(IEnumerable<ProductInfo> Products, decimal DeliveryCost, CustomerInfo CustomerDetails, AdressInfo AdressDetails)
-        : this(null, null, null, 0, DeliveryCost, DMethod.Standard.GetDisplayName(), Products, CustomerDetails, AdressDetails, []) { }
+    // Minimal contructor required for order summarization
+    public OrderInfo(IEnumerable<ProductInfo> products, decimal deliveryCost, CustomerInfo customerDetails, AdressInfo adressDetails)
+        : this(null, null, null, 0, deliveryCost, DMethod.Standard.GetDisplayName(), products, customerDetails, adressDetails, []) { }
 
 }

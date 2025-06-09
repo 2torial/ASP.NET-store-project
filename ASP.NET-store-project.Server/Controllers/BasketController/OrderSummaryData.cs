@@ -1,12 +1,23 @@
 namespace ASP.NET_store_project.Server.Controllers.BasketController;
 
 using Data.Enums;
-using Models.StructuredData;
 using FluentValidation;
+using Models.StructuredData;
+using System.ComponentModel;
 
 // FromBody request data
 public record OrderSummaryData(IEnumerable<Order> Orders, CustomerInfo CustomerDetails, AdressInfo AdressDetails);
-public record Order(IEnumerable<Guid> ProductBasketIds, DeliveryMethod DeliveryMethod);
+
+public record Order(IEnumerable<Guid> ProductBasketIds, DeliveryMethod DeliveryMethod)
+{
+    // Transform recieved DeliveryMethod into decimal format
+    public decimal DecimalDeliveryCost() => DeliveryMethod switch
+    {
+        DeliveryMethod.Standard => 5,
+        DeliveryMethod.Express => 25,
+        _ => throw new InvalidEnumArgumentException()
+    };
+};
 
 // Validation ruleset
 public class OrderSummaryDataValidator : AbstractValidator<OrderSummaryData>

@@ -1,5 +1,6 @@
 namespace ASP.NET_store_project.Server.Controllers.BasketController;
 
+using ASP.NET_store_project.Server.Data.DataOutsorced;
 using Data;
 using Data.DataRevised;
 using Extentions;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Models;
 using Models.ComponentData;
 using Models.StructuredData;
+using System.Linq;
 using Utilities;
 
 [ApiController]
@@ -34,53 +36,59 @@ public class BasketController(AppDbContext context, IHttpClientFactory httpClien
         if (customer == null)
             return this.SingleErrorBadRequest("This customer does not exist!");
 
-        // Filters selected products
-        var selectedBasketIds = orderData.Orders
-            .SelectMany(order => order.ProductBasketIds);
-        var selectedProducts = customer.BasketProducts
-            .Join(selectedBasketIds,
-                basketProd => basketProd.DatabaseId,
-                basketId => basketId,
-                (prod, _) => prod);
+        // Identifies selected products
+        var orderBases = orderData.Orders
+            .Select(order =>
+            {
+                var orderedProducts = order.ProductBasketIds
+                    .Join(customer.BasketProducts,
+                        basketId => basketId,
+                        basketProd => basketProd.DatabaseId,
+                        (_, prod) => prod);
+                var firstProduct = orderedProducts.First();
 
-        // Confirmes the number of selected products matches server-side filtered basket products count
-        if (selectedBasketIds.Count() != selectedProducts.Count())
-            return this.SingleErrorBadRequest("Unidentified products were found in order.");
+                return orderedProducts.Count() != order.ProductBasketIds.Count() || orderedProducts.Any(prod => prod.SupplierId != firstProduct.SupplierId)
+                     ? null : new { firstProduct.Supplier, Products = orderedProducts, DeliveryCost = order.DecimalDeliveryCost() };
+            });
+        if (orderBases.Any(order => order == null))
+            return this.SingleErrorBadRequest("Some of the requested products couldn't be identified.");
 
-        // Groups products by their suppliers
-        var basket = selectedProducts
-            .GroupBy(
-                prod => prod.Supplier,
-                prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity },
-                (sup, prods) => new { Supplier = sup, Products = prods });
-        if (!basket.Any())
-            return this.SingleErrorBadRequest("Basket is empty.");
+        // Collects all selected BasketProduct objects
+        var selectedProducts = orderBases
+            .SelectMany(order => order!.Products);
 
-        // Requests potential order placement confirmation from related suppliers
-        var confirmedProductsBatch = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
-            .PostAsync(basket,
-                groupedProds => new(
-                    httpClientFactory.CreateClient(groupedProds.Supplier.Name),
-                    groupedProds.Supplier.SelectedProductsRequestAdress,
-                    JsonContentConverter.Convert(groupedProds.Products)),
-                (groupedProds, resultProds) => new { groupedProds.Supplier, Products = resultProds?.Select(prod => prod.NewModified(groupedProds.Supplier)) });
+        // Requests potential order placement confirmation from related suppliers and transforms recieved data into order objects
+        var orders = await MultipleRequestsEndpoint<IEnumerable<ProductInfo>>
+            .PostAsync(orderBases,
+                order => new(
+                    httpClientFactory.CreateClient(order!.Supplier.Name),
+                    order.Supplier.SelectedProductsRequestAdress,
+                    JsonContentConverter.Convert(order.Products.Select(prod => new ProductInfo() { Id = prod.ProductId, Quantity = prod.Quantity }))),
+                (order, resultProds) => resultProds == null ? null : new
+                {
+                    order!.Supplier,
+                    Info = new OrderInfo(
+                        resultProds.Select(prod => prod.NewModified(order!.Supplier)),
+                        order!.DeliveryCost,
+                        orderData.CustomerDetails,
+                        orderData.AdressDetails)
+                });
+        if (orders.Any(order => order == null))
+            return this.SingleErrorBadRequest("System couldn't place new order because of communication error, try again later.");
 
         // Checks avaliability of requested products
-        var confirmedProducts = confirmedProductsBatch
-            .SelectMany(group => group?.Products ?? []);
+        var confirmedProducts = orders
+            .SelectMany(order => order!.Info.Products);
         if (!selectedProducts.All(sProd => confirmedProducts.Any(cProd => sProd.ProductId == cProd.Id && sProd.Quantity == cProd.Quantity)))
             return this.SingleErrorBadRequest("Not all products are avaliable for sell.");
 
         // Requests order placement from related suppliers
         var orderAcceptResults = await MultipleRequestsEndpoint<string>
-            .PostAsync(confirmedProductsBatch,
-                groupedProds => new(
-                    httpClientFactory.CreateClient(groupedProds!.Supplier.Name),
-                    $"{groupedProds.Supplier.OrderAcceptRequestAdress}/{groupedProds.Supplier.StoreExternalId}/{customer.Id}",
-                    JsonContentConverter.Convert(new OrderInfo(
-                        groupedProds.Products!, 0,
-                        orderData.CustomerDetails,
-                        orderData.AdressDetails))),
+            .PostAsync(orders,
+                order => new(
+                    httpClientFactory.CreateClient(order!.Supplier.Name),
+                    $"{order.Supplier.OrderAcceptRequestAdress}/{order.Supplier.StoreExternalId}/{customer.Id}",
+                    JsonContentConverter.Convert(order.Info)),
                 async msg => msg.IsSuccessStatusCode ? await msg.Content.ReadAsStringAsync() : null,
                 (summary, orderId) => new { summary!.Supplier, OrderId = orderId });
 
@@ -89,7 +97,7 @@ public class BasketController(AppDbContext context, IHttpClientFactory httpClien
             .Where(result => result?.OrderId != null);
 
         // If number of succeeded orders is lower than number of placed orders, attempts order cancelation
-        if (succeededOrders.Count() < basket.Count())
+        if (succeededOrders.Count() < orders.Count())
         {
             var orderCancelResults = await MultipleRequestsEndpoint<bool>
                 .PostAsync(succeededOrders,
