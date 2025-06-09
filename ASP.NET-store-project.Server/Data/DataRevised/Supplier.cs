@@ -1,44 +1,43 @@
-﻿using ASP.NET_store_project.Server.Utilities;
+﻿namespace ASP.NET_store_project.Server.Data.DataRevised;
 
-namespace ASP.NET_store_project.Server.Data.DataRevised
+using Utilities;
+
+// Internal database table
+public class Supplier(
+    string name, 
+    string baseAdress, 
+    string storeExternalId,
+    string filteredProductsRequestAdress, 
+    string selectedProductsRequestAdress, 
+    string displayedProductRequestAdress,
+    string orderListRequestAdress,
+    string orderAcceptRequestAdress,
+    string orderCancelRequestAdress,
+    decimal profitMultiplier = 0.15m) // 0.10m equals 10% profit
 {
-    // Internal database table model
-    public class Supplier(
-        string name, 
-        string baseAdress, 
-        string storeExternalId,
-        string filteredProductsRequestAdress, 
-        string selectedProductsRequestAdress, 
-        string displayedProductRequestAdress,
-        string orderListRequestAdress,
-        string orderAcceptRequestAdress,
-        string orderCancelRequestAdress,
-        decimal profitMultiplier = 0.15m) // 0.10m equals 10% profit
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string Name { get; set; } = name;
+    public string Name { get; set; } = name;
 
-        public string StoreExternalId { get; set; } = storeExternalId;
+    public string StoreExternalId { get; set; } = storeExternalId;
 
-        public string BaseAdress { get; set; } = baseAdress;
+    public string BaseAdress { get; set; } = baseAdress;
 
-        public string FilteredProductsRequestAdress { get; set; } = filteredProductsRequestAdress;
+    public string FilteredProductsRequestAdress { get; set; } = filteredProductsRequestAdress;
 
-        public string SelectedProductsRequestAdress { get; set; } = selectedProductsRequestAdress;
+    public string SelectedProductsRequestAdress { get; set; } = selectedProductsRequestAdress;
 
-        public string DisplayedProductRequestAdress { get; set; } = displayedProductRequestAdress;
+    public string DisplayedProductRequestAdress { get; set; } = displayedProductRequestAdress;
 
-        public string OrderListRequestAdress { get; set; } = orderListRequestAdress;
+    public string OrderListRequestAdress { get; set; } = orderListRequestAdress;
 
-        public string OrderAcceptRequestAdress { get; set; } = orderAcceptRequestAdress;
+    public string OrderAcceptRequestAdress { get; set; } = orderAcceptRequestAdress;
 
-        public string OrderCancelRequestAdress { get; set; } = orderCancelRequestAdress;
+    public string OrderCancelRequestAdress { get; set; } = orderCancelRequestAdress;
 
-        public decimal ProfitMultiplier { get; set; } = profitMultiplier;
+    public decimal ProfitMultiplier { get; set; } = profitMultiplier;
 
-        // Calculates store price based on present multiplier
-        public decimal CalculateStorePrice(decimal cost) =>
-            StorePriceCalculator.Calculate(cost, ProfitMultiplier);
-    }
+    // Calculates store price based on present multiplier
+    public decimal CalculateStorePrice(decimal cost) =>
+        StorePriceCalculator.Calculate(cost, ProfitMultiplier);
 }

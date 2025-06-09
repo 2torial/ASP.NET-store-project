@@ -10,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configures clients meant for communicating with Suppliers' external APIs
-// All requests are handled through json
+// All requests are handled using json as content type
 var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
 {
     httpClient.BaseAddress = new Uri(uriAdress);
@@ -18,7 +18,7 @@ var configSupplier = (string uriAdress) => (HttpClient httpClient) =>
     httpClient.DefaultRequestHeaders.Add(
         HeaderNames.Accept, "application/json");
 };
-// Supliers' request adresses
+// Supliers' request base adresses
 builder.Services.AddHttpClient("SupplierA", configSupplier("https://localhost:5173/api/supplier/[A]/"));
 builder.Services.AddHttpClient("SupplierB", configSupplier("https://localhost:5173/api/supplier/[B]/"));
 builder.Services.AddHttpClient("SupplierC", configSupplier("https://localhost:5173/api/supplier/[C]/"));
@@ -49,7 +49,7 @@ builder.Services
         };
     });
 
-    builder.Services.AddAuthorizationBuilder()
+builder.Services.AddAuthorizationBuilder()
     .AddPolicy(IdentityData.RegularUserPolicyName, policy =>
         policy.RequireClaim(IdentityData.RegularUserClaimName, "true"))
     .AddPolicy(IdentityData.AdminUserPolicyName, policy =>
@@ -60,7 +60,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database configuration (this program uses postgres), it retrieves data from appsettings.json
+// Database configuration (this program uses postgres)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("StoreDatabase")));
 
