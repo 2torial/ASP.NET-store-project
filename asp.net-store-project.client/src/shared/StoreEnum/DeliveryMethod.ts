@@ -5,6 +5,6 @@ export enum DeliveryMethod {
 }
 
 export const deliveryMethodLabel = new Map<DeliveryMethod, string>([
-	[DeliveryMethod.Standard, "Standard Delivery 5"],
-	[DeliveryMethod.Express, "Express Delivery 25"]
+	[DeliveryMethod.Standard, "Standard Delivery $5"],
+	[DeliveryMethod.Express, "Express Delivery $25"]
 ]);

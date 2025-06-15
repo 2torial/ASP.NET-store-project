@@ -48,8 +48,8 @@ function OrderList() {
                     <tr>
                         <td>{order.supplierName}</td>
                         <td>{`${order.stageHistory[0]?.dateOfCreation}`}</td>
-                        <td>${order.productsCost}</td>
-                        <td>${order.deliveryCost}</td>
+                        <td>${order.productsCost.toFixed(2)}</td>
+                        <td>${order.deliveryCost.toFixed(2)}</td>
                         <td>{order.stageHistory[order.stageHistory.length - 1]?.type}</td>
                         <td>{`${order.stageHistory[order.stageHistory.length - 1]?.dateOfCreation}`}</td>
                     </tr>

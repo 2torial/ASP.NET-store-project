@@ -34,9 +34,9 @@ function UserList() {
 				<th>Username</th>
 				<th>Privileges</th>
 			</tr>
-			{users.map((user, idx) => <tr key={idx}>{user.isAdmin
-				? <><td>{user.name}</td><td>Admin</td></>
-				: <><td>{user.name}</td><td>Regular</td></>}
+			{users.map((user, idx) => <tr key={idx}>
+				<td>{user.name}</td>
+				<td>{user.isAdmin ? "Admin" : "Regular"}</td>
 			</tr>)}
 		</table>
 	</main>;
