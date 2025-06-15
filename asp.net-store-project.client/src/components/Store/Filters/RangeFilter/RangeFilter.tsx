@@ -11,8 +11,8 @@ function RangeFilter({ from, to }: RangeFilterProps) {
     const inputTo = useRef(null);
 
     useEffect(() => {
-        (inputFrom.current! as HTMLInputElement).value = String(from);
-        (inputTo.current! as HTMLInputElement).value = String(to);
+        (inputFrom.current! as HTMLInputElement).value = from.toFixed(2);
+        (inputTo.current! as HTMLInputElement).value = to.toFixed(2);
     });
 
     const toggleSection = (event: React.MouseEvent<HTMLElement>) => {

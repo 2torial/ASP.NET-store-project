@@ -2,6 +2,6 @@
 
 public enum DeliveryMethod
 {
-    Standard,
-    Express
+    Standard,   // $5
+    Express     // $25
 }

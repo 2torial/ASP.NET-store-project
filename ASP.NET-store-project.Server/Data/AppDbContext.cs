@@ -117,9 +117,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new("RAM Memory", "64 GB", 64),
                 new("RAM Memory", "No Memory")] },
             { "System", [
-                new("System", "Windows 10", 1),
-                new("System", "Windows 11", 2),
-                new("System", "MacOS", 11),
+                new("System", "Windoors 10", 1),
+                new("System", "Windoors 11", 2),
+                new("System", "McInToss OS", 11),
                 new("System", "No System")] },
             { "Disk", [
                 new("Disk", "SSD", 1),
@@ -131,14 +131,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new("Disk Capacity", "2048 GB", 2048),
                 new("Disk Capacity", "4096 GB", 4096)] },
             { "Processor", [
-                new("Processor", "Intel Core i3", 1),
-                new("Processor", "Intel Core i5", 1),
-                new("Processor", "Intel Core i7", 1),
-                new("Processor", "Intel Core i9", 1),
-                new("Processor", "Ryzen 3", 2),
-                new("Processor", "Ryzen 5", 2),
-                new("Processor", "Ryzen 7", 2),
-                new("Processor", "Ryzen 9", 2),
+                new("Processor", "Mackerel Core i3", 1003),
+                new("Processor", "Mackerel Core i5", 1005),
+                new("Processor", "Mackerel Core i7", 1007),
+                new("Processor", "Mackerel Core i9", 1009),
+                new("Processor", "Resin 3", 2003),
+                new("Processor", "Resin 5", 2005),
+                new("Processor", "Resin 7", 2007),
+                new("Processor", "Resin 9", 2009),
                 new("Processor", "No Processor")] },
             { "Cord Length", [
                 new("Cord Length", "1 m", 1),
@@ -156,15 +156,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .SelectMany(kvp => kvp.Value));
 
         var rand = new Random();
+        string[] companies = ["Panatonik", "Soni", "PH", "Levono", "Pineapple", "Gell", "Twinsung"];
+        string[] laptopTypes = ["Laptop", "Notebook", "Ultrabook"];
         string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string modelChars = "abcpXYZ ";
         Item[] items = [.. Enumerable.Range(1, 300)
             .Select(n =>
             {
                 var category = categories[rand.Next(0, categories.Length)];
                 var supplierKey = supplierKeys[rand.Next(0, 3)];
                 var supplier = labeledSuppliers[supplierKey];
-                var random3 = "" + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)] + chars[rand.Next(chars.Length)];
-                var name = $"{random3} {supplierKey} {category.Type}";
+                var company = companies[rand.Next(companies.Length)];
+                var type = category.Type switch {
+                    "Microphone" or "Headset" => category.Type,
+                    "PersonalComputer" => "Computer",
+                    "Laptop" => laptopTypes[rand.Next(laptopTypes.Length)],
+                    _ => throw new ArgumentOutOfRangeException(category.Type)
+                };
+                var model = $"{chars[rand.Next(chars.Length)]}{1000 * rand.Next(1, 10) + 10 * rand.Next(10)}{modelChars[rand.Next(modelChars.Length)]}";
+                var name = $"{type} {company} {model}";
                 var computerPrices = new decimal[] { 300, 400, 450, 500, 600, 700, 800, 820, 850, 900, 1000 };
                 var otherPrices = new decimal[] { 20, 30, 50, 55, 60, 90, 100, 110, 115, 150, 190, 200 };
                 var price = category == categories[0] || category == categories[3]

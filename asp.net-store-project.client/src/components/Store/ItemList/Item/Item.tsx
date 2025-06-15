@@ -30,7 +30,7 @@ function Item({ product }: ItemProps) {
             </ul>
         </div>
         <div className="store-section">
-            <h3 className="store-price">${product.price}</h3>
+            <h3 className="store-price">${product.price.toFixed(2)}</h3>
             <div className="store-options">
                 <span onClick={addItem(product)} className="cart-icon fa fa-cart-plus" />
             </div>

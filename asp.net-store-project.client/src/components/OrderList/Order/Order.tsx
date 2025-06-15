@@ -19,7 +19,7 @@ function Order({ product }: OrderProps) {
                     {product.name}
                 </Link>
             </h3>
-            <h3 className="price">${product.price}</h3>
+            <h3 className="price">${product.price.toFixed(2)}</h3>
             <h3 className="quantity">{product.quantity}</h3>
         </div>
     </div>;

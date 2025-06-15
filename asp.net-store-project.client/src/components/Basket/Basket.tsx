@@ -39,6 +39,7 @@ function Basket() {
 
     const [productsPrice, setProductsPrice] = useState(0);
     const [deliveryCost, setDeliveryCost] = useState(0);
+    const [readDeliveryCost, setReadDeliveryCost] = useState(false);
 
     const reload = async () => {
         const response = await fetch('/api/basket');
@@ -84,7 +85,9 @@ function Basket() {
             ];
 
         setProductsPrice(productsCost);
-        setDeliveryCost(deliveryCost);
+        if (selectedProducts === undefined || !readDeliveryCost)
+            setDeliveryCost(deliveryCost);
+        setReadDeliveryCost(true);
     }
 
     const addItem = (prod: ProductInfo) => async () => {
@@ -96,6 +99,9 @@ function Basket() {
     const removeItem = (prod: ProductInfo) => async () => {
         const response = await fetch(`/api/basket/remove/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
+        console.log(prod.quantity === 1);
+        if (prod.quantity === 1)
+            setReadDeliveryCost(false);
         reload();
     }
 
@@ -175,7 +181,7 @@ function Basket() {
                                 {prod.name}
                             </Link>
                         </h3>
-                        <h3 className="price">${prod.price}</h3>
+                        <h3 className="price">${prod.price.toFixed(2)}</h3>
                         <span className="quantity">
                             <span onClick={addItem(prod)} className="plus-icon fa fa-plus-square" />
                             <span>{prod.quantity}</span>
@@ -188,10 +194,10 @@ function Basket() {
         <form onSubmit={summarize} className="input-section" id={FormID.Summary}>
             <table className="grid-wide">
                 <tr><th colSpan={2}>Summary</th></tr>
-                <tr><td>Products cost</td><td>${productsPrice}</td></tr>
-                <tr><td>Delivery cost</td><td>${deliveryCost}</td></tr>
+                <tr><td>Products cost</td><td>${productsPrice.toFixed(2)}</td></tr>
+                <tr><td>Delivery cost</td><td>${deliveryCost.toFixed(2)}</td></tr>
                 <tr><td>Payment method</td><td>{"???"}</td></tr>
-                <tr><td>Total</td><td>${productsPrice + deliveryCost}</td></tr>
+                <tr><td>Total</td><td>${(productsPrice + deliveryCost).toFixed(2)}</td></tr>
             </table>
             <div>
                 <label htmlFor="name">Name</label>
