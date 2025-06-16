@@ -5,8 +5,8 @@ import { useRef } from 'react';
 import { IdentityPolicy } from '../../shared/StoreEnum/IdentityPolicy';
 
 interface NavProps {
-	updateUserIdentity(): void,
-	userIdentity: IdentityPolicy
+	updateUserIdentity(): void;
+	userIdentity: IdentityPolicy;
 }
 
 export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
@@ -39,10 +39,11 @@ export function Nav({ updateUserIdentity, userIdentity }: NavProps) {
 			</div>
 			<div className="empty-space-section"></div>
 			<SearchBar />
-			<div className="menu-section">
-				<Link to="/basket">
+			<div className="menu-section">{userIdentity !== IdentityPolicy.AnonymousUser
+				? <Link to="/basket">
 					<span className="cart-icon fa fa-shopping-cart" />
 				</Link>
+				: <span />}
 				<span ref={profileIconRef} onMouseOver={openMenu} className="profile-icon fa fa-cogs" />
 			</div>
 		</div>

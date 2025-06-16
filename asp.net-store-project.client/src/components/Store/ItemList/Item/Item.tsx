@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import { ProductInfo } from '../../../../shared/StoreObject/ProductInfo';
 import './Item.css';
+import { IdentityPolicy } from '../../../../shared/StoreEnum/IdentityPolicy';
 
 interface ItemProps {
     product: ProductInfo;
+    userIdentity: IdentityPolicy;
 }
 
-function Item({ product }: ItemProps) {
+function Item({ product, userIdentity }: ItemProps) {
     const addItem = (prod: ProductInfo) => async () => {
         const response = await fetch(`/api/basket/add/${prod.supplierId}/${prod.id}`);
         alert(await response.text());
@@ -31,8 +33,9 @@ function Item({ product }: ItemProps) {
         </div>
         <div className="store-section">
             <h3 className="store-price">${product.price.toFixed(2)}</h3>
-            <div className="store-options">
-                <span onClick={addItem(product)} className="cart-icon fa fa-cart-plus" />
+            <div className="store-options">{userIdentity !== IdentityPolicy.AnonymousUser
+                ? <span onClick={addItem(product)} className="cart-icon fa fa-cart-plus" />
+                : <></>}
             </div>
         </div>
     </div>;

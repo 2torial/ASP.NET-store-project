@@ -10,6 +10,7 @@ import { PageSize } from '../../shared/StoreEnum/StorePageSize';
 import { SortingMethod } from '../../shared/StoreEnum/StoreSortingMethod';
 import { SortingOrder } from '../../shared/StoreEnum/StoreSortingOrder';
 import { ProductInfo, ProductTag } from '../../shared/StoreObject/ProductInfo';
+import { IdentityPolicy } from '../../shared/StoreEnum/IdentityPolicy';
 
 interface StoreComponentData {
 	settings: StoreSettings;
@@ -48,7 +49,11 @@ const configMockupSettings = (formData: FormData) => {
 	formData.append("PageIndex", "1");
 }
 
-export function Store() {
+interface StoreProps {
+	userIdentity: IdentityPolicy;
+}
+
+export function Store({ userIdentity } : StoreProps) {
 	const location = useLocation()
 	const [settings, setSettings] = useState<StoreSettings>();
 	const [filters, setFilters] = useState<StoreFilters>();
@@ -112,7 +117,8 @@ export function Store() {
 	const itemsProps = {
 		sortBy: settings.sortingMethod,
 		orderBy: settings.sortingOrder,
-		products
+		products,
+		userIdentity
 	}
 	return <main id="store">
 		<Filters {...filterProps} />
