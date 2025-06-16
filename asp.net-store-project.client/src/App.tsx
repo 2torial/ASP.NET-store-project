@@ -33,8 +33,8 @@ function App() {
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 		<Nav updateUserIdentity={updateUserIdentity} userIdentity={userIdentity} />
 		{useRoutes([
-			{ path: "/", element: <Store /> },
-			{ path: "/store", element: <Store /> },
+			{ path: "/", element: <Store userIdentity={userIdentity} /> },
+			{ path: "/store", element: <Store userIdentity={userIdentity} /> },
 			{ path: "/product", element: <Product /> },
 			{ path: "/basket", element: <Basket /> },
 			{ path: "/sign-in", element: <AccountForm updateUserIdentity={updateUserIdentity} newAccount={false} /> },

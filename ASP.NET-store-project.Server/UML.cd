@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="ASP.NET_store_project.Server.Controllers.IdentityController.IdentityController">
+    <Position X="5.75" Y="2.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAgAAAAAAAAAAABAAAEAAAAAAAAA=</HashCode>
+      <FileName>Controllers\IdentityController\IdentityController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Controllers.BasketController.BasketController">
+    <Position X="11.5" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAgAAAAAAAAAAAgAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BasketController\BasketController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Controllers.StoreController.StoreController">
+    <Position X="14.5" Y="2.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\StoreController\StoreController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Controllers.SupplierControllers.ExternalSupplierController">
+    <Position X="17.75" Y="2.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAkAQAAAAAAACAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Controllers\SupplierControllers\ExternalSupplierController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Controllers.AdminPanelController">
+    <Position X="3.25" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\AdminPanelController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Controllers.OrdersPanelController">
+    <Position X="8.5" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\OrdersPanelController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Mvc.ControllerBase" Collapsed="true">
+    <Position X="16.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataRevised.BasketProduct">
+    <Position X="6.25" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAQAACgAAgAAA=</HashCode>
+      <FileName>Data\DataRevised\BasketProduct.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Supplier" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataRevised.Supplier">
+    <Position X="2" Y="5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAACACAAAAAIAAAAAAAIAAQIAAAIEIAAAAAECAAAAAA=</HashCode>
+      <FileName>Data\DataRevised\Supplier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataRevised.User">
+    <Position X="6.25" Y="8.25" Width="1.75" />
+    <AssociationLine Name="BasketProducts" Type="ASP.NET_store_project.Server.Data.DataRevised.BasketProduct" FixedFromPoint="true">
+      <Path>
+        <Point X="7.75" Y="8.25" />
+        <Point X="7.75" Y="7.517" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAACAgAAAAAAAAAAAAAAAAAACAAAAAAAAQAAAAAAIAA=</HashCode>
+      <FileName>Data\DataRevised\User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="BasketProducts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.AdressDetails">
+    <Position X="22.25" Y="7" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAgAQAAACIIAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\AdressDetails.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Category">
+    <Position X="8.75" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\Category.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.ClientDetails">
+    <Position X="22.25" Y="9.75" Width="2.25" />
+    <AssociationLine Name="Orders" Type="ASP.NET_store_project.Server.Data.DataOutsorced.Order" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="22.25" Y="10" />
+        <Point X="21.875" Y="10" />
+        <Point X="21.875" Y="8.062" />
+        <Point X="20.5" Y="8.062" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAQAAIAA=</HashCode>
+      <FileName>Data\DataOutsorced\ClientDetails.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Store" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Orders" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.ContactDetails">
+    <Position X="22.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAAAAAQAQABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\ContactDetails.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Item">
+    <Position X="13" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQBAAgAAAAAAACQgAAAAAAAAAAAAgIAACAA=</HashCode>
+      <FileName>Data\DataOutsorced\Item.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Category" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Configurations" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Configuration">
+    <Position X="8.75" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\ItemConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.ItemConfiguration">
+    <Position X="10.75" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\ItemConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Order">
+    <Position X="18.5" Y="6.25" Width="2" />
+    <AssociationLine Name="AdressDetails" Type="ASP.NET_store_project.Server.Data.DataOutsorced.AdressDetails" FixedToPoint="true">
+      <Path>
+        <Point X="20.5" Y="7.438" />
+        <Point X="22.25" Y="7.438" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="ClientDetails" Type="ASP.NET_store_project.Server.Data.DataOutsorced.ClientDetails" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="20.5" Y="8.312" />
+        <Point X="20.875" Y="8.312" />
+        <Point X="20.875" Y="10.438" />
+        <Point X="22.25" Y="10.438" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="ContactDetails" Type="ASP.NET_store_project.Server.Data.DataOutsorced.ContactDetails" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="20.5" Y="6.813" />
+        <Point X="20.875" Y="6.813" />
+        <Point X="20.875" Y="5.686" />
+        <Point X="22.25" Y="5.686" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="ItemOrders" Type="ASP.NET_store_project.Server.Data.DataOutsorced.ItemOrder" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="18.5" Y="7.75" />
+        <Point X="17.25" Y="7.75" />
+        <Point X="17.25" Y="7.373" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="OrderStages" Type="ASP.NET_store_project.Server.Data.DataOutsorced.OrderStage" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="18.5" Y="8.188" />
+        <Point X="17.25" Y="8.188" />
+        <Point X="17.25" Y="8.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQCgAAAAoAAAAIAAAgSAAAAAAAAAAAACCAgAIAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\Order.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AdressDetails" />
+      <Property Name="ClientDetails" />
+      <Property Name="ContactDetails" />
+      <Property Name="DeliveryMethod" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ItemOrders" />
+      <Property Name="OrderStages" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.ItemOrder">
+    <Position X="15.75" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAEAAAAAAAAAAAgAAAACAEAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\Order.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Item" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.OrderDeliveryMethod">
+    <Position X="18.5" Y="9.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\OrderDeliveryMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Stage">
+    <Position X="13" Y="8.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\OrderStage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.OrderStage">
+    <Position X="15.75" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>kAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\OrderStage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Stage" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ASP.NET_store_project.Server.Data.DataOutsorced.Store">
+    <Position X="18.5" Y="10.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataOutsorced\Store.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

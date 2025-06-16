@@ -16,7 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Category>()
-            .ToTable("ItemCategory");
+            .ToTable("Category");
 
         modelBuilder.Entity<Item>()
             .ToTable("Item");
