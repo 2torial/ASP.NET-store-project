@@ -1,5 +1,5 @@
 # Internet Store ASP.NET Project based on Dropshipping Model
-This is a back-end oriented project with frontent built from scratch to fit the purpose. \
+This is a back-end oriented project with front-end built from scratch to fit the purpose. \
 Project is currently archived, link to the further developed cloned repository can be found below: \
 https://github.com/2torial/ASP.NET-dropshipping
 
